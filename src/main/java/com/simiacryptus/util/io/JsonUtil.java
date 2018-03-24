@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.stream.IntStream;
 
 /**
@@ -87,6 +88,22 @@ public class JsonUtil {
       array.add(new JsonPrimitive(k));
     }
     return array;
+  }
+  
+  /**
+   * Write json.
+   *
+   * @param obj the obj
+   * @throws IOException the io exception
+   */
+  public static String toJson(final Object obj) {
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    try {
+      writeJson(outputStream, obj);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
   }
   
   /**
