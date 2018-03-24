@@ -68,7 +68,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     double v1 = 0;
     double v2 = 0;
     double vmax = max;
-    double vmin = max;
+    double vmin = min;
     int z = 0;
     double vlog = 0;
     int n = 0;
@@ -76,8 +76,8 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     for (final double v : values) {
       v1 += v;
       v2 += v * v;
-      vmin = Math.min(min, v);
-      vmax = Math.max(max, v);
+      vmin = Math.min(vmin, v);
+      vmax = Math.max(vmax, v);
       if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
         z++;
       }
