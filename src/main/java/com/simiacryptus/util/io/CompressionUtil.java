@@ -53,10 +53,10 @@ public class CompressionUtil {
    * @param dictionary the dictionary
    * @return the byte [ ]
    */
-  public static byte[] encodeLZ(String data, String dictionary) {
+  public static byte[] encodeLZ(CharSequence data, String dictionary) {
     byte[] asBytes = new byte[0];
     try {
-      asBytes = data.getBytes("UTF-8");
+      asBytes = String.valueOf(data).getBytes("UTF-8");
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException(e);
     }
@@ -133,7 +133,7 @@ public class CompressionUtil {
    * @param data the data
    * @return the byte [ ]
    */
-  public static byte[] encodeLZ(String data) {
+  public static byte[] encodeLZ(CharSequence data) {
     return encodeLZ(data, "");
   }
   
@@ -144,7 +144,7 @@ public class CompressionUtil {
    * @param dictionary the dictionary
    * @return the string
    */
-  public static String decodeLZToString(byte[] data, String dictionary) {
+  public static CharSequence decodeLZToString(byte[] data, CharSequence dictionary) {
     try {
       return new String(decodeLZ(data), "UTF-8");
     } catch (UnsupportedEncodingException e) {
@@ -182,7 +182,7 @@ public class CompressionUtil {
    * @param data the data
    * @return the string
    */
-  public static String decodeBZ(byte[] data) {
+  public static CharSequence decodeBZ(byte[] data) {
     try {
       return new String(decodeBZRaw(data), "UTF-8");
     } catch (IOException e) {
@@ -249,7 +249,7 @@ public class CompressionUtil {
    * @param dictionary the dictionary
    * @return the string
    */
-  public static String decodeBZ(byte[] data, String dictionary) {
+  public static CharSequence decodeBZ(byte[] data, String dictionary) {
     try {
       byte[] dictBytes = dictionary.getBytes("UTF-8");
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -304,7 +304,7 @@ public class CompressionUtil {
    * @param str the str
    * @return the string
    */
-  public static String displayStr(String str) {
+  public static CharSequence displayStr(String str) {
     return str.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\n").replaceAll("\0", "\\\\0");
   }
 }

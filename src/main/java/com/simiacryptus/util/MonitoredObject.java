@@ -29,7 +29,7 @@ import java.util.function.Supplier;
  */
 public class MonitoredObject implements MonitoredItem {
   
-  private final Map<String, Object> items = new HashMap<>();
+  private final Map<CharSequence, Object> items = new HashMap<>();
   
   /**
    * Add const monitored object.
@@ -39,7 +39,7 @@ public class MonitoredObject implements MonitoredItem {
    * @return the monitored object
    */
   @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject addConst(final String key, final Object item) {
+  public com.simiacryptus.util.MonitoredObject addConst(final CharSequence key, final Object item) {
     items.put(key, item);
     return this;
   }
@@ -52,7 +52,7 @@ public class MonitoredObject implements MonitoredItem {
    * @return the monitored object
    */
   @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject addField(final String key, final Supplier<Object> item) {
+  public com.simiacryptus.util.MonitoredObject addField(final CharSequence key, final Supplier<Object> item) {
     items.put(key, item);
     return this;
   }
@@ -65,7 +65,7 @@ public class MonitoredObject implements MonitoredItem {
    * @return the monitored object
    */
   @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject addObj(final String key, final MonitoredItem item) {
+  public com.simiacryptus.util.MonitoredObject addObj(final CharSequence key, final MonitoredItem item) {
     items.put(key, item);
     return this;
   }
@@ -77,8 +77,8 @@ public class MonitoredObject implements MonitoredItem {
    */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject clearConstants() {
-    @javax.annotation.Nonnull final HashSet<String> keys = new HashSet<>(items.keySet());
-    for (final String k : keys) {
+    @javax.annotation.Nonnull final HashSet<CharSequence> keys = new HashSet<>(items.keySet());
+    for (final CharSequence k : keys) {
       final Object v = items.get(k);
       if (v instanceof com.simiacryptus.util.MonitoredObject) {
         ((com.simiacryptus.util.MonitoredObject) v).clearConstants();
@@ -92,10 +92,10 @@ public class MonitoredObject implements MonitoredItem {
   
   @javax.annotation.Nonnull
   @Override
-  public Map<String, Object> getMetrics() {
-    @javax.annotation.Nonnull final HashMap<String, Object> returnValue = new HashMap<>();
+  public Map<CharSequence, Object> getMetrics() {
+    @javax.annotation.Nonnull final HashMap<CharSequence, Object> returnValue = new HashMap<>();
     items.entrySet().stream().parallel().forEach(e -> {
-      final String k = e.getKey();
+      final CharSequence k = e.getKey();
       final Object v = e.getValue();
       if (v instanceof MonitoredItem) {
         returnValue.put(k, ((MonitoredItem) v).getMetrics());

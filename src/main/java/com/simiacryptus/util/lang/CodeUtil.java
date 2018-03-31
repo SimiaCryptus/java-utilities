@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  * The type Code util.
  */
 public class CodeUtil {
-  private static final List<String> sourceFolders = Arrays.asList("src/main/java", "src/test/java", "src/main/scala", "src/test/scala");
+  private static final List<CharSequence> sourceFolders = Arrays.asList("src/main/java", "src/test/java", "src/main/scala", "src/test/scala");
   /**
    * The constant projectRoot.
    */
@@ -59,7 +59,7 @@ public class CodeUtil {
     if (null == clazz) return null;
     String name = clazz.getName();
     if (null == name) return null;
-    final String path = name.replaceAll("\\.", "/").replaceAll("\\$.*", "");
+    final CharSequence path = name.replaceAll("\\.", "/").replaceAll("\\$.*", "");
     return com.simiacryptus.util.lang.CodeUtil.findFile(path + ".java");
   }
   
@@ -72,7 +72,7 @@ public class CodeUtil {
    */
   @javax.annotation.Nonnull
   public static File findFile(@javax.annotation.Nonnull final StackTraceElement callingFrame) {
-    @javax.annotation.Nonnull final String[] packagePath = callingFrame.getClassName().split("\\.");
+    @javax.annotation.Nonnull final CharSequence[] packagePath = callingFrame.getClassName().split("\\.");
     @javax.annotation.Nonnull final String path = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator)) + File.separator + callingFrame.getFileName();
     return com.simiacryptus.util.lang.CodeUtil.findFile(path);
   }
@@ -99,7 +99,7 @@ public class CodeUtil {
    * @return the indent
    */
   @javax.annotation.Nonnull
-  public static String getIndent(@javax.annotation.Nonnull final String txt) {
+  public static CharSequence getIndent(@javax.annotation.Nonnull final CharSequence txt) {
     @javax.annotation.Nonnull final Matcher matcher = Pattern.compile("^\\s+").matcher(txt);
     return matcher.find() ? matcher.group(0) : "";
   }
@@ -117,10 +117,10 @@ public class CodeUtil {
       assert null != file;
       final int start = callingFrame.getLineNumber() - 1;
       final List<String> allLines = Files.readAllLines(file.toPath());
-      final String txt = allLines.get(start);
-      @javax.annotation.Nonnull final String indent = com.simiacryptus.util.lang.CodeUtil.getIndent(txt);
-      @javax.annotation.Nonnull final ArrayList<String> lines = new ArrayList<>();
-      for (int i = start + 1; i < allLines.size() && (com.simiacryptus.util.lang.CodeUtil.getIndent(allLines.get(i)).length() > indent.length() || allLines.get(i).trim().isEmpty()); i++) {
+      final CharSequence txt = allLines.get(start);
+      @javax.annotation.Nonnull final CharSequence indent = com.simiacryptus.util.lang.CodeUtil.getIndent(txt);
+      @javax.annotation.Nonnull final ArrayList<CharSequence> lines = new ArrayList<>();
+      for (int i = start + 1; i < allLines.size() && (com.simiacryptus.util.lang.CodeUtil.getIndent(allLines.get(i)).length() > indent.length() || String.valueOf(allLines.get(i)).trim().isEmpty()); i++) {
         final String line = allLines.get(i);
         lines.add(line.substring(Math.min(indent.length(), line.length())));
       }
@@ -167,7 +167,7 @@ public class CodeUtil {
   }
   
   private static List<File> scanProject(File file) {
-    return sourceFolders.stream().map(name -> new File(file, name))
+    return sourceFolders.stream().map(name -> new File(file, name.toString()))
       .filter(f -> f.exists() && f.isDirectory())
       .collect(Collectors.toList());
   }

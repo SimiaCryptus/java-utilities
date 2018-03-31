@@ -48,11 +48,10 @@ public class Misspelling extends TestDocument {
   
   /**
    * Instantiates a new Misspelling.
-   *
-   * @param correct     the correct
+   *  @param correct     the correct
    * @param misspelling the misspelling
    */
-  public Misspelling(String correct, String misspelling) {
+  public Misspelling(String correct, CharSequence misspelling) {
     super(correct, misspelling);
   }
   
@@ -121,11 +120,11 @@ public class Misspelling extends TestDocument {
       try {
         try (final InputStream in = Util.cache(url, file)) {
           String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
-          List<String> list = Arrays.asList(txt.split("\n"));
+          List<CharSequence> list = Arrays.asList(txt.split("\n"));
           String activeItem = "";
-          for (String item : list) {
-            if (item.startsWith("$")) {
-              activeItem = item.substring(1);
+          for (CharSequence item : list) {
+            if (item.toString().startsWith("$")) {
+              activeItem = item.toString().substring(1);
             }
             else {
               queue.add(new Misspelling(activeItem, item));

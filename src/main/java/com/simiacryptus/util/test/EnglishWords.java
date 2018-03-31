@@ -56,7 +56,7 @@ public class EnglishWords extends TestDocument {
    *
    * @param text the text
    */
-  public EnglishWords(String text) {
+  public EnglishWords(CharSequence text) {
     super(text, text);
   }
   
@@ -101,9 +101,9 @@ public class EnglishWords extends TestDocument {
     try {
       InputStream in = Util.cache(url, file);
       String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
-      List<String> list = Arrays.stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", "")).collect(Collectors.toList());
+      List<CharSequence> list = Arrays.stream(txt.split("\n")).map(x -> x.replaceAll("[^\\w]", "")).collect(Collectors.toList());
       Collections.shuffle(list);
-      for (String paragraph : list) {
+      for (CharSequence paragraph : list) {
         queue.add(new EnglishWords(paragraph));
       }
     } catch (final IOException e) {

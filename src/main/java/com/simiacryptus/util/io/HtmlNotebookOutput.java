@@ -214,9 +214,9 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public OutputStream file(@javax.annotation.Nonnull final String name) {
+  public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
     try {
-      return new FileOutputStream(new File(getResourceDir(), name));
+      return new FileOutputStream(new File(getResourceDir(), name.toString()));
     } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -224,15 +224,15 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String file(final String data, final String caption) {
+  public String file(final CharSequence data, final CharSequence caption) {
     return file(data, excerptNumber++ + ".txt", caption);
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String file(byte[] data, @javax.annotation.Nonnull String filename, String caption) {
+  public CharSequence file(byte[] data, @javax.annotation.Nonnull CharSequence filename, CharSequence caption) {
     try {
-      IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), filename)));
+      IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), filename.toString())));
     } catch (@javax.annotation.Nonnull final IOException e) {
       throw new RuntimeException(e);
     }
@@ -241,9 +241,9 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String file(final String data, @javax.annotation.Nonnull final String fileName, final String caption) {
+  public String file(final CharSequence data, @javax.annotation.Nonnull final CharSequence fileName, final CharSequence caption) {
     try {
-      IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), fileName)), Charset.forName("UTF-8"));
+      IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), fileName.toString())), Charset.forName("UTF-8"));
     } catch (@javax.annotation.Nonnull final IOException e) {
       throw new RuntimeException(e);
     }
@@ -267,7 +267,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
    *
    * @return the source root
    */
-  public String getSourceRoot() {
+  public CharSequence getSourceRoot() {
     return sourceRoot;
   }
   
@@ -284,30 +284,30 @@ public class HtmlNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public void h1(final String fmt, final Object... args) {
+  public void h1(final CharSequence fmt, final Object... args) {
     out("<h1>" + fmt + "</h1>", args);
   }
   
   @Override
-  public void h2(final String fmt, final Object... args) {
+  public void h2(final CharSequence fmt, final Object... args) {
     out("<h2>" + fmt + "</h2>", args);
   }
   
   @Override
-  public void h3(final String fmt, final Object... args) {
+  public void h3(final CharSequence fmt, final Object... args) {
     out("<h3>" + fmt + "</h3>", args);
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String image(@Nullable final BufferedImage rawImage, final String caption) throws IOException {
+  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) throws IOException {
     if (null == rawImage) return "";
     new ByteArrayOutputStream();
-    @javax.annotation.Nonnull final String thisImage = UUID.randomUUID().toString().substring(0, 8);
+    @javax.annotation.Nonnull final CharSequence thisImage = UUID.randomUUID().toString().substring(0, 8);
     @javax.annotation.Nonnull final File file = new File(getResourceDir(), "img" + thisImage + ".png");
     @javax.annotation.Nonnull final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     ImageIO.write(rawImage, "png", buffer);
-    final String pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
+    final CharSequence pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
     if (pngSrc.length() < 4 * 1024) {
       return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
     }
@@ -322,7 +322,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public String link(@javax.annotation.Nonnull final File file, final String text) {
+  public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
     @Nullable String path = null;
     try {
       path = workingDir.getCanonicalFile().toPath().relativize(file.getCanonicalFile().toPath()).normalize().toString().replaceAll("\\\\", "/");
@@ -341,19 +341,19 @@ public class HtmlNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public void p(final String fmt, final Object... args) {
+  public void p(final CharSequence fmt, final Object... args) {
     out("<p>" + fmt + "</p>", args);
   }
   
   @Nullable
   @Override
-  public String getFrontMatterProperty(String key) {
+  public CharSequence getFrontMatterProperty(CharSequence key) {
     return null;
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String getName() {
+  public CharSequence getName() {
     return "www";
   }
   
@@ -367,10 +367,10 @@ public class HtmlNotebookOutput implements NotebookOutput {
   @javax.annotation.Nonnull
   public String summarize(final int maxLog, @javax.annotation.Nonnull final String string) {
     if (string.length() > maxLog * 2) {
-      @javax.annotation.Nonnull final String left = string.substring(0, maxLog);
-      @javax.annotation.Nonnull final String right = string.substring(string.length() - maxLog);
-      final String link = String.format(file(string, "\n...skipping %s bytes...\n"), string.length() - 2 * maxLog);
-      return left + link + right;
+      @javax.annotation.Nonnull final CharSequence left = string.substring(0, maxLog);
+      @javax.annotation.Nonnull final CharSequence right = string.substring(string.length() - maxLog);
+      final CharSequence link = String.format(file(string, "\n...skipping %s bytes...\n"), string.length() - 2 * maxLog);
+      return left.toString() + link + right;
     }
     else {
       return string;

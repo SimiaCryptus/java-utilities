@@ -68,9 +68,9 @@ public class NullNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public OutputStream file(@javax.annotation.Nonnull String name) {
+  public OutputStream file(@javax.annotation.Nonnull CharSequence name) {
     try {
-      return new FileOutputStream(name);
+      return new FileOutputStream(name.toString());
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -78,10 +78,10 @@ public class NullNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String file(@javax.annotation.Nonnull String data, String caption) {
+  public String file(@javax.annotation.Nonnull CharSequence data, CharSequence caption) {
     try {
       @javax.annotation.Nonnull File file = File.createTempFile("temp", "bin");
-      IOUtils.write(data.getBytes(Charset.forName("UTF-8")), new FileOutputStream(file));
+      IOUtils.write(data.toString().getBytes(Charset.forName("UTF-8")), new FileOutputStream(file));
       return file.getCanonicalPath();
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -90,16 +90,16 @@ public class NullNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull String filename, String caption) {
+  public CharSequence file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull CharSequence filename, CharSequence caption) {
     return file(new String(data, Charset.forName("UTF-8")), filename, caption);
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String file(@javax.annotation.Nonnull String data, @javax.annotation.Nonnull String fileName, String caption) {
+  public String file(@javax.annotation.Nonnull CharSequence data, @javax.annotation.Nonnull CharSequence fileName, CharSequence caption) {
     try {
-      @javax.annotation.Nonnull File file = new File(fileName);
-      IOUtils.write(data.getBytes(Charset.forName("UTF-8")), new FileOutputStream(file));
+      @javax.annotation.Nonnull File file = new File(fileName.toString());
+      IOUtils.write(data.toString().getBytes(Charset.forName("UTF-8")), new FileOutputStream(file));
       return file.getCanonicalPath();
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -107,45 +107,45 @@ public class NullNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public void h1(String fmt, Object... args) {
+  public void h1(CharSequence fmt, Object... args) {
   
   }
   
   @Override
-  public void h2(String fmt, Object... args) {
+  public void h2(CharSequence fmt, Object... args) {
   
   }
   
   @Override
-  public void h3(String fmt, Object... args) {
+  public void h3(CharSequence fmt, Object... args) {
   
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String image(BufferedImage rawImage, String caption) {
+  public String image(BufferedImage rawImage, CharSequence caption) {
     return "";
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String link(File file, String text) {
+  public CharSequence link(File file, CharSequence text) {
     return "";
   }
   
   @Override
-  public void p(String fmt, Object... args) {
+  public void p(CharSequence fmt, Object... args) {
   
   }
   
   @Nullable
   @Override
-  public String getFrontMatterProperty(String key) {
+  public CharSequence getFrontMatterProperty(CharSequence key) {
     return null;
   }
   
   @Override
-  public String getName() {
+  public CharSequence getName() {
     return name;
   }
   

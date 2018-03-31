@@ -120,7 +120,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
   
   @Override
   public String toString() {
-    return toString(1);
+    return toString(1).toString();
   }
   
   /**
@@ -129,7 +129,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
    * @param scale the scale
    * @return the string
    */
-  public String toString(final double scale) {
+  public CharSequence toString(final double scale) {
     return String.format("%.4e +- %.4e [%.4e - %.4e] (%d#)", getAverage() * scale, getStandardDeviation() * scale, getMin() * scale, getMax() * scale, getCount());
   }
 }
