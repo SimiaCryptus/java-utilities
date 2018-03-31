@@ -273,7 +273,7 @@ public class Util {
    * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
-  public static InputStream cacheStream(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+  public static InputStream cacheStream(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheStream(url.toString(), new File(url.getPath()).getName());
   }
   
@@ -287,7 +287,7 @@ public class Util {
    * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
-  public static File cacheFile(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+  public static File cacheFile(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheFile(url.toString(), new File(url.getPath()).getName());
   }
   
@@ -296,8 +296,8 @@ public class Util {
    *
    * @return the string [ ]
    */
-  public static String[] currentStack() {
-    return Stream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new String[i]);
+  public static CharSequence[] currentStack() {
+    return Stream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
   }
   
   /**
@@ -360,7 +360,7 @@ public class Util {
    * @param strs      the strs
    * @return the string
    */
-  public static String mkString(@javax.annotation.Nonnull final String separator, final String... strs) {
+  public static String mkString(@javax.annotation.Nonnull final CharSequence separator, final CharSequence... strs) {
     return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
   }
   
@@ -403,7 +403,7 @@ public class Util {
    * @param fragments the fragments
    * @throws IOException the io exception
    */
-  public static void report(@javax.annotation.Nonnull final Stream<String> fragments) throws IOException {
+  public static void report(@javax.annotation.Nonnull final Stream<CharSequence> fragments) throws IOException {
     @javax.annotation.Nonnull final File outDir = new File("reports");
     outDir.mkdirs();
     final StackTraceElement caller = com.simiacryptus.util.Util.getLast(Arrays.stream(Thread.currentThread().getStackTrace())//
@@ -423,7 +423,7 @@ public class Util {
    * @param fragments the fragments
    * @throws IOException the io exception
    */
-  public static void report(final String... fragments) throws IOException {
+  public static void report(final CharSequence... fragments) throws IOException {
     com.simiacryptus.util.Util.report(Stream.of(fragments));
   }
   
@@ -474,7 +474,7 @@ public class Util {
    * @param alt the alt
    * @return the string
    */
-  public static String toInlineImage(final BufferedImage img, final String alt) {
+  public static CharSequence toInlineImage(final BufferedImage img, final String alt) {
     return com.simiacryptus.util.Util.toInlineImage(new LabeledObject<>(img, alt));
   }
   
@@ -484,7 +484,7 @@ public class Util {
    * @param img the img
    * @return the string
    */
-  public static String toInlineImage(@javax.annotation.Nonnull final LabeledObject<BufferedImage> img) {
+  public static CharSequence toInlineImage(@javax.annotation.Nonnull final LabeledObject<BufferedImage> img) {
     @javax.annotation.Nonnull final ByteArrayOutputStream b = new ByteArrayOutputStream();
     try {
       ImageIO.write(img.data, "PNG", b);
@@ -494,7 +494,7 @@ public class Util {
       throw new RuntimeException(e);
     }
     final byte[] byteArray = b.toByteArray();
-    final String encode = Base64.getEncoder().encodeToString(byteArray);
+    final CharSequence encode = Base64.getEncoder().encodeToString(byteArray);
     return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
   

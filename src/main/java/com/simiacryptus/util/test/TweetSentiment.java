@@ -108,7 +108,7 @@ public class TweetSentiment extends TestDocument {
       try (final ZipInputStream in = new ZipInputStream(load)) {
         ZipEntry entry = in.getNextEntry();
         try (final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-          String[] header = reader.readLine().split(",");
+          CharSequence[] header = reader.readLine().split(",");
           String read;
           while (null != (read = reader.readLine())) {
             String[] values = read.split(",");

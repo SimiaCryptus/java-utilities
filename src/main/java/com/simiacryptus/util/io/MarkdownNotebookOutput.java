@@ -68,13 +68,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   private final String name;
   @javax.annotation.Nonnull
   private final PrintStream primaryOut;
-  private final List<String> buffer = new ArrayList<>();
-  private final Map<String, String> frontMatter = new HashMap<>();
+  private final List<CharSequence> buffer = new ArrayList<>();
+  private final Map<CharSequence, CharSequence> frontMatter = new HashMap<>();
   /**
    * The Toc.
    */
   @javax.annotation.Nonnull
-  public List<String> toc = new ArrayList<>();
+  public List<CharSequence> toc = new ArrayList<>();
   /**
    * The Anchor.
    */
@@ -104,14 +104,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @return the markdown notebook output
    */
   @javax.annotation.Nonnull
-  public static com.simiacryptus.util.io.MarkdownNotebookOutput get(@javax.annotation.Nonnull Class<?> sourceClass, @Nullable String absoluteUrl, @javax.annotation.Nonnull String... suffix) {
+  public static com.simiacryptus.util.io.MarkdownNotebookOutput get(@javax.annotation.Nonnull Class<?> sourceClass, @Nullable CharSequence absoluteUrl, @javax.annotation.Nonnull CharSequence... suffix) {
     try {
       final StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
-      final String methodName = callingFrame.getMethodName();
+      final CharSequence methodName = callingFrame.getMethodName();
       final String className = sourceClass.getCanonicalName();
       @javax.annotation.Nonnull File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.", "/").replaceAll("\\$", "/")));
-      for (int i = 0; i < suffix.length - 1; i++) path = new File(path, suffix[i]);
-      String testName = suffix.length == 0 ? methodName : suffix[suffix.length - 1];
+      for (int i = 0; i < suffix.length - 1; i++) path = new File(path, suffix[i].toString());
+      String testName = suffix.length == 0 ? String.valueOf(methodName) : suffix[suffix.length - 1].toString();
       path = new File(path, testName + ".md");
       path.getParentFile().mkdirs();
       @javax.annotation.Nonnull com.simiacryptus.util.io.MarkdownNotebookOutput notebookOutput = new com.simiacryptus.util.io.MarkdownNotebookOutput(path, testName);
@@ -160,7 +160,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
       String className = null == source ? callingFrame.getClassName() : source.getClass().getCanonicalName();
       String methodName = callingFrame.getMethodName();
-      String fileName = methodName + ".md";
+      CharSequence fileName = methodName + ".md";
       File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.", "/").replaceAll("\\$", "/"), fileName));
       path.getParentFile().mkdirs();
       return new MarkdownNotebookOutput(path, methodName);
@@ -178,7 +178,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           out.println("---");
           
           frontMatter.forEach((key, value) -> {
-            String escaped = StringEscapeUtils.escapeJson(value)
+            CharSequence escaped = StringEscapeUtils.escapeJson(String.valueOf(value))
               .replaceAll("\n", " ")
               .replaceAll(":", "&#58;")
               .replaceAll("\\{", "\\{")
@@ -194,17 +194,17 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
-  public void setFrontMatterProperty(String key, String value) {
+  public void setFrontMatterProperty(CharSequence key, CharSequence value) {
     frontMatter.put(key, value);
   }
   
   @Override
-  public String getFrontMatterProperty(String key) {
+  public CharSequence getFrontMatterProperty(CharSequence key) {
     return frontMatter.get(key);
   }
   
   @Override
-  public String getName() {
+  public CharSequence getName() {
     return name;
   }
   
@@ -214,7 +214,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param anchorId the anchor id
    * @return the string
    */
-  public String anchor(String anchorId) {
+  public CharSequence anchor(CharSequence anchorId) {
     return String.format("<a id=\"%s\"></a>", anchorId);
   }
   
@@ -223,7 +223,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    *
    * @return the string
    */
-  public String anchorId() {
+  public CharSequence anchorId() {
     return String.format("p-%d", anchor++);
   }
   
@@ -255,13 +255,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       out(anchor(anchorId()) + "Code from [%s:%s](%s#L%s) executed in %.2f seconds (%.3f gc): ",
         callingFrame.getFileName(), callingFrame.getLineNumber(),
         linkTo(CodeUtil.findFile(callingFrame)), callingFrame.getLineNumber(), result.obj.seconds(), result.obj.gc_seconds());
-      String text = sourceCode.replaceAll("\n", "\n  ");
+      CharSequence text = sourceCode.replaceAll("\n", "\n  ");
       out("```java");
       out("  " + text);
       out("```");
       
       if (!result.log.isEmpty()) {
-        String summary = summarize(result.log, maxLog).replaceAll("\n", "\n    ").replaceAll("    ~", "");
+        CharSequence summary = summarize(result.log, maxLog).replaceAll("\n", "\n    ").replaceAll("    ~", "");
         out(anchor(anchorId()) + "Logging: ");
         out("```");
         out("    " + summary);
@@ -321,9 +321,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public OutputStream file(@javax.annotation.Nonnull final String name) {
+  public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
     try {
-      return new FileOutputStream(new File(getResourceDir(), name));
+      return new FileOutputStream(new File(getResourceDir(), name.toString()));
     } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -331,22 +331,22 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String file(final String data, final String caption) {
+  public String file(final CharSequence data, final CharSequence caption) {
     return file(data, ++com.simiacryptus.util.io.MarkdownNotebookOutput.excerptNumber + ".txt", caption);
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull String filename, String caption) {
+  public CharSequence file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull CharSequence filename, CharSequence caption) {
     return file(new String(data, Charset.forName("UTF-8")), filename, caption);
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String file(@Nullable final String data, @javax.annotation.Nonnull final String fileName, final String caption) {
+  public String file(@Nullable final CharSequence data, @javax.annotation.Nonnull final CharSequence fileName, final CharSequence caption) {
     try {
       if (null != data) {
-        IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), fileName)), Charset.forName("UTF-8"));
+        IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), fileName.toString())), Charset.forName("UTF-8"));
       }
     } catch (@javax.annotation.Nonnull final IOException e) {
       throw new RuntimeException(e);
@@ -389,32 +389,32 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public void h1(@javax.annotation.Nonnull final String fmt, final Object... args) {
-    String anchorId = anchorId();
-    @javax.annotation.Nonnull String msg = format(fmt, args);
+  public void h1(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
+    CharSequence anchorId = anchorId();
+    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
     toc.add(String.format("1. [%s](#%s)", msg, anchorId));
     out("# " + anchor(anchorId) + msg);
   }
   
   @Override
-  public void h2(@javax.annotation.Nonnull final String fmt, final Object... args) {
-    String anchorId = anchorId();
-    @javax.annotation.Nonnull String msg = format(fmt, args);
+  public void h2(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
+    CharSequence anchorId = anchorId();
+    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
     toc.add(String.format("   1. [%s](#%s)", msg, anchorId));
     out("## " + anchor(anchorId) + fmt, args);
   }
   
   @Override
-  public void h3(@javax.annotation.Nonnull final String fmt, final Object... args) {
-    String anchorId = anchorId();
-    @javax.annotation.Nonnull String msg = format(fmt, args);
+  public void h3(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
+    CharSequence anchorId = anchorId();
+    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
     toc.add(String.format("      1. [%s](#%s)", msg, anchorId));
     out("### " + anchor(anchorId) + fmt, args);
   }
   
   @javax.annotation.Nonnull
   @Override
-  public String image(@Nullable final BufferedImage rawImage, final String caption) throws IOException {
+  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) throws IOException {
     if (null == rawImage) return "";
     new ByteArrayOutputStream();
     final int thisImage = ++com.simiacryptus.util.io.MarkdownNotebookOutput.imageNumber;
@@ -431,7 +431,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String link(@javax.annotation.Nonnull final File file, final String text) {
+  public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
     try {
       return "[" + text + "](" + codeFile(file) + ")";
     } catch (@javax.annotation.Nonnull final IOException e) {
@@ -446,7 +446,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @return the string
    * @throws IOException the io exception
    */
-  public String codeFile(@javax.annotation.Nonnull File file) throws IOException {
+  public CharSequence codeFile(@javax.annotation.Nonnull File file) throws IOException {
     Path path = pathToCodeFile(file);
     if (null != getAbsoluteUrl()) {
       try {
@@ -478,7 +478,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @return the string
    * @throws IOException the io exception
    */
-  public String linkTo(@javax.annotation.Nonnull final File file) throws IOException {
+  public CharSequence linkTo(@javax.annotation.Nonnull final File file) throws IOException {
     return codeFile(file);
   }
   
@@ -498,13 +498,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @return the string
    */
   @javax.annotation.Nonnull
-  public String format(@javax.annotation.Nonnull String fmt, @javax.annotation.Nonnull Object... args) {
-    return 0 == args.length ? fmt : String.format(fmt, args);
+  public String format(@javax.annotation.Nonnull CharSequence fmt, @javax.annotation.Nonnull Object... args) {
+    return 0 == args.length ? fmt.toString() : String.format(fmt.toString(), args);
   }
   
   @Override
-  public void p(final String fmt, final Object... args) {
-    out(anchor(anchorId()) + fmt + "\n", args);
+  public void p(final CharSequence fmt, final Object... args) {
+    out(anchor(anchorId()).toString() + fmt + "\n", args);
   }
   
   /**

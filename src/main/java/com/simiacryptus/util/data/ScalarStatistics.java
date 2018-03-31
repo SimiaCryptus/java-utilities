@@ -212,8 +212,8 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
   
   @Override
-  public Map<String, Object> getMetrics() {
-    @javax.annotation.Nonnull final HashMap<String, Object> map = new HashMap<>();
+  public Map<CharSequence, Object> getMetrics() {
+    @javax.annotation.Nonnull final HashMap<CharSequence, Object> map = new HashMap<>();
     map.put("count", sum0);
     map.put("sum", sum1);
     map.put("negative", negatives);

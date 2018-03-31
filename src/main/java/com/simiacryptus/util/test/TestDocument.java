@@ -26,16 +26,15 @@ import com.simiacryptus.util.io.CompressionUtil;
  */
 public class TestDocument {
   
-  private final String title;
+  private final CharSequence title;
   private final byte[] text;
   
   /**
    * Instantiates a new Test document.
-   *
-   * @param title the title
+   *  @param title the title
    * @param text  the text
    */
-  public TestDocument(String title, String text) {
+  public TestDocument(CharSequence title, CharSequence text) {
     this.title = title;
     this.text = CompressionUtil.encodeLZ(text);
   }
@@ -62,7 +61,7 @@ public class TestDocument {
    *
    * @return the title
    */
-  public String getTitle() {
+  public CharSequence getTitle() {
     return title;
   }
 }

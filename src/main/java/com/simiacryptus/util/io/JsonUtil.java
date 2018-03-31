@@ -96,7 +96,7 @@ public class JsonUtil {
    * @param obj the obj
    * @throws IOException the io exception
    */
-  public static String toJson(final Object obj) {
+  public static CharSequence toJson(final Object obj) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try {
       writeJson(outputStream, obj);

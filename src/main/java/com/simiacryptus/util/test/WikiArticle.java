@@ -107,8 +107,8 @@ public class WikiArticle extends TestDocument {
           spf.setNamespaceAware(false);
           final SAXParser saxParser = spf.newSAXParser();
           saxParser.parse(in, new DefaultHandler() {
-            Stack<String> prefix = new Stack<String>();
-            Stack<Map<String, AtomicInteger>> indexes = new Stack<Map<String, AtomicInteger>>();
+            Stack<CharSequence> prefix = new Stack<CharSequence>();
+            Stack<Map<CharSequence, AtomicInteger>> indexes = new Stack<Map<CharSequence, AtomicInteger>>();
             StringBuilder nodeString = new StringBuilder();
             private String title;
             
@@ -133,7 +133,7 @@ public class WikiArticle extends TestDocument {
               if (Thread.currentThread().isInterrupted()) {
                 throw new RuntimeException(new InterruptedException());
               }
-              final String pop = this.prefix.pop();
+              final CharSequence pop = this.prefix.pop();
               this.indexes.pop();
               
               final int length = this.nodeString.length();
@@ -170,7 +170,7 @@ public class WikiArticle extends TestDocument {
               }
               int idx;
               if (0 < this.indexes.size()) {
-                final Map<String, AtomicInteger> index = this.indexes.peek();
+                final Map<CharSequence, AtomicInteger> index = this.indexes.peek();
                 AtomicInteger cnt = index.get(qName);
                 if (null == cnt) {
                   cnt = new AtomicInteger(-1);
@@ -186,7 +186,7 @@ public class WikiArticle extends TestDocument {
                 path += "[" + idx + "]";
               }
               this.prefix.push(path);
-              this.indexes.push(new HashMap<String, AtomicInteger>());
+              this.indexes.push(new HashMap<CharSequence, AtomicInteger>());
               super.startElement(uri, localName, qName, attributes);
             }
             

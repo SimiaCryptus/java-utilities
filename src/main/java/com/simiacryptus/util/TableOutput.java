@@ -47,11 +47,11 @@ public class TableOutput {
   /**
    * The Rows.
    */
-  public final List<Map<String, Object>> rows = new ArrayList<>();
+  public final List<Map<CharSequence, Object>> rows = new ArrayList<>();
   /**
    * The Schema.
    */
-  public final Map<String, Class<?>> schema = new LinkedHashMap<>();
+  public final Map<CharSequence, Class<?>> schema = new LinkedHashMap<>();
   
   /**
    * Create table output.
@@ -60,7 +60,7 @@ public class TableOutput {
    * @return the table output
    */
   @javax.annotation.Nonnull
-  public static com.simiacryptus.util.TableOutput create(@javax.annotation.Nonnull final Map<String, Object>... rows) {
+  public static com.simiacryptus.util.TableOutput create(@javax.annotation.Nonnull final Map<CharSequence, Object>... rows) {
     @javax.annotation.Nonnull final com.simiacryptus.util.TableOutput table = new com.simiacryptus.util.TableOutput();
     Arrays.stream(rows).forEach(table::putRow);
     return table;
@@ -76,9 +76,9 @@ public class TableOutput {
   public com.simiacryptus.util.TableOutput calcNumberStats() {
     @javax.annotation.Nonnull final com.simiacryptus.util.TableOutput tableOutput = new com.simiacryptus.util.TableOutput();
     schema.entrySet().stream().filter(x -> Number.class.isAssignableFrom(x.getValue())).map(col -> {
-      final String key = col.getKey();
+      final CharSequence key = col.getKey();
       final DoubleStatistics stats = rows.stream().filter(x -> x.containsKey(key)).map(x -> (Number) x.get(key)).collect(DoubleStatistics.NUMBERS);
-      @javax.annotation.Nonnull final LinkedHashMap<String, Object> row = new LinkedHashMap<>();
+      @javax.annotation.Nonnull final LinkedHashMap<CharSequence, Object> row = new LinkedHashMap<>();
       row.put("field", key);
       row.put("sum", stats.getSum());
       row.put("avg", stats.getAverage());
@@ -103,9 +103,9 @@ public class TableOutput {
    *
    * @param properties the properties
    */
-  public void putRow(@javax.annotation.Nonnull final Map<String, Object> properties) {
-    for (@javax.annotation.Nonnull final Entry<String, Object> prop : properties.entrySet()) {
-      final String propKey = prop.getKey();
+  public void putRow(@javax.annotation.Nonnull final Map<CharSequence, Object> properties) {
+    for (@javax.annotation.Nonnull final Entry<CharSequence, Object> prop : properties.entrySet()) {
+      final CharSequence propKey = prop.getKey();
       final Class<?> propClass = prop.getValue().getClass();
       if (!propClass.equals(schema.getOrDefault(propKey, propClass))) {
         throw new RuntimeException("Schema mismatch for " + propKey);
@@ -121,10 +121,10 @@ public class TableOutput {
    * @param sortCols the sort cols
    * @return the string
    */
-  public String toCSV(final boolean sortCols) {
+  public CharSequence toCSV(final boolean sortCols) {
     try (@javax.annotation.Nonnull ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (@javax.annotation.Nonnull PrintStream printStream = new PrintStream(buffer)) {
-        @javax.annotation.Nonnull final Collection<String> keys = sortCols ? new TreeSet<String>(schema.keySet()) : schema.keySet();
+        @javax.annotation.Nonnull final Collection<CharSequence> keys = sortCols ? new TreeSet<CharSequence>(schema.keySet()) : schema.keySet();
         final String formatString = keys.stream()
           .map(k -> {
             switch (schema.get(k).getSimpleName()) {
@@ -139,7 +139,7 @@ public class TableOutput {
             }
           }).collect(Collectors.joining(","));
         printStream.println(keys.stream().collect(Collectors.joining(",")).trim());
-        for (@javax.annotation.Nonnull final Map<String, Object> row : rows) {
+        for (@javax.annotation.Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
         }
       }
@@ -167,7 +167,7 @@ public class TableOutput {
   public String toHtmlTable(final boolean sortCols) {
     try (@javax.annotation.Nonnull ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (@javax.annotation.Nonnull PrintStream printStream = new PrintStream(buffer)) {
-        @javax.annotation.Nonnull final Collection<String> keys = sortCols ? new TreeSet<String>(schema.keySet()) : schema.keySet();
+        @javax.annotation.Nonnull final Collection<CharSequence> keys = sortCols ? new TreeSet<CharSequence>(schema.keySet()) : schema.keySet();
         final String formatString = keys.stream()
           .map(k -> {
             switch (schema.get(k).getSimpleName()) {
@@ -185,7 +185,7 @@ public class TableOutput {
         printStream.print("<tr>");
         printStream.println(keys.stream().map(s -> "<th>" + s + "</th>").collect(Collectors.joining("")).trim());
         printStream.print("</tr>");
-        for (@javax.annotation.Nonnull final Map<String, Object> row : rows) {
+        for (@javax.annotation.Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.print("<tr>");
           printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
           printStream.print("</tr>");
@@ -225,7 +225,7 @@ public class TableOutput {
           Arrays.fill(t, '-');
           return new String(t);
         }).collect(Collectors.joining(" | ")).trim());
-        for (@javax.annotation.Nonnull final Map<String, Object> row : rows) {
+        for (@javax.annotation.Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(String.format(formatString, schema.entrySet().stream().map(e -> row.get(e.getKey())).toArray()));
         }
       }
@@ -249,19 +249,19 @@ public class TableOutput {
         printStream.println(toTextTable());
       }
     }
-    final List<Entry<String, Class<?>>> scalarCols = schema.entrySet().stream()
+    final List<Entry<CharSequence, Class<?>>> scalarCols = schema.entrySet().stream()
       .filter(e -> Number.class.isAssignableFrom(e.getValue()))
       .collect(Collectors.toList());
     try (@javax.annotation.Nonnull FileOutputStream file = new FileOutputStream(new File(path, "tensors.tsv"))) {
       try (@javax.annotation.Nonnull PrintStream printStream = new PrintStream(file)) {
-        for (@javax.annotation.Nonnull final Map<String, Object> row : rows) {
+        for (@javax.annotation.Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(scalarCols.stream()
             .map(e -> ((Number) row.getOrDefault(e.getKey(), 0)).doubleValue())
             .map(x -> x.toString()).collect(Collectors.joining("\t")));
         }
       }
     }
-    final List<Entry<String, Class<?>>> metadataCols = schema.entrySet().stream()
+    final List<Entry<CharSequence, Class<?>>> metadataCols = schema.entrySet().stream()
       .filter(e -> String.class.isAssignableFrom(e.getValue()))
       .collect(Collectors.toList());
     try (@javax.annotation.Nonnull FileOutputStream file = new FileOutputStream(new File(path, "metadata.tsv"))) {
@@ -269,19 +269,19 @@ public class TableOutput {
         if (1 < metadataCols.size()) {
           printStream.println(metadataCols.stream().map(e -> e.getKey()).collect(Collectors.joining("\t")));
         }
-        for (@javax.annotation.Nonnull final Map<String, Object> row : rows) {
+        for (@javax.annotation.Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(metadataCols.stream()
-            .map(e -> ((String) row.getOrDefault(e.getKey(), "")))
+            .map(e -> ((CharSequence) row.getOrDefault(e.getKey(), "")))
             .collect(Collectors.joining("\t")));
         }
       }
     }
-    final List<Entry<String, Class<?>>> urlCols = schema.entrySet().stream()
+    final List<Entry<CharSequence, Class<?>>> urlCols = schema.entrySet().stream()
       .filter(e -> URL.class.isAssignableFrom(e.getValue()))
       .collect(Collectors.toList());
     try (@javax.annotation.Nonnull FileOutputStream file = new FileOutputStream(new File(path, "bookmarks.txt"))) {
       try (@javax.annotation.Nonnull PrintStream printStream = new PrintStream(file)) {
-        for (@javax.annotation.Nonnull final Map<String, Object> row : rows) {
+        for (@javax.annotation.Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(urlCols.stream()
             .map(e -> row.get(e.getKey()).toString())
             .collect(Collectors.joining("\t")));

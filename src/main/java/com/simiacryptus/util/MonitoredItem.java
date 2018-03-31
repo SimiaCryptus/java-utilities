@@ -30,5 +30,5 @@ public interface MonitoredItem {
    *
    * @return the metrics
    */
-  Map<String, Object> getMetrics();
+  Map<CharSequence, Object> getMetrics();
 }

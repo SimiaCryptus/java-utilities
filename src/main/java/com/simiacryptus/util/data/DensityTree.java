@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  */
 public class DensityTree {
   
-  private final String[] columnNames;
+  private final CharSequence[] columnNames;
   private double minSplitFract = 0.05;
   private int splitSizeThreshold = 10;
   private double minFitness = 4.0;
@@ -41,7 +41,7 @@ public class DensityTree {
    *
    * @param columnNames the column names
    */
-  public DensityTree(String... columnNames) {
+  public DensityTree(CharSequence... columnNames) {
     this.columnNames = columnNames;
   }
   
@@ -110,7 +110,7 @@ public class DensityTree {
    *
    * @return the string [ ]
    */
-  public String[] getColumnNames() {
+  public CharSequence[] getColumnNames() {
     return columnNames;
   }
   
@@ -365,8 +365,8 @@ public class DensityTree {
         return "// " + dataInfo();
       }
     }
-    
-    private String dataInfo() {
+  
+    private CharSequence dataInfo() {
       return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
     

@@ -114,7 +114,7 @@ public interface NotebookOutput extends Closeable {
    * @return the output stream
    */
   @Nonnull
-  OutputStream file(String name);
+  OutputStream file(CharSequence name);
   
   /**
    * File string.
@@ -124,7 +124,7 @@ public interface NotebookOutput extends Closeable {
    * @return the string
    */
   @Nonnull
-  String file(String data, String caption);
+  String file(CharSequence data, CharSequence caption);
   
   /**
    * File string.
@@ -135,7 +135,7 @@ public interface NotebookOutput extends Closeable {
    * @return the string
    */
   @Nonnull
-  String file(byte[] data, String filename, String caption);
+  CharSequence file(byte[] data, CharSequence filename, CharSequence caption);
   
   /**
    * File string.
@@ -146,7 +146,7 @@ public interface NotebookOutput extends Closeable {
    * @return the string
    */
   @Nonnull
-  String file(String data, String fileName, String caption);
+  String file(CharSequence data, CharSequence fileName, CharSequence caption);
   
   /**
    * H 1.
@@ -154,7 +154,7 @@ public interface NotebookOutput extends Closeable {
    * @param fmt  the fmt
    * @param args the args
    */
-  void h1(String fmt, Object... args);
+  void h1(CharSequence fmt, Object... args);
   
   /**
    * H 2.
@@ -162,7 +162,7 @@ public interface NotebookOutput extends Closeable {
    * @param fmt  the fmt
    * @param args the args
    */
-  void h2(String fmt, Object... args);
+  void h2(CharSequence fmt, Object... args);
   
   /**
    * H 3.
@@ -170,7 +170,7 @@ public interface NotebookOutput extends Closeable {
    * @param fmt  the fmt
    * @param args the args
    */
-  void h3(String fmt, Object... args);
+  void h3(CharSequence fmt, Object... args);
   
   /**
    * Image string.
@@ -181,7 +181,7 @@ public interface NotebookOutput extends Closeable {
    * @throws IOException the io exception
    */
   @Nonnull
-  String image(BufferedImage rawImage, String caption) throws IOException;
+  String image(BufferedImage rawImage, CharSequence caption) throws IOException;
   
   /**
    * Link string.
@@ -190,7 +190,7 @@ public interface NotebookOutput extends Closeable {
    * @param text the text
    * @return the string
    */
-  String link(File file, String text);
+  CharSequence link(File file, CharSequence text);
   
   /**
    * Out.
@@ -208,7 +208,7 @@ public interface NotebookOutput extends Closeable {
    * @param fmt  the fmt
    * @param args the args
    */
-  void p(String fmt, Object... args);
+  void p(CharSequence fmt, Object... args);
   
   /**
    * Sets fm prop.
@@ -216,7 +216,7 @@ public interface NotebookOutput extends Closeable {
    * @param key   the key
    * @param value the value
    */
-  default void setFrontMatterProperty(String key, String value) {
+  default void setFrontMatterProperty(CharSequence key, CharSequence value) {
   }
   
   /**
@@ -225,7 +225,7 @@ public interface NotebookOutput extends Closeable {
    * @param key   the key
    * @param value the value
    */
-  default void appendFrontMatterProperty(String key, String value) {appendFrontMatterProperty(key, value, "");}
+  default void appendFrontMatterProperty(CharSequence key, CharSequence value) {appendFrontMatterProperty(key, value, "");}
   
   /**
    * Append front matter property.
@@ -234,10 +234,10 @@ public interface NotebookOutput extends Closeable {
    * @param value     the value
    * @param delimiter the delimiter
    */
-  default void appendFrontMatterProperty(String key, String value, String delimiter) {
-    @Nullable String prior = getFrontMatterProperty(key);
+  default void appendFrontMatterProperty(CharSequence key, CharSequence value, CharSequence delimiter) {
+    @Nullable CharSequence prior = getFrontMatterProperty(key);
     if (null == prior) setFrontMatterProperty(key, value);
-    else setFrontMatterProperty(key, prior + delimiter + value);
+    else setFrontMatterProperty(key, prior.toString() + delimiter + value);
   }
   
   /**
@@ -247,14 +247,14 @@ public interface NotebookOutput extends Closeable {
    * @return the front matter property
    */
   @Nullable
-  String getFrontMatterProperty(String key);
+  CharSequence getFrontMatterProperty(CharSequence key);
   
   /**
    * Gets name.
    *
    * @return the name
    */
-  String getName();
+  CharSequence getName();
   
   /**
    * Gets resource dir.

@@ -54,7 +54,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
   /**
    * The Custom handlers.
    */
-  public final Map<String, Function<IHTTPSession, Response>> customHandlers = new HashMap<>();
+  public final Map<CharSequence, Function<IHTTPSession, Response>> customHandlers = new HashMap<>();
   /**
    * The Data reciever.
    */
@@ -183,7 +183,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
    * @param logic    the logic
    * @param async    the async
    */
-  public void addAsyncHandler(final String path, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
+  public void addAsyncHandler(final CharSequence path, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
     addSessionHandler(path, com.simiacryptus.util.StreamNanoHTTPD.asyncHandler(pool, mimeType, logic, async));
   }
   
@@ -194,7 +194,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
    * @param value the value
    * @return the function
    */
-  public Function<IHTTPSession, Response> addSessionHandler(final String path, final Function<IHTTPSession, Response> value) {
+  public Function<IHTTPSession, Response> addSessionHandler(final CharSequence path, final Function<IHTTPSession, Response> value) {
     return customHandlers.put(path, value);
   }
   
@@ -206,7 +206,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
    * @param logic    the logic
    * @param async    the async
    */
-  public void addSyncHandler(final String path, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
+  public void addSyncHandler(final CharSequence path, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
     addSessionHandler(path, com.simiacryptus.util.StreamNanoHTTPD.syncHandler(pool, mimeType, logic, async));
   }
   

@@ -48,7 +48,7 @@ public class LOG {
    * @param msg  the msg
    * @param args the args
    */
-  public static void d(final Throwable e, final String msg, final Object... args) {
+  public static void d(final Throwable e, final CharSequence msg, final Object... args) {
     LOG.d(msg + "\n  " + LOG.toString(e).replace("\n", "\n  "), args);
   }
   
@@ -95,7 +95,7 @@ public class LOG {
     }
   }
   
-  private static String toString(final double[] point) {
+  private static CharSequence toString(final double[] point) {
     final StringBuffer sb = new StringBuffer();
     for (final double v : point) {
       if (0 < sb.length()) {

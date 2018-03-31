@@ -549,12 +549,12 @@ public class Bits implements Comparable<Bits> {
       return sb.substring(sb.length() - this.bitLength, sb.length());
     }
     else {
-      final String n = sb.toString();
+      final CharSequence n = sb.toString();
       sb = new StringBuffer();
       while (sb.length() + n.length() < this.bitLength) {
         sb.append("0");
       }
-      return sb + n;
+      return sb.toString() + n;
     }
   }
   
@@ -563,7 +563,7 @@ public class Bits implements Comparable<Bits> {
    *
    * @return the string
    */
-  public String toHexString() {
+  public CharSequence toHexString() {
     final StringBuffer sb = new StringBuffer();
     for (final byte b : this.bytes) {
       sb.append(Integer.toHexString(b & 0xFF));
@@ -576,7 +576,7 @@ public class Bits implements Comparable<Bits> {
    *
    * @return the string
    */
-  public String toBase64String() {
+  public CharSequence toBase64String() {
     return Base64.getEncoder().encodeToString(this.bytes);
   }
   
