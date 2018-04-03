@@ -414,18 +414,22 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) throws IOException {
+  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) {
     if (null == rawImage) return "";
     new ByteArrayOutputStream();
     final int thisImage = ++com.simiacryptus.util.io.MarkdownNotebookOutput.imageNumber;
     @javax.annotation.Nonnull final String fileName = name + "." + thisImage + ".png";
     @javax.annotation.Nonnull final File file = new File(getResourceDir(), fileName);
     @Nullable final BufferedImage stdImage = Util.resize(rawImage);
-    if (stdImage != rawImage) {
-      @javax.annotation.Nonnull final String rawName = name + "_raw." + thisImage + ".png";
-      ImageIO.write(rawImage, "png", new File(getResourceDir(), rawName));
+    try {
+      if (stdImage != rawImage) {
+        @javax.annotation.Nonnull final String rawName = name + "_raw." + thisImage + ".png";
+        ImageIO.write(rawImage, "png", new File(getResourceDir(), rawName));
+      }
+      ImageIO.write(stdImage, "png", file);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-    ImageIO.write(stdImage, "png", file);
     return anchor(anchorId()) + "![" + caption + "](etc/" + file.getName() + ")";
   }
   
