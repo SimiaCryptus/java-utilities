@@ -181,7 +181,7 @@ public interface NotebookOutput extends Closeable {
    * @throws IOException the io exception
    */
   @Nonnull
-  String image(BufferedImage rawImage, CharSequence caption) throws IOException;
+  String image(BufferedImage rawImage, CharSequence caption);
   
   /**
    * Link string.

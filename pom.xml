@@ -25,7 +25,6 @@
         <groupId>com.simiacryptus</groupId>
         <artifactId>java-parent</artifactId>
         <version>1.2.0</version>
-        <relativePath>../java-parent/</relativePath>
     </parent>
 
     <artifactId>java-util</artifactId>

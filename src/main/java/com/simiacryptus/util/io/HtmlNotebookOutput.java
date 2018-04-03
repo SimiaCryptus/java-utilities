@@ -300,24 +300,28 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) throws IOException {
+  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) {
     if (null == rawImage) return "";
     new ByteArrayOutputStream();
     @javax.annotation.Nonnull final CharSequence thisImage = UUID.randomUUID().toString().substring(0, 8);
     @javax.annotation.Nonnull final File file = new File(getResourceDir(), "img" + thisImage + ".png");
     @javax.annotation.Nonnull final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    ImageIO.write(rawImage, "png", buffer);
-    final CharSequence pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
-    if (pngSrc.length() < 4 * 1024) {
-      return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
-    }
-    else {
-      @Nullable final BufferedImage stdImage = Util.resize(rawImage);
-      if (stdImage != rawImage) {
-        ImageIO.write(rawImage, "png", new File(getResourceDir(), "raw" + thisImage + ".png"));
+    try {
+      ImageIO.write(rawImage, "png", buffer);
+      final CharSequence pngSrc = Base64.getEncoder().encodeToString(buffer.toByteArray());
+      if (pngSrc.length() < 4 * 1024) {
+        return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
       }
-      ImageIO.write(stdImage, "png", file);
-      return "<img src='etc/" + file.getName() + "' alt='" + caption + "'/>";
+      else {
+        @Nullable final BufferedImage stdImage = Util.resize(rawImage);
+        if (stdImage != rawImage) {
+          ImageIO.write(rawImage, "png", new File(getResourceDir(), "raw" + thisImage + ".png"));
+        }
+        ImageIO.write(stdImage, "png", file);
+        return "<img src='etc/" + file.getName() + "' alt='" + caption + "'/>";
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
   }
   
