@@ -61,8 +61,8 @@ public class StaticResourcePool<T> {
    * With u.
    *
    * @param f         the f
-   * @param filter
-   * @param exclusive
+   * @param filter    the filter
+   * @param exclusive the exclusive
    */
   public void apply(@javax.annotation.Nonnull final Consumer<T> f, final Predicate<T> filter, final boolean exclusive) {
     T poll = get(filter, exclusive);
@@ -132,8 +132,8 @@ public class StaticResourcePool<T> {
    *
    * @param <U>       the type parameter
    * @param f         the f
-   * @param filter
-   * @param exclusive
+   * @param filter    the filter
+   * @param exclusive the exclusive
    * @return the u
    */
   public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter, final boolean exclusive) {

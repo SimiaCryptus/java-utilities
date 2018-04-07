@@ -60,6 +60,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * The Logger.
    */
   static final Logger log = LoggerFactory.getLogger(com.simiacryptus.util.io.MarkdownNotebookOutput.class);
+  /**
+   * The constant MAX_OUTPUT.
+   */
   public static int MAX_OUTPUT = 4 * 1024;
   private static int excerptNumber = 0;
   private static int imageNumber = 0;

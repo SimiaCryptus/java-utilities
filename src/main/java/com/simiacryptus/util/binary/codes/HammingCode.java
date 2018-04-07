@@ -274,7 +274,7 @@ public class HammingCode<T extends Comparable<T>> {
      * The Index.
      */
     final TreeMap<X, Bits> index;
-    
+  
     /**
      * Instantiates a new Sub code.
      *
@@ -289,7 +289,7 @@ public class HammingCode<T extends Comparable<T>> {
       this.codes.put(Bits.NULL, item);
       this.index.put(item, Bits.NULL);
     }
-    
+  
     /**
      * Instantiates a new Sub code.
      *
@@ -343,7 +343,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection() {
       super();
     }
-    
+  
     /**
      * Instantiates a new Hamming code collection.
      *
@@ -353,7 +353,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection(final BitInputStream data) throws IOException {
       super(data);
     }
-    
+  
     /**
      * Instantiates a new Hamming code collection.
      *

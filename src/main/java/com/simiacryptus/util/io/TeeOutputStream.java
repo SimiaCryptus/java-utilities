@@ -64,6 +64,12 @@ public class TeeOutputStream extends OutputStream {
     }
   }
   
+  /**
+   * Instantiates a new Tee output stream.
+   *
+   * @param primary     the primary
+   * @param secondaries the secondaries
+   */
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
     branches.addAll(Arrays.asList(secondaries));
@@ -147,10 +153,21 @@ public class TeeOutputStream extends OutputStream {
     }
   }
   
+  /**
+   * Is chain closes boolean.
+   *
+   * @return the boolean
+   */
   public boolean isChainCloses() {
     return chainCloses;
   }
   
+  /**
+   * Sets chain closes.
+   *
+   * @param chainCloses the chain closes
+   * @return the chain closes
+   */
   public TeeOutputStream setChainCloses(boolean chainCloses) {
     this.chainCloses = chainCloses;
     return this;

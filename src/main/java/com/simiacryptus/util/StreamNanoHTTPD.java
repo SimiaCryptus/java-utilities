@@ -98,6 +98,12 @@ public class StreamNanoHTTPD extends NanoHTTPD {
     };
   }
   
+  /**
+   * Instantiates a new Stream nano httpd.
+   *
+   * @param port the port
+   * @throws IOException the io exception
+   */
   public StreamNanoHTTPD(final int port) throws IOException {
     this(port, null, null);
   }

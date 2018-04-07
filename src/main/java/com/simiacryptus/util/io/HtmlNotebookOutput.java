@@ -78,7 +78,6 @@ public class HtmlNotebookOutput implements NotebookOutput {
    *
    * @param parentDirectory the parent directory
    * @param out             the out
-   * @throws FileNotFoundException the file not found exception
    */
   public HtmlNotebookOutput(final File parentDirectory, @javax.annotation.Nonnull final OutputStream out) {
     primaryOut = new PrintStream(out);

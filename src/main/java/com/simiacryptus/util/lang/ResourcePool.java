@@ -62,6 +62,12 @@ public abstract class ResourcePool<T> {
     return get(x -> true);
   }
   
+  /**
+   * Get t.
+   *
+   * @param filter the filter
+   * @return the t
+   */
   public T get(Predicate<T> filter) {
     ArrayList<T> sampled = new ArrayList<>();
     try {
@@ -103,7 +109,9 @@ public abstract class ResourcePool<T> {
   /**
    * With.
    *
-   * @param f the f
+   * @param <U> the type parameter
+   * @param f   the f
+   * @return the u
    */
   public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f) { return apply(f, x -> true);}
   
@@ -117,8 +125,10 @@ public abstract class ResourcePool<T> {
   /**
    * With.
    *
+   * @param <U>    the type parameter
    * @param f      the f
-   * @param filter
+   * @param filter the filter
+   * @return the u
    */
   public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
@@ -141,7 +151,7 @@ public abstract class ResourcePool<T> {
    * With.
    *
    * @param f      the f
-   * @param filter
+   * @param filter the filter
    */
   public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f, final Predicate<T> filter) {
     final T prior = currentValue.get();

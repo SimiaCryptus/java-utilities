@@ -70,7 +70,6 @@ public class BitOutputStream implements AutoCloseable {
    * Gets total bits written.
    *
    * @return the total bits written
-   * @throws IOException the io exception
    */
   public int getTotalBitsWritten() {
     return totalBitsWritten;

@@ -24,6 +24,7 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.twitter.chill.KryoInstantiator;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import org.apache.commons.io.IOUtils;
@@ -39,7 +40,7 @@ import java.util.Arrays;
  * The type Io util.
  */
 public class IOUtil {
-  private static final ObjectMapper objectMapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+  private static final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
     @Override
     protected Kryo initialValue() {

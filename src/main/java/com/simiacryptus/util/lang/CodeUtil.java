@@ -24,7 +24,6 @@ import org.apache.commons.io.IOUtils;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -109,7 +108,6 @@ public class CodeUtil {
    *
    * @param callingFrame the calling frame
    * @return the heapCopy text
-   * @throws IOException the io exception
    */
   public static String getInnerText(@javax.annotation.Nonnull final StackTraceElement callingFrame) {
     try {

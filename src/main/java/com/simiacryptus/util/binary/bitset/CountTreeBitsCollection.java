@@ -528,7 +528,7 @@ public class CountTreeBitsCollection extends
      * The One count.
      */
     public long oneCount;
-    
+  
     /**
      * Instantiates a new Branch counts.
      *
@@ -539,7 +539,7 @@ public class CountTreeBitsCollection extends
       this.path = path;
       this.size = size;
     }
-    
+  
     /**
      * Instantiates a new Branch counts.
      *

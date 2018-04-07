@@ -25,7 +25,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -168,7 +167,7 @@ public class SysOutInterceptor extends PrintStream {
   }
   
   @Override
-  public void write(byte[] b) throws IOException {
+  public void write(byte[] b) {
     currentHandler().print(new String(b));
   }
   
@@ -204,7 +203,7 @@ public class SysOutInterceptor extends PrintStream {
      * The Obj.
      */
     public final T obj;
-    
+  
     /**
      * Instantiates a new Logged result.
      *

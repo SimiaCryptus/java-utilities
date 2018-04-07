@@ -26,7 +26,6 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +47,8 @@ public class Misspelling extends TestDocument {
   
   /**
    * Instantiates a new Misspelling.
-   *  @param correct     the correct
+   *
+   * @param correct     the correct
    * @param misspelling the misspelling
    */
   public Misspelling(String correct, CharSequence misspelling) {
@@ -64,7 +64,7 @@ public class Misspelling extends TestDocument {
     private final int articleLimit;
     private final List<Misspelling> queue = Collections.synchronizedList(new ArrayList<>());
     private volatile Thread thread;
-    
+
     /**
      * Instantiates a new Loader.
      *
@@ -78,7 +78,7 @@ public class Misspelling extends TestDocument {
       String[] split = path.split("/");
       file = split[split.length - 1];
     }
-    
+  
     /**
      * Clear.
      *
@@ -96,7 +96,7 @@ public class Misspelling extends TestDocument {
         }
       }
     }
-    
+  
     /**
      * Load stream.
      *
@@ -120,7 +120,7 @@ public class Misspelling extends TestDocument {
       try {
         try (final InputStream in = Util.cache(url, file)) {
           String txt = new String(IOUtils.toByteArray(in), "UTF-8").replaceAll("\r", "");
-          List<CharSequence> list = Arrays.asList(txt.split("\n"));
+          CharSequence[] list = txt.split("\n");
           String activeItem = "";
           for (CharSequence item : list) {
             if (item.toString().startsWith("$")) {
