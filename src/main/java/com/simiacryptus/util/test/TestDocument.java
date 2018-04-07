@@ -31,7 +31,8 @@ public class TestDocument {
   
   /**
    * Instantiates a new Test document.
-   *  @param title the title
+   *
+   * @param title the title
    * @param text  the text
    */
   public TestDocument(CharSequence title, CharSequence text) {

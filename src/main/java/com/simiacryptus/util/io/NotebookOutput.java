@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -178,7 +177,6 @@ public interface NotebookOutput extends Closeable {
    * @param rawImage the raw image
    * @param caption  the caption
    * @return the string
-   * @throws IOException the io exception
    */
   @Nonnull
   String image(BufferedImage rawImage, CharSequence caption);

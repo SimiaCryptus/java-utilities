@@ -170,7 +170,7 @@ public class DensityTree {
      */
     @javax.annotation.Nonnull
     public final double[] min;
-    
+  
     /**
      * Instantiates a new Bounds.
      *
@@ -183,7 +183,7 @@ public class DensityTree {
       assert (max.length == min.length);
       assert (IntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
     }
-    
+  
     /**
      * Union bounds.
      *
@@ -199,7 +199,7 @@ public class DensityTree {
         return Double.isFinite(pt[d]) ? Math.min(min[d], pt[d]) : min[d];
       }).toArray());
     }
-    
+  
     /**
      * Gets volume.
      *
@@ -227,7 +227,7 @@ public class DensityTree {
   public class OrthoRule extends Rule {
     private final int dim;
     private final double value;
-    
+  
     /**
      * Instantiates a new Ortho rule.
      *
@@ -258,7 +258,7 @@ public class DensityTree {
      * The Fitness.
      */
     public double fitness;
-    
+  
     /**
      * Instantiates a new Rule.
      *
@@ -267,7 +267,7 @@ public class DensityTree {
     public Rule(String name) {
       this.name = name;
     }
-    
+  
     /**
      * Eval boolean.
      *
@@ -303,7 +303,7 @@ public class DensityTree {
     private Node right = null;
     @Nullable
     private Rule rule = null;
-    
+  
     /**
      * Instantiates a new Node.
      *
@@ -312,7 +312,7 @@ public class DensityTree {
     public Node(@javax.annotation.Nonnull double[][] points) {
       this(points, 0);
     }
-    
+  
     /**
      * Instantiates a new Node.
      *
@@ -325,7 +325,7 @@ public class DensityTree {
       this.depth = depth;
       split();
     }
-    
+  
     /**
      * Predict int.
      *
@@ -348,7 +348,7 @@ public class DensityTree {
     public String toString() {
       return code();
     }
-    
+  
     /**
      * Code string.
      *
@@ -369,7 +369,7 @@ public class DensityTree {
     private CharSequence dataInfo() {
       return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
-    
+  
     /**
      * Split.
      */
@@ -386,7 +386,7 @@ public class DensityTree {
       this.left = new Node(leftPts, depth + 1);
       this.right = new Node(rightPts, depth + 1);
     }
-    
+  
     /**
      * Split ortho stream.
      *
@@ -418,7 +418,7 @@ public class DensityTree {
         return (Rule) rule;
       }).filter(i -> null != i && i.fitness > minFitness);
     }
-    
+  
     /**
      * Gets rule.
      *
@@ -428,7 +428,7 @@ public class DensityTree {
     public Rule getRule() {
       return rule;
     }
-    
+  
     /**
      * Sets rule.
      *
@@ -440,7 +440,7 @@ public class DensityTree {
       this.rule = rule;
       return this;
     }
-    
+  
     /**
      * Gets right.
      *
@@ -450,7 +450,7 @@ public class DensityTree {
     public Node getRight() {
       return right;
     }
-    
+  
     /**
      * Sets right.
      *
@@ -462,7 +462,7 @@ public class DensityTree {
       this.right = right;
       return this;
     }
-    
+  
     /**
      * Gets left.
      *
@@ -472,7 +472,7 @@ public class DensityTree {
     public Node getLeft() {
       return left;
     }
-    
+  
     /**
      * Sets left.
      *
@@ -484,7 +484,7 @@ public class DensityTree {
       this.left = left;
       return this;
     }
-    
+  
     /**
      * Gets depth.
      *

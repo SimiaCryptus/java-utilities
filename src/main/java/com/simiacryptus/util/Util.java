@@ -50,7 +50,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.time.temporal.ChronoUnit;
@@ -146,7 +145,6 @@ public class Util {
    * @return the input stream
    * @throws IOException              the io exception
    * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
   public static InputStream cache(String url, String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
@@ -192,7 +190,6 @@ public class Util {
    * @return the input stream
    * @throws IOException              the io exception
    * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
   public static InputStream cacheStream(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
@@ -212,7 +209,6 @@ public class Util {
    * @return the file
    * @throws IOException              the io exception
    * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
   public static File cacheFile(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
@@ -270,7 +266,6 @@ public class Util {
    * @return the input stream
    * @throws IOException              the io exception
    * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
   public static InputStream cacheStream(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
@@ -284,7 +279,6 @@ public class Util {
    * @return the file
    * @throws IOException              the io exception
    * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyStoreException        the key store exception
    * @throws KeyManagementException   the key management exception
    */
   public static File cacheFile(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {

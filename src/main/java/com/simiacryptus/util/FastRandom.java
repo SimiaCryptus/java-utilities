@@ -23,14 +23,25 @@ package com.simiacryptus.util;
  * The type Fast randomize.
  */
 public class FastRandom {
+  /**
+   * The constant INSTANCE.
+   */
   public static final FastRandom INSTANCE = new FastRandom();
   private final long t;
   private long x;
   private long y;
   private long z;
   
+  /**
+   * Instantiates a new Fast random.
+   */
   public FastRandom() {this(System.nanoTime());}
   
+  /**
+   * Instantiates a new Fast random.
+   *
+   * @param seed the seed
+   */
   public FastRandom(final long seed) {
     t = seed >>> 24;
     x = seed;

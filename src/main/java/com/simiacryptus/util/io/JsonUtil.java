@@ -36,6 +36,9 @@ import java.util.stream.IntStream;
  */
 public class JsonUtil {
   
+  /**
+   * The constant MAPPER.
+   */
   public static final ObjectMapper MAPPER = new ObjectMapper();
   
   /**
@@ -94,7 +97,7 @@ public class JsonUtil {
    * Write json.
    *
    * @param obj the obj
-   * @throws IOException the io exception
+   * @return the char sequence
    */
   public static CharSequence toJson(final Object obj) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
