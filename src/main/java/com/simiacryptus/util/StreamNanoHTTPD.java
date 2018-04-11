@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.simiacryptus.util.io.AsyncOutputStream;
 import com.simiacryptus.util.io.TeeOutputStream;
 import fi.iki.elonen.NanoHTTPD;
@@ -27,11 +26,7 @@ import fi.iki.elonen.NanoHTTPD;
 import java.awt.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -39,10 +34,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -50,22 +42,17 @@ import java.util.function.Function;
 /**
  * The type Stream nano httpd.
  */
-public class StreamNanoHTTPD extends NanoHTTPD {
-  /**
-   * The Custom handlers.
-   */
-  public final Map<CharSequence, Function<IHTTPSession, Response>> customHandlers = new HashMap<>();
+public class StreamNanoHTTPD extends FileNanoHTTPD {
   /**
    * The Data reciever.
    */
   @javax.annotation.Nonnull
   public final TeeOutputStream dataReciever;
   @javax.annotation.Nonnull
-  private final File file;
+  protected final URI gatewayUri;
   @javax.annotation.Nonnull
-  private final URI gatewayUri;
+  private final File primaryFile;
   private final String mimeType;
-  private final ExecutorService pool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
   
   
   /**
@@ -73,19 +60,19 @@ public class StreamNanoHTTPD extends NanoHTTPD {
    *
    * @param port     the port
    * @param mimeType the mime type
-   * @param file     the file
+   * @param primaryFile     the file
    * @throws IOException the io exception
    */
-  public StreamNanoHTTPD(final int port, final String mimeType, final File file) throws IOException {
-    super(port);
-    this.file = file;
-    this.mimeType = mimeType;
+  public StreamNanoHTTPD(final int port, final String mimeType, final File primaryFile) throws IOException {
+    super(primaryFile.getParentFile(), port);
     try {
-      gatewayUri = null == file ? null : new URI(String.format("http://localhost:%s/%s", port, file.getName()));
+      gatewayUri = null == primaryFile ? null : new URI(String.format("http://localhost:%s/%s", port, primaryFile.getName()));
     } catch (@javax.annotation.Nonnull final URISyntaxException e) {
       throw new RuntimeException(e);
     }
-    dataReciever = null == file ? null : new TeeOutputStream(new FileOutputStream(file), true) {
+    this.primaryFile = primaryFile;
+    this.mimeType = mimeType;
+    dataReciever = null == primaryFile ? null : new TeeOutputStream(new FileOutputStream(primaryFile), true) {
       @Override
       public void close() {
         try {
@@ -98,6 +85,20 @@ public class StreamNanoHTTPD extends NanoHTTPD {
     };
   }
   
+  @Override
+  @javax.annotation.Nonnull
+  public StreamNanoHTTPD init() throws IOException {
+    super.init();
+    new Thread(() -> {
+      try {
+        Thread.sleep(100);
+        if (null != gatewayUri) Desktop.getDesktop().browse(gatewayUri);
+      } catch (@javax.annotation.Nonnull final Exception e) {
+        e.printStackTrace();
+      }
+    }).start();
+    return this;
+  }
   /**
    * Instantiates a new Stream nano httpd.
    *
@@ -145,43 +146,6 @@ public class StreamNanoHTTPD extends NanoHTTPD {
   }
   
   /**
-   * Create output stream.
-   *
-   * @param port     the port
-   * @param path     the path
-   * @param mimeType the mime type
-   * @return the output stream
-   * @throws IOException the io exception
-   */
-  @javax.annotation.Nonnull
-  public static OutputStream create(final int port, @javax.annotation.Nonnull final File path, final String mimeType) throws IOException {
-    return new com.simiacryptus.util.StreamNanoHTTPD(port, mimeType, path).init().dataReciever;
-  }
-  
-  /**
-   * Sync handler function.
-   *
-   * @param pool     the pool
-   * @param mimeType the mime type
-   * @param logic    the logic
-   * @param async    the async
-   * @return the function
-   */
-  public static Function<IHTTPSession, Response> syncHandler(final ExecutorService pool, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
-    return session -> {
-      try (@javax.annotation.Nonnull ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-        logic.accept(out);
-        out.flush();
-        final byte[] bytes = out.toByteArray();
-        return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, mimeType, new ByteArrayInputStream(bytes), bytes.length);
-      } catch (@javax.annotation.Nonnull final IOException e) {
-        e.printStackTrace();
-        throw new RuntimeException(e);
-      }
-    };
-  }
-  
-  /**
    * Add async handler.
    *
    * @param path     the path
@@ -193,56 +157,13 @@ public class StreamNanoHTTPD extends NanoHTTPD {
     addSessionHandler(path, com.simiacryptus.util.StreamNanoHTTPD.asyncHandler(pool, mimeType, logic, async));
   }
   
-  /**
-   * Add session handler function.
-   *
-   * @param path  the path
-   * @param value the value
-   * @return the function
-   */
-  public Function<IHTTPSession, Response> addSessionHandler(final CharSequence path, final Function<IHTTPSession, Response> value) {
-    return customHandlers.put(path, value);
-  }
-  
-  /**
-   * Add sync handler.
-   *
-   * @param path     the path
-   * @param mimeType the mime type
-   * @param logic    the logic
-   * @param async    the async
-   */
-  public void addSyncHandler(final CharSequence path, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
-    addSessionHandler(path, com.simiacryptus.util.StreamNanoHTTPD.syncHandler(pool, mimeType, logic, async));
-  }
-  
-  /**
-   * Init stream nano httpd.
-   *
-   * @return the stream nano httpd
-   * @throws IOException the io exception
-   */
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.StreamNanoHTTPD init() throws IOException {
-    com.simiacryptus.util.StreamNanoHTTPD.this.start(30000);
-    new Thread(() -> {
-      try {
-        Thread.sleep(100);
-        if (null != gatewayUri) Desktop.getDesktop().browse(gatewayUri);
-      } catch (@javax.annotation.Nonnull final Exception e) {
-        e.printStackTrace();
-      }
-    }).start();
-    return this;
-  }
-  
   @Override
   public Response serve(final IHTTPSession session) {
     String requestPath = session.getUri();
     while (requestPath.startsWith("/")) {
       requestPath = requestPath.substring(1);
     }
-    if (null != file && requestPath.equals(file.getName())) {
+    if (null != primaryFile && requestPath.equals(primaryFile.getName())) {
       try {
         @javax.annotation.Nonnull final Response response = NanoHTTPD.newChunkedResponse(Response.Status.OK, mimeType, new BufferedInputStream(dataReciever.newInputStream()));
         response.setGzipEncoding(false);
@@ -252,22 +173,7 @@ public class StreamNanoHTTPD extends NanoHTTPD {
       }
     }
     else {
-      if (customHandlers.containsKey(requestPath)) {
-        return customHandlers.get(requestPath).apply(session);
-      }
-      else {
-        @javax.annotation.Nonnull final File file = null == this.file ? null : new File(this.file.getParent(), requestPath);
-        if (null != file && file.exists()) {
-          try {
-            return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
-          } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
-            throw new RuntimeException(e);
-          }
-        }
-        else {
-          return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found");
-        }
-      }
+      return super.serve(session);
     }
   }
   

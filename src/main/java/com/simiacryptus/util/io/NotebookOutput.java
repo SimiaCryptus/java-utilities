@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.util.FileNanoHTTPD;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 
 import javax.annotation.Nonnull;
@@ -27,11 +28,19 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
 import java.io.OutputStream;
+import java.util.function.Consumer;
 
 /**
  * The interface Notebook output.
  */
 public interface NotebookOutput extends Closeable {
+  
+  static Consumer<NotebookOutput> concat(@Nonnull final Consumer<NotebookOutput> fn, @Nonnull final Consumer<NotebookOutput> header) {
+    return log -> {
+      header.accept(log);
+      fn.accept(log);
+    };
+  }
   
   /**
    * Code.
@@ -43,33 +52,6 @@ public interface NotebookOutput extends Closeable {
       fn.run();
       return null;
     }, getMaxOutSize(), 3);
-  }
-  
-  /**
-   * Code.
-   *
-   * @param fn   the fn
-   * @param size the size
-   */
-  default void code(@Nonnull final Runnable fn, int size) {
-    this.code(() -> {
-      fn.run();
-      return null;
-    }, size, 3);
-  }
-  
-  /**
-   * Code.
-   *
-   * @param fn       the fn
-   * @param maxLog   the max log
-   * @param framesNo the frames no
-   */
-  default void code(@Nonnull final Runnable fn, final int maxLog, final int framesNo) {
-    this.code(() -> {
-      fn.run();
-      return null;
-    }, maxLog, framesNo);
   }
   
   /**
@@ -88,11 +70,10 @@ public interface NotebookOutput extends Closeable {
    *
    * @param <T>  the type parameter
    * @param fn   the fn
-   * @param size the size
    * @return the t
    */
-  default <T> T code(final UncheckedSupplier<T> fn, int size) {
-    return code(fn, size, 3);
+  default <T> T out(final UncheckedSupplier<T> fn) {
+    return code(fn, Integer.MAX_VALUE, 3);
   }
   
   /**
@@ -220,14 +201,6 @@ public interface NotebookOutput extends Closeable {
   /**
    * Append front matter property.
    *
-   * @param key   the key
-   * @param value the value
-   */
-  default void appendFrontMatterProperty(CharSequence key, CharSequence value) {appendFrontMatterProperty(key, value, "");}
-  
-  /**
-   * Append front matter property.
-   *
    * @param key       the key
    * @param value     the value
    * @param delimiter the delimiter
@@ -268,5 +241,7 @@ public interface NotebookOutput extends Closeable {
    * @return the max out size
    */
   int getMaxOutSize();
+  
+  FileNanoHTTPD getHttpd();
   
 }

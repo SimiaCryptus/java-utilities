@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.util.FileNanoHTTPD;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 import org.apache.commons.io.IOUtils;
 
@@ -158,5 +159,10 @@ public class NullNotebookOutput implements NotebookOutput {
   @Override
   public int getMaxOutSize() {
     return 0;
+  }
+  
+  @Override
+  public FileNanoHTTPD getHttpd() {
+    return null;
   }
 }
