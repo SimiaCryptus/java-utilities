@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.util.FileNanoHTTPD;
 import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.lang.CodeUtil;
@@ -49,6 +50,7 @@ import java.util.UUID;
 /**
  * The type Html notebook output.
  */
+@Deprecated
 public class HtmlNotebookOutput implements NotebookOutput {
   private static final Logger log = LoggerFactory.getLogger(com.simiacryptus.util.io.HtmlNotebookOutput.class);
   
@@ -382,5 +384,10 @@ public class HtmlNotebookOutput implements NotebookOutput {
   
   public int getMaxOutSize() {
     return maxOutSize;
+  }
+  
+  @Override
+  public FileNanoHTTPD getHttpd() {
+    return null;
   }
 }
