@@ -23,12 +23,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
+import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 /**
@@ -122,5 +125,16 @@ public class JsonUtil {
     @javax.annotation.Nonnull final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     mapper.writeValue(buffer, obj);
     out.write(buffer.toByteArray());
+  }
+  
+  public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
+    if (file.exists()) {
+      return MAPPER.readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
+    }
+    else {
+      T obj = intializer.get();
+      FileUtils.write(file, toJson(obj), Charset.defaultCharset());
+      return obj;
+    }
   }
 }
