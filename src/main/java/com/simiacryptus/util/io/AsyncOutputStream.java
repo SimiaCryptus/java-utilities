@@ -63,7 +63,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   }
   
   @Override
-  public synchronized void write(final byte[] b, final int off, final int len) throws IOException {
+  public synchronized void write(final byte[] b, final int off, final int len) {
     @javax.annotation.Nonnull final byte[] _b = Arrays.copyOfRange(b, off, Math.min(b.length, off + len));
     queue.submit(() -> {
       try {
@@ -75,7 +75,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   }
   
   @Override
-  public synchronized void write(final int b) throws IOException {
+  public synchronized void write(final int b) {
     queue.submit(() -> {
       try {
         out.write(b);

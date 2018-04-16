@@ -121,6 +121,16 @@ public class JsonUtil {
     out.write(buffer.toByteArray());
   }
   
+  /**
+   * Cache t.
+   *
+   * @param <T>        the type parameter
+   * @param file       the file
+   * @param clazz      the clazz
+   * @param intializer the intializer
+   * @return the t
+   * @throws IOException the io exception
+   */
   public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
     if (file.exists()) {
       return getMapper().readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
@@ -132,6 +142,11 @@ public class JsonUtil {
     }
   }
   
+  /**
+   * Gets mapper.
+   *
+   * @return the mapper
+   */
   public static ObjectMapper getMapper() {
     return new ObjectMapper()
       //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)

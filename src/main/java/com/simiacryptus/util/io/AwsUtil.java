@@ -19,5 +19,8 @@
 
 package com.simiacryptus.util.io;
 
+/**
+ * The type Aws util.
+ */
 public class AwsUtil {
 }
