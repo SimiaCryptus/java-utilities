@@ -92,7 +92,8 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
   @javax.annotation.Nonnull
   public StreamNanoHTTPD init() throws IOException {
     super.init();
-    new Thread(() -> {
+    if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+      new Thread(() -> {
       try {
         Thread.sleep(100);
         if (null != gatewayUri) Desktop.getDesktop().browse(gatewayUri);
