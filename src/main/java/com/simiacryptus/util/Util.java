@@ -411,7 +411,8 @@ public class Util {
     fragments.forEach(out::println);
     out.println("</body></html>");
     out.close();
-    Desktop.getDesktop().browse(report.toURI());
+    if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+      Desktop.getDesktop().browse(report.toURI());
   }
   
   /**

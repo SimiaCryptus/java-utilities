@@ -620,7 +620,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   @javax.annotation.Nonnull
   public File getResourceDir() {
-    @javax.annotation.Nonnull final File etc = new File(reportFile.getParentFile(), "etc");
+    @javax.annotation.Nonnull final File etc = new File(reportFile.getParentFile(), "etc").getAbsoluteFile();
     etc.mkdirs();
     return etc;
   }
