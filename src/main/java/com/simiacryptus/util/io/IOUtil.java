@@ -24,8 +24,6 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.twitter.chill.KryoInstantiator;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import org.apache.commons.io.IOUtils;
 
@@ -40,11 +38,13 @@ import java.util.Arrays;
  * The type Io util.
  */
 public class IOUtil {
-  private static final ObjectMapper objectMapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+  private static final ObjectMapper objectMapper = JsonUtil.getMapper();
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
     @Override
     protected Kryo initialValue() {
-      return new KryoInstantiator().setRegistrationRequired(false).newKryo();
+      Kryo kryo = new Kryo();
+      kryo.setRegistrationRequired(false);
+      return kryo;
     }
   };
   private static final ThreadLocal<byte[]> buffer = new ThreadLocal<byte[]>() {
@@ -99,7 +99,7 @@ public class IOUtil {
       Output output = new Output(buffer.get());
       new KryoReflectionFactorySupport().writeClassAndObject(output, obj);
       output.close();
-      IOUtils.write(CompressionUtil.encodeBZ(Arrays.copyOf(output.getBuffer(), output.position())), file);
+      IOUtils.write(Arrays.copyOf(output.getBuffer(), output.position()), file);
       file.close();
     } catch (IOException e) {
       throw new RuntimeException(e);
@@ -130,7 +130,7 @@ public class IOUtil {
    */
   public static <T> T readKryo(File file) {
     try {
-      byte[] bytes = CompressionUtil.decodeBZRaw(Files.readAllBytes(file.toPath()));
+      byte[] bytes = Files.readAllBytes(file.toPath());
       Input input = new Input(buffer.get(), 0, bytes.length);
       return (T) new KryoReflectionFactorySupport().readClassAndObject(input);
     } catch (IOException e) {

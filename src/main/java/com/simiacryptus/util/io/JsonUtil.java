@@ -40,11 +40,6 @@ import java.util.stream.IntStream;
 public class JsonUtil {
   
   /**
-   * The constant MAPPER.
-   */
-  public static final ObjectMapper MAPPER = new ObjectMapper();
-  
-  /**
    * Get double array double [ ].
    *
    * @param array the array
@@ -120,8 +115,7 @@ public class JsonUtil {
    * @throws IOException the io exception
    */
   public static void writeJson(@javax.annotation.Nonnull final OutputStream out, final Object obj) throws IOException {
-    final ObjectMapper mapper = new ObjectMapper().enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-      .enable(SerializationFeature.INDENT_OUTPUT);
+    final ObjectMapper mapper = getMapper();
     @javax.annotation.Nonnull final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     mapper.writeValue(buffer, obj);
     out.write(buffer.toByteArray());
@@ -129,12 +123,18 @@ public class JsonUtil {
   
   public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
     if (file.exists()) {
-      return MAPPER.readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
+      return getMapper().readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
     }
     else {
       T obj = intializer.get();
       FileUtils.write(file, toJson(obj), Charset.defaultCharset());
       return obj;
     }
+  }
+  
+  public static ObjectMapper getMapper() {
+    return new ObjectMapper()
+      //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+      .enable(SerializationFeature.INDENT_OUTPUT);
   }
 }

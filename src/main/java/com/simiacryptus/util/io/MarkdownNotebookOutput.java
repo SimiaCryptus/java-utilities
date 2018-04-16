@@ -108,12 +108,22 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param name       the name
    * @throws FileNotFoundException the file not found exception
    */
-  public MarkdownNotebookOutput(@javax.annotation.Nonnull final File reportFile, final String name) throws FileNotFoundException {
+  public MarkdownNotebookOutput(@Nonnull final File reportFile, final String name) throws FileNotFoundException {this(reportFile, name, new Random().nextInt(2 * 1024) + 2 * 1024);}
+  
+  /**
+   * Instantiates a new Markdown notebook output.
+   *
+   * @param reportFile the file name
+   * @param name       the name
+   * @param httpPort
+   * @throws FileNotFoundException the file not found exception
+   */
+  public MarkdownNotebookOutput(@javax.annotation.Nonnull final File reportFile, final String name, final int httpPort) throws FileNotFoundException {
     this.name = name;
+    reportFile.getAbsoluteFile().getParentFile().mkdirs();
     primaryOut = new PrintStream(new FileOutputStream(reportFile));
     this.reportFile = reportFile;
-    int port = new Random().nextInt(2 * 1024) + 2 * 1024;
-    this.httpd = new FileNanoHTTPD(reportFile.getParentFile(), port);
+    this.httpd = new FileNanoHTTPD(reportFile.getParentFile(), httpPort);
     this.httpd.addHandler("", "text/html", out -> {
       try {
         writeHtmlAndPdf(getRoot(), testName());
@@ -135,21 +145,26 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       }
     });
     try {
+      log.info("Starting server at port " + httpPort);
       this.httpd.init();
-      new Thread(() -> {
-        try {
-          while (!httpd.isAlive()) Thread.sleep(100);
-          Desktop.getDesktop().browse(new URI(String.format("http://localhost:%d", port)));
-        } catch (InterruptedException | IOException | URISyntaxException e) {
-          e.printStackTrace();
-        }
-      }).start();
+      if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+        new Thread(() -> {
+          try {
+            while (!httpd.isAlive()) Thread.sleep(100);
+            Desktop.getDesktop().browse(new URI(String.format("http://localhost:%d", httpPort)));
+          } catch (InterruptedException | IOException | URISyntaxException e) {
+            e.printStackTrace();
+          }
+        }).start();
+        onComplete(file -> {
+          try {
+            Desktop.getDesktop().browse(new File(file, testName() + ".html").toURI());
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+      }
       onComplete(file -> {
-        try {
-          Desktop.getDesktop().browse(new File(file, testName() + ".html").toURI());
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
         httpd.stop();
       });
     } catch (IOException e) {
@@ -400,9 +415,15 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           return new TimedResult<Object>(e, System.nanoTime() - start, gcTime);
         }
       });
+      CharSequence codeLink;
+      try {
+        codeLink = linkTo(CodeUtil.findFile(callingFrame));
+      } catch (Throwable e) {
+        codeLink = "";
+      }
       out(anchor(anchorId()) + "Code from [%s:%s](%s#L%s) executed in %.2f seconds (%.3f gc): ",
         callingFrame.getFileName(), callingFrame.getLineNumber(),
-        linkTo(CodeUtil.findFile(callingFrame)), callingFrame.getLineNumber(), result.obj.seconds(), result.obj.gc_seconds());
+        codeLink, callingFrame.getLineNumber(), result.obj.seconds(), result.obj.gc_seconds());
       CharSequence text = sourceCode.replaceAll("\n", "\n  ");
       out("```java");
       out("  " + text);

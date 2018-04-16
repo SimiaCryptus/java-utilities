@@ -28,6 +28,7 @@ import com.simiacryptus.util.test.LabeledObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
@@ -52,10 +53,12 @@ import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -564,5 +567,10 @@ public class Util {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
+  }
+  
+  @Nonnull
+  public static String dateStr(final String formatStr) {
+    return new SimpleDateFormat(formatStr).format(new Date());
   }
 }
