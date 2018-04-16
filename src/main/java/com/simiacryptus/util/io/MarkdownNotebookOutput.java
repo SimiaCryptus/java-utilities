@@ -115,7 +115,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    *
    * @param reportFile the file name
    * @param name       the name
-   * @param httpPort
+   * @param httpPort   the http port
    * @throws FileNotFoundException the file not found exception
    */
   public MarkdownNotebookOutput(@javax.annotation.Nonnull final File reportFile, final String name, final int httpPort) throws FileNotFoundException {
@@ -172,6 +172,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Get markdown notebook output.
+   *
+   * @param path        the path
+   * @param codeBaseUrl the code base url
+   * @return the markdown notebook output
+   */
   @Nonnull
   public static MarkdownNotebookOutput get(final File path, @Nullable final CharSequence codeBaseUrl) {
     try {
@@ -190,6 +197,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Wrap frontmatter consumer.
+   *
+   * @param fn the fn
+   * @return the consumer
+   */
   public static Consumer<NotebookOutput> wrapFrontmatter(@Nonnull final Consumer<NotebookOutput> fn) {
     return log -> {
       @Nonnull TimedResult<Void> time = TimedResult.time(() -> {
@@ -245,6 +258,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * Gets exception string.
+   *
+   * @param e the e
+   * @return the exception string
+   */
   @Nonnull
   public static CharSequence getExceptionString(Throwable e) {
     if (e instanceof RuntimeException && e.getCause() != null && e.getCause() != e)
@@ -254,6 +273,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return e.getClass().getSimpleName();
   }
   
+  /**
+   * On complete markdown notebook output.
+   *
+   * @param tasks the tasks
+   * @return the markdown notebook output
+   */
   @Nonnull
   public MarkdownNotebookOutput onComplete(Consumer<File>... tasks) {
     Arrays.stream(tasks).forEach(onComplete::add);
@@ -276,22 +301,46 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     });
   }
   
+  /**
+   * Gets root.
+   *
+   * @return the root
+   */
   @Nonnull
   public File getRoot() {
     return new File(reportFile.getParent());
   }
   
+  /**
+   * Test name string.
+   *
+   * @return the string
+   */
   public String testName() {
     String[] split = reportFile.getName().split(".");
     return 0 == split.length ? reportFile.getName() : split[0];
   }
   
+  /**
+   * Write zip.
+   *
+   * @param root     the root
+   * @param baseName the base name
+   * @throws IOException the io exception
+   */
   public void writeZip(final File root, final String baseName) throws IOException {
     try (@Nonnull ZipOutputStream out = new ZipOutputStream(new FileOutputStream(new File(root, baseName + ".zip")))) {
       writeArchive(root, root, out, file -> !file.getName().equals(baseName + ".zip"));
     }
   }
   
+  /**
+   * Write html and pdf.
+   *
+   * @param root     the root
+   * @param baseName the base name
+   * @throws IOException the io exception
+   */
   public void writeHtmlAndPdf(final File root, final String baseName) throws IOException {
     MutableDataSet options = new MutableDataSet();
     Parser parser = Parser.builder(options).build();
@@ -306,6 +355,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
+  /**
+   * To string string.
+   *
+   * @param list the list
+   * @return the string
+   */
   @Nonnull
   public String toString(final List<CharSequence> list) {
     if (list.size() > 0 && list.stream().allMatch(x -> {
@@ -318,6 +373,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     else return list.stream().reduce((a, b) -> a + "\n" + b).orElse("").toString();
   }
   
+  /**
+   * Write archive.
+   *
+   * @param root   the root
+   * @param dir    the dir
+   * @param out    the out
+   * @param filter the filter
+   */
   public void writeArchive(final File root, final File dir, final ZipOutputStream out, final Predicate<? super File> filter) {
     Arrays.stream(dir.listFiles()).filter(filter).forEach(file ->
     {
@@ -339,6 +402,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     });
   }
   
+  /**
+   * Write markdown with frontmatter.
+   *
+   * @param out the out
+   */
   public void writeMarkdownWithFrontmatter(final PrintWriter out) {
     if (!frontMatter.isEmpty()) {
       out.println("---");

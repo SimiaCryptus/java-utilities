@@ -48,6 +48,9 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
    */
   @javax.annotation.Nonnull
   public final TeeOutputStream dataReciever;
+  /**
+   * The Gateway uri.
+   */
   @javax.annotation.Nonnull
   protected final URI gatewayUri;
   @javax.annotation.Nonnull
@@ -58,9 +61,9 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
   /**
    * Instantiates a new Stream nano httpd.
    *
-   * @param port     the port
-   * @param mimeType the mime type
-   * @param primaryFile     the file
+   * @param port        the port
+   * @param mimeType    the mime type
+   * @param primaryFile the file
    * @throws IOException the io exception
    */
   public StreamNanoHTTPD(final int port, final String mimeType, final File primaryFile) throws IOException {
@@ -99,6 +102,7 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
     }).start();
     return this;
   }
+  
   /**
    * Instantiates a new Stream nano httpd.
    *

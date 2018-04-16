@@ -569,6 +569,12 @@ public class Util {
     }
   }
   
+  /**
+   * Date str string.
+   *
+   * @param formatStr the format str
+   * @return the string
+   */
   @Nonnull
   public static String dateStr(final String formatStr) {
     return new SimpleDateFormat(formatStr).format(new Date());

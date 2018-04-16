@@ -35,6 +35,13 @@ import java.util.function.Consumer;
  */
 public interface NotebookOutput extends Closeable {
   
+  /**
+   * Concat consumer.
+   *
+   * @param fn     the fn
+   * @param header the header
+   * @return the consumer
+   */
   static Consumer<NotebookOutput> concat(@Nonnull final Consumer<NotebookOutput> fn, @Nonnull final Consumer<NotebookOutput> header) {
     return log -> {
       header.accept(log);
@@ -68,8 +75,8 @@ public interface NotebookOutput extends Closeable {
   /**
    * Code t.
    *
-   * @param <T>  the type parameter
-   * @param fn   the fn
+   * @param <T> the type parameter
+   * @param fn  the fn
    * @return the t
    */
   default <T> T out(final UncheckedSupplier<T> fn) {
@@ -242,6 +249,11 @@ public interface NotebookOutput extends Closeable {
    */
   int getMaxOutSize();
   
+  /**
+   * Gets httpd.
+   *
+   * @return the httpd
+   */
   FileNanoHTTPD getHttpd();
   
 }

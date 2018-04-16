@@ -37,14 +37,26 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+/**
+ * The type File nano httpd.
+ */
 public class FileNanoHTTPD extends NanoHTTPD {
   /**
    * The Custom handlers.
    */
   public final Map<CharSequence, Function<IHTTPSession, Response>> handlers = new HashMap<>();
+  /**
+   * The Pool.
+   */
   protected final ExecutorService pool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
   private final File root;
   
+  /**
+   * Instantiates a new File nano httpd.
+   *
+   * @param root the root
+   * @param port the port
+   */
   public FileNanoHTTPD(File root, final int port) {
     super(port);
     this.root = root;
