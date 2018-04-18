@@ -297,7 +297,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     writeHtmlAndPdf(root, testName());
     writeZip(root, testName());
     onComplete.stream().forEach(fn -> {
-      fn.accept(root);
+      try {
+        fn.accept(root);
+      } catch (Throwable e) {
+        log.info("Error closing log", e);
+      }
     });
   }
   
