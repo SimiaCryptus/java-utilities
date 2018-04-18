@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>java-util</artifactId>
-    <version>1.4.7</version>
+    <version>1.4.17</version>
     <description>Miscellaneous utilities for Java 8</description>
 
     <properties>
@@ -128,13 +128,6 @@
             <artifactId>jackson-module-scala_2.11</artifactId>
             <version>2.8.4</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.twitter</groupId>
-            <artifactId>chill-java</artifactId>
-            <version>0.8.1</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.nanohttpd</groupId>
             <artifactId>nanohttpd</artifactId>
