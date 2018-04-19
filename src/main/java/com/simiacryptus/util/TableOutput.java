@@ -203,7 +203,7 @@ public class TableOutput {
    *
    * @return the string
    */
-  public String toTextTable() {
+  public String toMarkdownTable() {
     try (@javax.annotation.Nonnull ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (@javax.annotation.Nonnull PrintStream printStream = new PrintStream(buffer)) {
         final String formatString = schema.entrySet().stream()
@@ -246,7 +246,7 @@ public class TableOutput {
     path.mkdirs();
     try (@javax.annotation.Nonnull FileOutputStream file = new FileOutputStream(new File(path, "data.tsv"))) {
       try (@javax.annotation.Nonnull PrintStream printStream = new PrintStream(file)) {
-        printStream.println(toTextTable());
+        printStream.println(toMarkdownTable());
       }
     }
     final List<Entry<CharSequence, Class<?>>> scalarCols = schema.entrySet().stream()

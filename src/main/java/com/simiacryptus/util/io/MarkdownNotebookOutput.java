@@ -531,7 +531,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           escape = false;
         }
         else if (eval instanceof TableOutput) {
-          str = ((TableOutput) eval).toTextTable();
+          str = ((TableOutput) eval).toMarkdownTable();
           escape = false;
         }
         else {
