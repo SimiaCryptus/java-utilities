@@ -348,9 +348,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   public void writeHtmlAndPdf(final File root, final String baseName) throws IOException {
     MutableDataSet options = new MutableDataSet();
     Parser parser = Parser.builder(options).build();
-    HtmlRenderer renderer = HtmlRenderer.builder(options).build();
+    HtmlRenderer renderer = HtmlRenderer.builder(options).escapeHtml(false).indentSize(2).softBreak("\n").build();
     File htmlFile = new File(root, baseName + ".html");
     String html = renderer.render(parser.parse(toString(toc) + "\n\n" + toString(markdownData)));
+    html = "<html><body>" + html + "</body></html>";
     try (FileOutputStream out = new FileOutputStream(htmlFile)) {
       IOUtils.write(html, out, Charset.forName("UTF-8"));
     }
