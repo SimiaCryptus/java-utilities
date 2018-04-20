@@ -56,6 +56,7 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
   @javax.annotation.Nonnull
   private final File primaryFile;
   private final String mimeType;
+  private boolean autobrowse = true;
   
   
   /**
@@ -96,7 +97,7 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
       new Thread(() -> {
       try {
         Thread.sleep(100);
-        if (null != gatewayUri) Desktop.getDesktop().browse(gatewayUri);
+        if (null != gatewayUri && isAutobrowse()) Desktop.getDesktop().browse(gatewayUri);
       } catch (@javax.annotation.Nonnull final Exception e) {
         e.printStackTrace();
       }
@@ -185,5 +186,14 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
   @Override
   protected boolean useGzipWhenAccepted(final Response r) {
     return false;
+  }
+  
+  public boolean isAutobrowse() {
+    return autobrowse;
+  }
+  
+  public StreamNanoHTTPD setAutobrowse(boolean autobrowse) {
+    this.autobrowse = autobrowse;
+    return this;
   }
 }

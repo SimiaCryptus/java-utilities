@@ -72,8 +72,8 @@ public class FileNanoHTTPD extends NanoHTTPD {
    * @throws IOException the io exception
    */
   @javax.annotation.Nonnull
-  public static OutputStream create(final int port, @javax.annotation.Nonnull final File path, final String mimeType) throws IOException {
-    return new StreamNanoHTTPD(port, mimeType, path).init().dataReciever;
+  public static FileNanoHTTPD create(final int port, @Nonnull final File path, final String mimeType) throws IOException {
+    return new FileNanoHTTPD(path, port).init();
   }
   
   /**

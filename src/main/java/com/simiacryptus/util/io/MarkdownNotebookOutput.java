@@ -26,6 +26,10 @@ import com.simiacryptus.util.lang.CodeUtil;
 import com.simiacryptus.util.lang.TimedResult;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 import com.simiacryptus.util.test.SysOutInterceptor;
+import com.vladsch.flexmark.Extension;
+import com.vladsch.flexmark.ext.escaped.character.EscapedCharacterExtension;
+import com.vladsch.flexmark.ext.gfm.strikethrough.SubscriptExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.pdf.converter.PdfConverterExtension;
@@ -89,6 +93,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   private final List<Consumer<File>> onComplete = new ArrayList<>();
   private final Map<CharSequence, CharSequence> frontMatter = new HashMap<>();
   private final FileNanoHTTPD httpd;
+  private final boolean autobrowse;
   /**
    * The Toc.
    */
@@ -99,7 +104,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   int anchor = 0;
   @Nullable
-  private String baseCodeUrl = null;
+  private final String baseCodeUrl = CodeUtil.getGitBase();
   
   /**
    * Instantiates a new Markdown notebook output.
@@ -108,7 +113,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param name       the name
    * @throws FileNotFoundException the file not found exception
    */
-  public MarkdownNotebookOutput(@Nonnull final File reportFile, final String name) throws FileNotFoundException {this(reportFile, name, new Random().nextInt(2 * 1024) + 2 * 1024);}
+  public MarkdownNotebookOutput(@Nonnull final File reportFile, final String name, boolean autobrowse) throws FileNotFoundException {this(reportFile, name, new Random().nextInt(2 * 1024) + 2 * 1024, autobrowse);}
   
   /**
    * Instantiates a new Markdown notebook output.
@@ -116,9 +121,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param reportFile the file name
    * @param name       the name
    * @param httpPort   the http port
+   * @param autobrowse
    * @throws FileNotFoundException the file not found exception
    */
-  public MarkdownNotebookOutput(@javax.annotation.Nonnull final File reportFile, final String name, final int httpPort) throws FileNotFoundException {
+  public MarkdownNotebookOutput(@javax.annotation.Nonnull final File reportFile, final String name, final int httpPort, final boolean autobrowse) throws FileNotFoundException {
     this.name = name;
     reportFile.getAbsoluteFile().getParentFile().mkdirs();
     primaryOut = new PrintStream(new FileOutputStream(reportFile));
@@ -144,6 +150,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         throw new RuntimeException(e);
       }
     });
+    this.autobrowse = autobrowse;
     try {
       log.info("Starting server at port " + httpPort);
       this.httpd.init();
@@ -151,14 +158,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         new Thread(() -> {
           try {
             while (!httpd.isAlive()) Thread.sleep(100);
-            Desktop.getDesktop().browse(new URI(String.format("http://localhost:%d", httpPort)));
+            if (isAutobrowse()) Desktop.getDesktop().browse(new URI(String.format("http://localhost:%d", httpPort)));
           } catch (InterruptedException | IOException | URISyntaxException e) {
             e.printStackTrace();
           }
         }).start();
         onComplete(file -> {
           try {
-            Desktop.getDesktop().browse(new File(file, testName() + ".html").toURI());
+            if (isAutobrowse()) Desktop.getDesktop().browse(new File(file, testName() + ".html").toURI());
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
@@ -172,30 +179,6 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
   
-  /**
-   * Get markdown notebook output.
-   *
-   * @param path        the path
-   * @param codeBaseUrl the code base url
-   * @return the markdown notebook output
-   */
-  @Nonnull
-  public static MarkdownNotebookOutput get(final File path, @Nullable final CharSequence codeBaseUrl) {
-    try {
-      @Nonnull MarkdownNotebookOutput notebookOutput = new MarkdownNotebookOutput(path, path.getName());
-      if (null != codeBaseUrl) {
-        try {
-          String url = new URI(codeBaseUrl + "/" + path.toPath().toString().replaceAll("\\\\", "/")).normalize().toString();
-          notebookOutput.setBaseCodeUrl(url);
-        } catch (URISyntaxException e) {
-          throw new RuntimeException(e);
-        }
-      }
-      return notebookOutput;
-    } catch (@Nonnull final FileNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-  }
   
   /**
    * Wrap frontmatter consumer.
@@ -222,8 +205,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * Get markdown notebook output.
    *
    * @return the markdown notebook output
+   * @param autobrowse
    */
-  public static com.simiacryptus.util.io.MarkdownNotebookOutput get() {
+  public static com.simiacryptus.util.io.MarkdownNotebookOutput get(final boolean autobrowse) {
     try {
       final StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
       final String className = callingFrame.getClassName();
@@ -232,7 +216,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       @javax.annotation.Nonnull File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.", "/").replaceAll("\\$", "/")));
       path = new File(path, fileName);
       path.getParentFile().mkdirs();
-      return new com.simiacryptus.util.io.MarkdownNotebookOutput(path, methodName);
+      return new com.simiacryptus.util.io.MarkdownNotebookOutput(path, methodName, autobrowse);
     } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -242,9 +226,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * Get markdown notebook output.
    *
    * @param source the source
+   * @param autobrowse
    * @return the markdown notebook output
    */
-  public static MarkdownNotebookOutput get(Object source) {
+  public static MarkdownNotebookOutput get(Object source, final boolean autobrowse) {
     try {
       StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
       String className = null == source ? callingFrame.getClassName() : source.getClass().getCanonicalName();
@@ -252,7 +237,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       CharSequence fileName = methodName + ".md";
       File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.", "/").replaceAll("\\$", "/"), fileName));
       path.getParentFile().mkdirs();
-      return new MarkdownNotebookOutput(path, methodName);
+      return new MarkdownNotebookOutput(path, methodName, autobrowse);
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -339,25 +324,15 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   /**
-   * Write html and pdf.
+   * Path to code file path.
    *
-   * @param root     the root
-   * @param baseName the base name
+   * @param baseFile
+   * @param file the file
+   * @return the path
    * @throws IOException the io exception
    */
-  public void writeHtmlAndPdf(final File root, final String baseName) throws IOException {
-    MutableDataSet options = new MutableDataSet();
-    Parser parser = Parser.builder(options).build();
-    HtmlRenderer renderer = HtmlRenderer.builder(options).escapeHtml(false).indentSize(2).softBreak("\n").build();
-    File htmlFile = new File(root, baseName + ".html");
-    String html = renderer.render(parser.parse(toString(toc) + "\n\n" + toString(markdownData)));
-    html = "<html><body>" + html + "</body></html>";
-    try (FileOutputStream out = new FileOutputStream(htmlFile)) {
-      IOUtils.write(html, out, Charset.forName("UTF-8"));
-    }
-    try (FileOutputStream out = new FileOutputStream(new File(root, baseName + ".pdf"))) {
-      PdfConverterExtension.exportToPdf(out, html, htmlFile.getAbsoluteFile().toURI().toString(), options);
-    }
+  public static Path pathToCodeFile(final File baseFile, @Nonnull File file) throws IOException {
+    return baseFile.getCanonicalFile().toPath().relativize(file.getCanonicalFile().toPath());
   }
   
   /**
@@ -463,6 +438,125 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return String.format("p-%d", anchor++);
   }
   
+  /**
+   * Write html and pdf.
+   *
+   * @param root     the root
+   * @param baseName the base name
+   * @throws IOException the io exception
+   */
+  public void writeHtmlAndPdf(final File root, final String baseName) throws IOException {
+    MutableDataSet options = new MutableDataSet();
+    List<Extension> extensions = Arrays.asList(
+      TablesExtension.create(),
+      SubscriptExtension.create(),
+      EscapedCharacterExtension.create()
+    );
+    Parser parser = Parser.builder(options).extensions(extensions).build();
+    HtmlRenderer renderer = HtmlRenderer.builder(options).extensions(extensions).escapeHtml(false).indentSize(2).softBreak("\n").build();
+    File htmlFile = new File(root, baseName + ".html");
+    String html = renderer.render(parser.parse(toString(toc) + "\n\n" + toString(markdownData)));
+    html = "<html><body>" + html + "</body></html>";
+    try (FileOutputStream out = new FileOutputStream(htmlFile)) {
+      IOUtils.write(html, out, Charset.forName("UTF-8"));
+    }
+    try (FileOutputStream out = new FileOutputStream(new File(root, baseName + ".pdf"))) {
+      PdfConverterExtension.exportToPdf(out, html, htmlFile.getAbsoluteFile().toURI().toString(), options);
+    }
+  }
+  
+  @javax.annotation.Nonnull
+  @Override
+  public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
+    try {
+      return new FileOutputStream(new File(getResourceDir(), name.toString()));
+    } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  @javax.annotation.Nonnull
+  @Override
+  public String file(final CharSequence data, final CharSequence caption) {
+    return file(data, ++com.simiacryptus.util.io.MarkdownNotebookOutput.excerptNumber + ".txt", caption);
+  }
+  
+  @javax.annotation.Nonnull
+  @Override
+  public CharSequence file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull CharSequence filename, CharSequence caption) {
+    return file(new String(data, Charset.forName("UTF-8")), filename, caption);
+  }
+  
+  @javax.annotation.Nonnull
+  @Override
+  public String file(@Nullable final CharSequence data, @javax.annotation.Nonnull final CharSequence fileName, final CharSequence caption) {
+    try {
+      if (null != data) {
+        IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), fileName.toString())), Charset.forName("UTF-8"));
+      }
+    } catch (@javax.annotation.Nonnull final IOException e) {
+      throw new RuntimeException(e);
+    }
+    return "[" + caption + "](etc/" + fileName + ")";
+  }
+  
+  /**
+   * Gets resource dir.
+   *
+   * @return the resource dir
+   */
+  @javax.annotation.Nonnull
+  public File getResourceDir() {
+    @javax.annotation.Nonnull final File etc = new File(reportFile.getParentFile(), "etc").getAbsoluteFile();
+    etc.mkdirs();
+    return etc;
+  }
+  
+  @Override
+  public void h1(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
+    CharSequence anchorId = anchorId();
+    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
+    toc.add(String.format("1. [%s](#%s)", msg, anchorId));
+    out("# " + anchor(anchorId) + msg);
+  }
+  
+  @Override
+  public void h2(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
+    CharSequence anchorId = anchorId();
+    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
+    toc.add(String.format("   1. [%s](#%s)", msg, anchorId));
+    out("## " + anchor(anchorId) + fmt, args);
+  }
+  
+  @Override
+  public void h3(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
+    CharSequence anchorId = anchorId();
+    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
+    toc.add(String.format("      1. [%s](#%s)", msg, anchorId));
+    out("### " + anchor(anchorId) + fmt, args);
+  }
+  
+  @javax.annotation.Nonnull
+  @Override
+  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) {
+    if (null == rawImage) return "";
+    new ByteArrayOutputStream();
+    final int thisImage = ++com.simiacryptus.util.io.MarkdownNotebookOutput.imageNumber;
+    @javax.annotation.Nonnull final String fileName = name + "." + thisImage + ".png";
+    @javax.annotation.Nonnull final File file = new File(getResourceDir(), fileName);
+    @Nullable final BufferedImage stdImage = Util.resize(rawImage);
+    try {
+      if (stdImage != rawImage) {
+        @javax.annotation.Nonnull final String rawName = name + "_raw." + thisImage + ".png";
+        ImageIO.write(rawImage, "png", new File(getResourceDir(), rawName));
+      }
+      ImageIO.write(stdImage, "png", file);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return anchor(anchorId()) + "![" + caption + "](etc/" + file.getName() + ")";
+  }
+  
   @Override
   @SuppressWarnings("unchecked")
   public <T> T code(@javax.annotation.Nonnull final UncheckedSupplier<T> fn, final int maxLog, final int framesNo) {
@@ -490,9 +584,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       });
       CharSequence codeLink;
       try {
-        codeLink = linkTo(CodeUtil.findFile(callingFrame));
+        codeLink = pathToGitResource(CodeUtil.findFile(callingFrame));
       } catch (Throwable e) {
-        codeLink = "";
+        String[] split = callingFrame.getClassName().split("\\.");
+        String packagePath = Arrays.asList(split).subList(0, split.length - 1).stream().reduce((a, b) -> a + "/" + b).get();
+        codeLink = this.baseCodeUrl + "/src/main/java/" + packagePath + "/" + callingFrame.getFileName();
       }
       out(anchor(anchorId()) + "Code from [%s:%s](%s#L%s) executed in %.2f seconds (%.3f gc): ",
         callingFrame.getFileName(), callingFrame.getLineNumber(),
@@ -563,128 +659,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
-    try {
-      return new FileOutputStream(new File(getResourceDir(), name.toString()));
-    } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-  }
-  
-  @javax.annotation.Nonnull
-  @Override
-  public String file(final CharSequence data, final CharSequence caption) {
-    return file(data, ++com.simiacryptus.util.io.MarkdownNotebookOutput.excerptNumber + ".txt", caption);
-  }
-  
-  @javax.annotation.Nonnull
-  @Override
-  public CharSequence file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull CharSequence filename, CharSequence caption) {
-    return file(new String(data, Charset.forName("UTF-8")), filename, caption);
-  }
-  
-  @javax.annotation.Nonnull
-  @Override
-  public String file(@Nullable final CharSequence data, @javax.annotation.Nonnull final CharSequence fileName, final CharSequence caption) {
-    try {
-      if (null != data) {
-        IOUtils.write(data, new FileOutputStream(new File(getResourceDir(), fileName.toString())), Charset.forName("UTF-8"));
-      }
-    } catch (@javax.annotation.Nonnull final IOException e) {
-      throw new RuntimeException(e);
-    }
-    return "[" + caption + "](etc/" + fileName + ")";
-  }
-  
-  /**
-   * Gets absolute url.
-   *
-   * @return the absolute url
-   */
-  @Nullable
-  public String getBaseCodeUrl() {
-    return baseCodeUrl;
-  }
-  
-  /**
-   * Sets absolute url.
-   *
-   * @param baseCodeUrl the absolute url
-   * @return the absolute url
-   */
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.io.MarkdownNotebookOutput setBaseCodeUrl(final String baseCodeUrl) {
-    this.baseCodeUrl = baseCodeUrl;
-    return this;
-  }
-  
-  /**
-   * Gets resource dir.
-   *
-   * @return the resource dir
-   */
-  @javax.annotation.Nonnull
-  public File getResourceDir() {
-    @javax.annotation.Nonnull final File etc = new File(reportFile.getParentFile(), "etc").getAbsoluteFile();
-    etc.mkdirs();
-    return etc;
-  }
-  
-  @Override
-  public void h1(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
-    CharSequence anchorId = anchorId();
-    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
-    toc.add(String.format("1. [%s](#%s)", msg, anchorId));
-    out("# " + anchor(anchorId) + msg);
-  }
-  
-  @Override
-  public void h2(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
-    CharSequence anchorId = anchorId();
-    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
-    toc.add(String.format("   1. [%s](#%s)", msg, anchorId));
-    out("## " + anchor(anchorId) + fmt, args);
-  }
-  
-  @Override
-  public void h3(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
-    CharSequence anchorId = anchorId();
-    @javax.annotation.Nonnull CharSequence msg = format(fmt, args);
-    toc.add(String.format("      1. [%s](#%s)", msg, anchorId));
-    out("### " + anchor(anchorId) + fmt, args);
-  }
-  
-  @javax.annotation.Nonnull
-  @Override
-  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) {
-    if (null == rawImage) return "";
-    new ByteArrayOutputStream();
-    final int thisImage = ++com.simiacryptus.util.io.MarkdownNotebookOutput.imageNumber;
-    @javax.annotation.Nonnull final String fileName = name + "." + thisImage + ".png";
-    @javax.annotation.Nonnull final File file = new File(getResourceDir(), fileName);
-    @Nullable final BufferedImage stdImage = Util.resize(rawImage);
-    try {
-      if (stdImage != rawImage) {
-        @javax.annotation.Nonnull final String rawName = name + "_raw." + thisImage + ".png";
-        ImageIO.write(rawImage, "png", new File(getResourceDir(), rawName));
-      }
-      ImageIO.write(stdImage, "png", file);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    return anchor(anchorId()) + "![" + caption + "](etc/" + file.getName() + ")";
-  }
-  
-  @javax.annotation.Nonnull
-  @Override
   public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
     try {
-      return "[" + text + "](" + codeFile(file) + ")";
+      return "[" + text + "](" + pathToReportResource(file) + ")";
     } catch (@javax.annotation.Nonnull final IOException e) {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Code file string.
    *
@@ -692,40 +674,26 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @return the string
    * @throws IOException the io exception
    */
-  public CharSequence codeFile(@javax.annotation.Nonnull File file) throws IOException {
-    Path path = pathToCodeFile(file);
-    if (null != getBaseCodeUrl()) {
+  public CharSequence pathToReportResource(@javax.annotation.Nonnull File file) throws IOException {
+    Path path = pathToCodeFile(this.reportFile, file);
+    String pathSlash = path.normalize().toString().replaceAll("\\\\", "/");
+    return pathSlash;
+  }
+  
+  public CharSequence pathToGitResource(@javax.annotation.Nonnull File file) throws IOException {
+    Path path = pathToCodeFile(new File("."), file);
+    String pathSlash = path.normalize().toString().replaceAll("\\\\", "/");
+    if (null != baseCodeUrl) {
       try {
-        return new URI(getBaseCodeUrl()).resolve(path.normalize().toString().replaceAll("\\\\", "/")).normalize().toString();
+        URI resolve = new URI(baseCodeUrl).resolve(pathSlash);
+        return resolve.normalize().toString();
       } catch (URISyntaxException e) {
         throw new RuntimeException(e);
       }
     }
     else {
-      return path.normalize().toString().replaceAll("\\\\", "/");
+      return pathSlash;
     }
-  }
-  
-  /**
-   * Path to code file path.
-   *
-   * @param file the file
-   * @return the path
-   * @throws IOException the io exception
-   */
-  public Path pathToCodeFile(@javax.annotation.Nonnull File file) throws IOException {
-    return reportFile.getCanonicalFile().toPath().relativize(file.getCanonicalFile().toPath());
-  }
-  
-  /**
-   * Link to string.
-   *
-   * @param file the file
-   * @return the string
-   * @throws IOException the io exception
-   */
-  public CharSequence linkTo(@javax.annotation.Nonnull final File file) throws IOException {
-    return codeFile(file);
   }
   
   @Override
@@ -778,4 +746,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   public FileNanoHTTPD getHttpd() {
     return httpd;
   }
+  
+  public boolean isAutobrowse() {
+    return autobrowse;
+  }
+  
 }
