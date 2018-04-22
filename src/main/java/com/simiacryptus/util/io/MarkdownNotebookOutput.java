@@ -94,6 +94,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   private final Map<CharSequence, CharSequence> frontMatter = new HashMap<>();
   private final FileNanoHTTPD httpd;
   private final boolean autobrowse;
+  private int maxImageSize = 1600;
   /**
    * The Toc.
    */
@@ -319,7 +320,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   public void writeZip(final File root, final String baseName) throws IOException {
     try (@Nonnull ZipOutputStream out = new ZipOutputStream(new FileOutputStream(new File(root, baseName + ".zip")))) {
-      writeArchive(root, root, out, file -> !file.getName().equals(baseName + ".zip"));
+      writeArchive(root, root, out, file -> !file.getName().equals(baseName + ".zip") && !file.getName().equals(baseName + ".pdf"));
     }
   }
   
@@ -544,7 +545,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     final int thisImage = ++com.simiacryptus.util.io.MarkdownNotebookOutput.imageNumber;
     @javax.annotation.Nonnull final String fileName = name + "." + thisImage + ".png";
     @javax.annotation.Nonnull final File file = new File(getResourceDir(), fileName);
-    @Nullable final BufferedImage stdImage = Util.resize(rawImage);
+    @Nullable final BufferedImage stdImage = Util.maximumSize(rawImage, getMaxImageSize());
     try {
       if (stdImage != rawImage) {
         @javax.annotation.Nonnull final String rawName = name + "_raw." + thisImage + ".png";
@@ -751,4 +752,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return autobrowse;
   }
   
+  public int getMaxImageSize() {
+    return maxImageSize;
+  }
+  
+  public MarkdownNotebookOutput setMaxImageSize(int maxImageSize) {
+    this.maxImageSize = maxImageSize;
+    return this;
+  }
 }
