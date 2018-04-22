@@ -429,12 +429,13 @@ public class Util {
    * Resize buffered image.
    *
    * @param image the image
+   * @param width
    * @return the buffered image
    */
   @Nullable
-  public static BufferedImage resize(@Nullable final BufferedImage image) {
+  public static BufferedImage maximumSize(@Nullable final BufferedImage image, int width) {
     if (null == image) return image;
-    final int width = Math.min(image.getWidth(), 800);
+    width = Math.min(image.getWidth(), width);
     if (width == image.getWidth()) return image;
     final int height = image.getHeight() * width / image.getWidth();
     @javax.annotation.Nonnull final BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

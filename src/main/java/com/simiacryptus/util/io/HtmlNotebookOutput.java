@@ -65,7 +65,8 @@ public class HtmlNotebookOutput implements NotebookOutput {
   public final File workingDir;
   @javax.annotation.Nonnull
   private final PrintStream primaryOut;
-  private final int maxOutSize = 8 * 1024;
+  private int maxOutSize = 8 * 1024;
+  private int maxImageSize = 1600;
   /**
    * The Source root.
    */
@@ -314,7 +315,7 @@ public class HtmlNotebookOutput implements NotebookOutput {
         return "<img src='data:image/png;base64," + pngSrc + "' alt='" + caption + "'/>";
       }
       else {
-        @Nullable final BufferedImage stdImage = Util.resize(rawImage);
+        @Nullable final BufferedImage stdImage = Util.maximumSize(rawImage, getMaxImageSize());
         if (stdImage != rawImage) {
           ImageIO.write(rawImage, "png", new File(getResourceDir(), "raw" + thisImage + ".png"));
         }
@@ -389,5 +390,19 @@ public class HtmlNotebookOutput implements NotebookOutput {
   @Override
   public FileNanoHTTPD getHttpd() {
     return null;
+  }
+  
+  public int getMaxImageSize() {
+    return maxImageSize;
+  }
+  
+  public HtmlNotebookOutput setMaxImageSize(int maxImageSize) {
+    this.maxImageSize = maxImageSize;
+    return this;
+  }
+  
+  public HtmlNotebookOutput setMaxOutSize(int maxOutSize) {
+    this.maxOutSize = maxOutSize;
+    return this;
   }
 }
