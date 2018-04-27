@@ -25,11 +25,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.io.FileUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -98,27 +98,18 @@ public class JsonUtil {
    * @return the char sequence
    */
   public static CharSequence toJson(final Object obj) {
+    return toJson(obj, getMapper());
+  }
+  
+  @Nonnull
+  public static CharSequence toJson(final Object obj, final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try {
-      writeJson(outputStream, obj);
+      objectMapper.writeValue(outputStream, obj);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
     return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
-  }
-  
-  /**
-   * Write json.
-   *
-   * @param out the out
-   * @param obj the obj
-   * @throws IOException the io exception
-   */
-  public static void writeJson(@javax.annotation.Nonnull final OutputStream out, final Object obj) throws IOException {
-    final ObjectMapper mapper = getMapper();
-    @javax.annotation.Nonnull final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    mapper.writeValue(buffer, obj);
-    out.write(buffer.toByteArray());
   }
   
   /**
