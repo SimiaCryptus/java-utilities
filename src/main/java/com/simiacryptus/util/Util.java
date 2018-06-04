@@ -91,6 +91,7 @@ public class Util {
   };
   private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
   private static final String jvmId = UUID.randomUUID().toString();
+  public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(true)));
   
   /**
    * Add.
@@ -411,7 +412,7 @@ public class Util {
     fragments.forEach(out::println);
     out.println("</body></html>");
     out.close();
-    if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+    if (AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
       Desktop.getDesktop().browse(report.toURI());
   }
   
@@ -452,7 +453,8 @@ public class Util {
    * @param component the component
    * @return the buffered image
    */
-  public static BufferedImage toImage(@javax.annotation.Nonnull final Component component) {
+  public static BufferedImage toImage(final Component component) {
+    if (null == component) return null;
     try {
       com.simiacryptus.util.Util.layout(component);
       @javax.annotation.Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);

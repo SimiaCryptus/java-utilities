@@ -153,7 +153,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     });
     this.autobrowse = autobrowse;
     try {
-      log.info("Starting server at port " + httpPort);
+      log.info(String.format("Serving %s at http://localhost:%d", reportFile.getAbsoluteFile(), httpPort));
       this.httpd.init();
       if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
         new Thread(() -> {
@@ -205,38 +205,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   /**
    * Get markdown notebook output.
    *
-   * @return the markdown notebook output
-   * @param autobrowse
-   */
-  public static com.simiacryptus.util.io.MarkdownNotebookOutput get(final boolean autobrowse) {
-    try {
-      final StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
-      final String className = callingFrame.getClassName();
-      final String methodName = callingFrame.getMethodName();
-      @javax.annotation.Nonnull final String fileName = methodName + ".md";
-      @javax.annotation.Nonnull File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.", "/").replaceAll("\\$", "/")));
-      path = new File(path, fileName);
-      path.getParentFile().mkdirs();
-      return new com.simiacryptus.util.io.MarkdownNotebookOutput(path, methodName, autobrowse);
-    } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
-      throw new RuntimeException(e);
-    }
-  }
-  
-  /**
-   * Get markdown notebook output.
-   *
-   * @param source the source
+   * @param path the path
    * @param autobrowse
    * @return the markdown notebook output
    */
-  public static MarkdownNotebookOutput get(Object source, final boolean autobrowse) {
+  public static MarkdownNotebookOutput get(File path, final boolean autobrowse) {
     try {
       StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
-      String className = null == source ? callingFrame.getClassName() : source.getClass().getCanonicalName();
       String methodName = callingFrame.getMethodName();
-      CharSequence fileName = methodName + ".md";
-      File path = new File(Util.mkString(File.separator, "reports", className.replaceAll("\\.", "/").replaceAll("\\$", "/"), fileName));
       path.getParentFile().mkdirs();
       return new MarkdownNotebookOutput(path, methodName, autobrowse);
     } catch (FileNotFoundException e) {
