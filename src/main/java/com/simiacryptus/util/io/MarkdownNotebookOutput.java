@@ -108,7 +108,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   int anchor = 0;
   @Nullable
   private final String baseCodeUrl = CodeUtil.getGitBase();
-  
+  public static final Random random = new Random();
   /**
    * Instantiates a new Markdown notebook output.
    *
@@ -116,7 +116,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param name       the name
    * @throws FileNotFoundException the file not found exception
    */
-  public MarkdownNotebookOutput(@Nonnull final File reportFile, final String name, boolean autobrowse) throws FileNotFoundException {this(reportFile, name, new Random().nextInt(2 * 1024) + 2 * 1024, autobrowse);}
+  public MarkdownNotebookOutput(@Nonnull final File reportFile, final String name, boolean autobrowse) throws FileNotFoundException {
+    this(
+      reportFile,
+      name,
+      random.nextInt(2 * 1024) + 2 * 1024,
+      autobrowse
+    );
+  }
   
   /**
    * Instantiates a new Markdown notebook output.
@@ -736,7 +743,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     MarkdownNotebookOutput subreport = null;
     try {
       File subreportFile = new File(getRoot(), reportName + ".md");
-      subreport = new MarkdownNotebookOutput(subreportFile, reportName, -1, false);
+      subreport = new MarkdownNotebookOutput(subreportFile, reportName, -1, false) {
+        @Override
+        public void writeZip(final File root, final String baseName) {}
+      };
       this.p("Subreport: %s %s %s %s", reportName,
         this.link(subreportFile, "markdown"),
         this.link(new File(getRoot(), reportName + ".html"), "html"),
