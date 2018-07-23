@@ -19,10 +19,11 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.util.FileNanoHTTPD;
+import com.simiacryptus.util.FileHTTPD;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -31,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.function.Consumer;
 
 /**
  * The type Null notebook output.
@@ -139,6 +141,12 @@ public class NullNotebookOutput implements NotebookOutput {
   
   }
   
+  @Nonnull
+  @Override
+  public NotebookOutput onComplete(final Consumer<File>... tasks) {
+    return this;
+  }
+  
   @Nullable
   @Override
   public CharSequence getFrontMatterProperty(CharSequence key) {
@@ -162,7 +170,16 @@ public class NullNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public FileNanoHTTPD getHttpd() {
-    return null;
+  public FileHTTPD getHttpd() {
+    return new FileHTTPD() {
+      @Override
+      public void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+      }
+    };
+  }
+  
+  @Override
+  public void subreport(final String reportName, final Consumer<NotebookOutput> fn) {
+    fn.accept(new NullNotebookOutput(reportName));
   }
 }

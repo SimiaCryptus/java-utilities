@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.util.FileHTTPD;
 import com.simiacryptus.util.FileNanoHTTPD;
 import com.simiacryptus.util.TableOutput;
 import com.simiacryptus.util.Util;
@@ -130,8 +131,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     reportFile.getAbsoluteFile().getParentFile().mkdirs();
     primaryOut = new PrintStream(new FileOutputStream(reportFile));
     this.reportFile = reportFile;
-    this.httpd = new FileNanoHTTPD(reportFile.getParentFile(), httpPort);
-    this.httpd.addHandler("", "text/html", out -> {
+    this.httpd = httpPort <= 0 ? null : new FileNanoHTTPD(reportFile.getParentFile(), httpPort);
+    if (null != this.httpd) this.httpd.addHandler("", "text/html", out -> {
       try {
         writeHtmlAndPdf(getRoot(), testName());
         try (FileInputStream input = new FileInputStream(new File(getRoot(), testName() + ".html"))) {
@@ -141,7 +142,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         throw new RuntimeException(e);
       }
     });
-    this.httpd.addHandler("pdf", "application/pdf", out -> {
+    if (null != this.httpd) this.httpd.addHandler("pdf", "application/pdf", out -> {
       try {
         writeHtmlAndPdf(getRoot(), testName());
         try (FileInputStream input = new FileInputStream(new File(getRoot(), testName() + ".pdf"))) {
@@ -154,9 +155,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     this.autobrowse = autobrowse;
     try {
       log.info(String.format("Serving %s at http://localhost:%d", reportFile.getAbsoluteFile(), httpPort));
-      this.httpd.init();
+      if (null != this.httpd) this.httpd.init();
       if (!GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-        new Thread(() -> {
+        if (null != this.httpd) new Thread(() -> {
           try {
             while (!httpd.isAlive()) Thread.sleep(100);
             if (isAutobrowse()) Desktop.getDesktop().browse(new URI(String.format("http://localhost:%d", httpPort)));
@@ -172,7 +173,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           }
         });
       }
-      onComplete(file -> {
+      if (null != this.httpd) onComplete(file -> {
         httpd.stop();
       });
     } catch (IOException e) {
@@ -209,11 +210,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param autobrowse
    * @return the markdown notebook output
    */
-  public static MarkdownNotebookOutput get(File path, final boolean autobrowse) {
+  public static NotebookOutput get(File path, final boolean autobrowse) {
     try {
       StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[2];
       String methodName = callingFrame.getMethodName();
-      path.getParentFile().mkdirs();
+      path.getAbsoluteFile().getParentFile().mkdirs();
       return new MarkdownNotebookOutput(path, methodName, autobrowse);
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
@@ -236,15 +237,20 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   /**
-   * On complete markdown notebook output.
+   * Path to code file path.
    *
-   * @param tasks the tasks
-   * @return the markdown notebook output
+   * @param baseFile
+   * @param file the file
+   * @return the path
    */
-  @Nonnull
-  public MarkdownNotebookOutput onComplete(Consumer<File>... tasks) {
-    Arrays.stream(tasks).forEach(onComplete::add);
-    return this;
+  public static Path pathToCodeFile(final File baseFile, @Nonnull File file) {
+    try {
+      Path basePath = baseFile.getCanonicalFile().toPath();
+      Path path = file.getCanonicalFile().toPath();
+      return basePath.relativize(path);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Base: %s; File: %s", baseFile, file), e);
+    }
   }
   
   @Override
@@ -301,15 +307,16 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   /**
-   * Path to code file path.
+   * On complete markdown notebook output.
    *
-   * @param baseFile
-   * @param file the file
-   * @return the path
-   * @throws IOException the io exception
+   * @param tasks the tasks
+   * @return the markdown notebook output
    */
-  public static Path pathToCodeFile(final File baseFile, @Nonnull File file) throws IOException {
-    return baseFile.getCanonicalFile().toPath().relativize(file.getCanonicalFile().toPath());
+  @Override
+  @Nonnull
+  public NotebookOutput onComplete(Consumer<File>... tasks) {
+    Arrays.stream(tasks).forEach(onComplete::add);
+    return this;
   }
   
   /**
@@ -422,7 +429,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param baseName the base name
    * @throws IOException the io exception
    */
-  public void writeHtmlAndPdf(final File root, final String baseName) throws IOException {
+  public void writeHtmlAndPdf(final File root, final CharSequence baseName) throws IOException {
     MutableDataSet options = new MutableDataSet();
     List<Extension> extensions = Arrays.asList(
       TablesExtension.create(),
@@ -720,8 +727,57 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return MAX_OUTPUT;
   }
   
-  public FileNanoHTTPD getHttpd() {
-    return httpd;
+  public FileHTTPD getHttpd() {
+    return (null != this.httpd) ? httpd : new FileHTTPD() {
+      @Override
+      public void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+      }
+    };
+  }
+  
+  @Override
+  public void subreport(final String reportName, final Consumer<NotebookOutput> fn) {
+    MarkdownNotebookOutput subreport = null;
+    try {
+      File subreportFile = new File(getRoot(), reportName + ".md");
+      subreport = new MarkdownNotebookOutput(subreportFile, reportName, -1, false);
+      this.p("Subreport: %s %s %s %s", reportName,
+        this.link(subreportFile, "markdown"),
+        this.link(new File(getRoot(), reportName + ".html"), "html"),
+        this.link(new File(getRoot(), reportName + ".pdf"), "pdf"));
+      final MarkdownNotebookOutput finalSubreport = subreport;
+      this.getHttpd().addHandler(reportName + ".html", "text/html", out -> {
+        try {
+          finalSubreport.writeHtmlAndPdf(finalSubreport.getRoot(), finalSubreport.getName());
+          try (FileInputStream input = new FileInputStream(new File(finalSubreport.getRoot(), finalSubreport.getName() + ".html"))) {
+            IOUtils.copy(input, out);
+          }
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      });
+      this.getHttpd().addHandler(reportName + ".pdf", "application/pdf", out -> {
+        try {
+          finalSubreport.writeHtmlAndPdf(finalSubreport.getRoot(), finalSubreport.getName());
+          try (FileInputStream input = new FileInputStream(new File(finalSubreport.getRoot(), finalSubreport.getName() + ".pdf"))) {
+            IOUtils.copy(input, out);
+          }
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      });
+      fn.accept(subreport);
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    } finally {
+      if (null != subreport) {
+        try {
+          subreport.close();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
   }
   
   public boolean isAutobrowse() {
@@ -732,7 +788,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return maxImageSize;
   }
   
-  public MarkdownNotebookOutput setMaxImageSize(int maxImageSize) {
+  public NotebookOutput setMaxImageSize(int maxImageSize) {
     this.maxImageSize = maxImageSize;
     return this;
   }
