@@ -645,11 +645,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @javax.annotation.Nonnull
   @Override
   public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
-    try {
-      return "[" + text + "](" + pathToReportResource(file) + ")";
-    } catch (@javax.annotation.Nonnull final IOException e) {
-      throw new RuntimeException(e);
-    }
+    return "[" + text + "](" + pathToReportResource(file) + ")";
   }
 
   /**
