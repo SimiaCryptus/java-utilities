@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * The interface Notebook output.
@@ -263,5 +264,5 @@ public interface NotebookOutput extends Closeable {
    */
   FileHTTPD getHttpd();
   
-  void subreport(String reportName, Consumer<NotebookOutput> fn);
+  <T> T subreport(String reportName, Function<NotebookOutput, T> fn);
 }

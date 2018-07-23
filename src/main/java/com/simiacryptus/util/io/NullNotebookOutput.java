@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * The type Null notebook output.
@@ -179,7 +180,7 @@ public class NullNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public void subreport(final String reportName, final Consumer<NotebookOutput> fn) {
-    fn.accept(new NullNotebookOutput(reportName));
+  public <T> T subreport(String reportName, Function<NotebookOutput, T> fn) {
+    return fn.apply(new NullNotebookOutput(reportName));
   }
 }
