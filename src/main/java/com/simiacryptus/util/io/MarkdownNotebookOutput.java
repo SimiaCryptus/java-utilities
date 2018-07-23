@@ -66,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -656,15 +657,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    *
    * @param file the file
    * @return the string
-   * @throws IOException the io exception
    */
-  public CharSequence pathToReportResource(@javax.annotation.Nonnull File file) throws IOException {
+  public CharSequence pathToReportResource(@javax.annotation.Nonnull File file) {
     Path path = pathToCodeFile(this.reportFile, file);
     String pathSlash = path.normalize().toString().replaceAll("\\\\", "/");
     return pathSlash;
   }
   
-  public CharSequence pathToGitResource(@javax.annotation.Nonnull File file) throws IOException {
+  public CharSequence pathToGitResource(@javax.annotation.Nonnull File file) {
     Path path = pathToCodeFile(new File("."), file);
     String pathSlash = path.normalize().toString().replaceAll("\\\\", "/");
     if (null != baseCodeUrl) {
@@ -736,7 +736,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public void subreport(final String reportName, final Consumer<NotebookOutput> fn) {
+  public <T> T subreport(String reportName, Function<NotebookOutput, T> fn) {
     MarkdownNotebookOutput subreport = null;
     try {
       File subreportFile = new File(getRoot(), reportName + ".md");
@@ -766,7 +766,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           throw new RuntimeException(e);
         }
       });
-      fn.accept(subreport);
+      return fn.apply(subreport);
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     } finally {

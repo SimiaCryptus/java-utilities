@@ -53,6 +53,7 @@ public class MarkdownNotebookOutputTest {
               throw new RuntimeException(e);
             }
           });
+          return null;
         });
       });
     }
