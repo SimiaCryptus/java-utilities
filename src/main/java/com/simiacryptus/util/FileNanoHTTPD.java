@@ -40,7 +40,8 @@ import java.util.function.Function;
 /**
  * The type File nano httpd.
  */
-public class FileNanoHTTPD extends NanoHTTPD {
+public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
+  
   /**
    * The Custom handlers.
    */

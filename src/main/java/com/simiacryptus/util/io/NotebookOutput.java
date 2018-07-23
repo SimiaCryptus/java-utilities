@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.util.FileNanoHTTPD;
+import com.simiacryptus.util.FileHTTPD;
 import com.simiacryptus.util.lang.UncheckedSupplier;
 
 import javax.annotation.Nonnull;
@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.function.Consumer;
 
@@ -196,6 +197,12 @@ public interface NotebookOutput extends Closeable {
    */
   void p(CharSequence fmt, Object... args);
   
+  @Nonnull
+  NotebookOutput onComplete(Consumer<File>... tasks);
+  
+  @Override
+  void close() throws IOException;
+  
   /**
    * Sets fm prop.
    *
@@ -254,6 +261,7 @@ public interface NotebookOutput extends Closeable {
    *
    * @return the httpd
    */
-  FileNanoHTTPD getHttpd();
+  FileHTTPD getHttpd();
   
+  void subreport(String reportName, Consumer<NotebookOutput> fn);
 }
