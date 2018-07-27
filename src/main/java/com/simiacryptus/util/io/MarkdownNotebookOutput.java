@@ -253,7 +253,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   public static Path pathToCodeFile(final File baseFile, @Nonnull File file) {
     try {
-      Path basePath = baseFile.getCanonicalFile().toPath();
+      Path basePath = baseFile.getCanonicalFile().toPath().getParent();
       Path path = file.getCanonicalFile().toPath();
       return basePath.relativize(path);
     } catch (IOException e) {
@@ -740,49 +740,49 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @Override
   public <T> T subreport(String reportName, Function<NotebookOutput, T> fn) {
-    MarkdownNotebookOutput subreport = null;
     try {
-      File subreportFile = new File(getRoot(), reportName + ".md");
-      subreport = new MarkdownNotebookOutput(subreportFile, reportName, -1, false) {
+      File root = getRoot();
+      File subreportFile = new File(root, reportName);
+      MarkdownNotebookOutput subreport = new MarkdownNotebookOutput(subreportFile, reportName, -1, false) {
         @Override
         public void writeZip(final File root, final String baseName) {}
       };
-      this.p("Subreport: %s %s %s %s", reportName,
-        this.link(subreportFile, "markdown"),
-        this.link(new File(getRoot(), reportName + ".html"), "html"),
-        this.link(new File(getRoot(), reportName + ".pdf"), "pdf"));
-      final MarkdownNotebookOutput finalSubreport = subreport;
-      this.getHttpd().addHandler(reportName + ".html", "text/html", out -> {
-        try {
-          finalSubreport.writeHtmlAndPdf(finalSubreport.getRoot(), finalSubreport.getName());
-          try (FileInputStream input = new FileInputStream(new File(finalSubreport.getRoot(), finalSubreport.getName() + ".html"))) {
-            IOUtils.copy(input, out);
+      try {
+        this.p("Subreport: %s %s %s %s", reportName,
+               this.link(subreportFile, "markdown"),
+               this.link(new File(root, reportName + ".html"), "html"),
+               this.link(new File(root, reportName + ".pdf"), "pdf")
+        );
+        this.getHttpd().addHandler(reportName + ".html", "text/html", out -> {
+          try {
+            subreport.writeHtmlAndPdf(root, subreport.getName());
+            try (FileInputStream input = new FileInputStream(new File(root, subreport.getName() + ".html"))) {
+              IOUtils.copy(input, out);
+            }
+          } catch (IOException e) {
+            throw new RuntimeException(e);
           }
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      });
-      this.getHttpd().addHandler(reportName + ".pdf", "application/pdf", out -> {
-        try {
-          finalSubreport.writeHtmlAndPdf(finalSubreport.getRoot(), finalSubreport.getName());
-          try (FileInputStream input = new FileInputStream(new File(finalSubreport.getRoot(), finalSubreport.getName() + ".pdf"))) {
-            IOUtils.copy(input, out);
+        });
+        this.getHttpd().addHandler(reportName + ".pdf", "application/pdf", out -> {
+          try {
+            subreport.writeHtmlAndPdf(root, subreport.getName());
+            try (FileInputStream input = new FileInputStream(new File(root, subreport.getName() + ".pdf"))) {
+              IOUtils.copy(input, out);
+            }
+          } catch (IOException e) {
+            throw new RuntimeException(e);
           }
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      });
-      return fn.apply(subreport);
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
-    } finally {
-      if (null != subreport) {
+        });
+        return fn.apply(subreport);
+      } finally {
         try {
           subreport.close();
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
       }
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
     }
   }
   

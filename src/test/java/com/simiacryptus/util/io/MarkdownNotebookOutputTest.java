@@ -28,7 +28,7 @@ public class MarkdownNotebookOutputTest {
   
   @Test
   public void test() throws Exception {
-    try (NotebookOutput notebookOutput = MarkdownNotebookOutput.get(new File("target/test.md"), true)) {
+    try (NotebookOutput notebookOutput = MarkdownNotebookOutput.get(new File("target/report/test.md"), true)) {
       IntStream.range(0, 10).forEach(i -> {
         try {
           Thread.sleep(1000);
@@ -42,12 +42,12 @@ public class MarkdownNotebookOutputTest {
   
   @Test
   public void testSubreport() throws Exception {
-    try (NotebookOutput notebookOutput = MarkdownNotebookOutput.get(new File("target/testSubreport.md"), true)) {
+    try (NotebookOutput notebookOutput = MarkdownNotebookOutput.get(new File("target/report/testSubreport.md"), true)) {
       IntStream.range(0, 10).forEach(i -> {
         notebookOutput.subreport("Iteration_" + i, subreport -> {
           IntStream.range(0, 10).forEach(j -> {
             try {
-              Thread.sleep(1000);
+              Thread.sleep(100);
               subreport.p(String.format("Iteration: %d / %d", i, j));
             } catch (InterruptedException e) {
               throw new RuntimeException(e);
