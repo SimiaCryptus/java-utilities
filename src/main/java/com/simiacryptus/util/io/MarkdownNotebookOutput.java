@@ -109,6 +109,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Nullable
   private final String baseCodeUrl = CodeUtil.getGitBase();
   public static final Random random = new Random();
+  
   /**
    * Instantiates a new Markdown notebook output.
    *
@@ -134,7 +135,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param autobrowse
    * @throws FileNotFoundException the file not found exception
    */
-  public MarkdownNotebookOutput(@javax.annotation.Nonnull final File reportFile, final String name, final int httpPort, final boolean autobrowse) throws FileNotFoundException {
+  public MarkdownNotebookOutput(
+    @javax.annotation.Nonnull final File reportFile,
+    final String name,
+    final int httpPort,
+    final boolean autobrowse
+  ) throws FileNotFoundException
+  {
     this.name = name;
     reportFile.getAbsoluteFile().getParentFile().mkdirs();
     primaryOut = new PrintStream(new FileOutputStream(reportFile));
@@ -214,7 +221,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   /**
    * Get markdown notebook output.
    *
-   * @param path the path
+   * @param path       the path
    * @param autobrowse
    * @return the markdown notebook output
    */
@@ -248,7 +255,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * Path to code file path.
    *
    * @param baseFile
-   * @param file the file
+   * @param file     the file
    * @return the path
    */
   public static Path pathToCodeFile(final File baseFile, @Nonnull File file) {
@@ -310,7 +317,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   public void writeZip(final File root, final String baseName) throws IOException {
     try (@Nonnull ZipOutputStream out = new ZipOutputStream(new FileOutputStream(new File(root, baseName + ".zip")))) {
-      writeArchive(root, root, out, file -> !file.getName().equals(baseName + ".zip") && !file.getName().equals(baseName + ".pdf"));
+      writeArchive(root, root, out, file -> !file.getName().equals(baseName + ".zip") && !file.getName().endsWith(".pdf"));
     }
   }
   
@@ -355,23 +362,23 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   public void writeArchive(final File root, final File dir, final ZipOutputStream out, final Predicate<? super File> filter) {
     Arrays.stream(dir.listFiles()).filter(filter).forEach(file ->
-    {
-      if (file.isDirectory()) {
-        writeArchive(root, file, out, filter);
-      }
-      else {
-        String absRoot = root.getAbsolutePath();
-        String absFile = file.getAbsolutePath();
-        String relativeFile = absFile.substring(absRoot.length());
-        if (relativeFile.startsWith(File.separator)) relativeFile = relativeFile.substring(1);
-        try {
-          out.putNextEntry(new ZipEntry(relativeFile));
-          IOUtils.copy(new FileInputStream(file), out);
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
-      }
-    });
+                                                          {
+                                                            if (file.isDirectory()) {
+                                                              writeArchive(root, file, out, filter);
+                                                            }
+                                                            else {
+                                                              String absRoot = root.getAbsolutePath();
+                                                              String absFile = file.getAbsolutePath();
+                                                              String relativeFile = absFile.substring(absRoot.length());
+                                                              if (relativeFile.startsWith(File.separator)) relativeFile = relativeFile.substring(1);
+                                                              try {
+                                                                out.putNextEntry(new ZipEntry(relativeFile));
+                                                                IOUtils.copy(new FileInputStream(file), out);
+                                                              } catch (IOException e) {
+                                                                throw new RuntimeException(e);
+                                                              }
+                                                            }
+                                                          });
   }
   
   /**
@@ -384,10 +391,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       out.println("---");
       frontMatter.forEach((key, value) -> {
         CharSequence escaped = StringEscapeUtils.escapeJson(String.valueOf(value))
-          .replaceAll("\n", " ")
-          .replaceAll(":", "&#58;")
-          .replaceAll("\\{", "\\{")
-          .replaceAll("\\}", "\\}");
+                                 .replaceAll("\n", " ")
+                                 .replaceAll(":", "&#58;")
+                                 .replaceAll("\\{", "\\{")
+                                 .replaceAll("\\}", "\\}");
         out.println(String.format("%s: %s", key, escaped));
       });
       out.println("---");
@@ -583,8 +590,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         codeLink = this.baseCodeUrl + "/src/main/java/" + packagePath + "/" + callingFrame.getFileName();
       }
       out(anchor(anchorId()) + "Code from [%s:%s](%s#L%s) executed in %.2f seconds (%.3f gc): ",
-        callingFrame.getFileName(), callingFrame.getLineNumber(),
-        codeLink, callingFrame.getLineNumber(), result.obj.seconds(), result.obj.gc_seconds());
+          callingFrame.getFileName(), callingFrame.getLineNumber(),
+          codeLink, callingFrame.getLineNumber(), result.obj.seconds(), result.obj.gc_seconds()
+      );
       CharSequence text = sourceCode.replaceAll("\n", "\n  ");
       out("```java");
       out("  " + text);
@@ -654,7 +662,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
     return "[" + text + "](" + pathToReportResource(file) + ")";
   }
-
+  
   /**
    * Code file string.
    *
@@ -721,7 +729,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       @javax.annotation.Nonnull final String prefix = logSrc.substring(0, maxLog);
       logSrc = prefix + String.format(
         (prefix.endsWith("\n") ? "" : "\n") + "~```\n~..." + file(logSrc, "skipping %s bytes") + "...\n~```\n",
-        logSrc.length() - 2 * maxLog) + logSrc.substring(logSrc.length() - maxLog);
+        logSrc.length() - 2 * maxLog
+      ) + logSrc.substring(logSrc.length() - maxLog);
     }
     return logSrc;
   }
@@ -740,20 +749,26 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @Override
   public <T> T subreport(String reportName, Function<NotebookOutput, T> fn) {
+    MarkdownNotebookOutput outer = this;
     try {
       File root = getRoot();
       File subreportFile = new File(root, reportName);
       MarkdownNotebookOutput subreport = new MarkdownNotebookOutput(subreportFile, reportName, -1, false) {
         @Override
+        public FileHTTPD getHttpd() {
+          return outer.getHttpd();
+        }
+  
+        @Override
         public void writeZip(final File root, final String baseName) {}
       };
       try {
-        this.p("Subreport: %s %s %s %s", reportName,
-               this.link(subreportFile, "markdown"),
-               this.link(new File(root, reportName + ".html"), "html"),
-               this.link(new File(root, reportName + ".pdf"), "pdf")
+        outer.p("Subreport: %s %s %s %s", reportName,
+                outer.link(subreportFile, "markdown"),
+                outer.link(new File(root, reportName + ".html"), "html"),
+                outer.link(new File(root, reportName + ".pdf"), "pdf")
         );
-        this.getHttpd().addHandler(reportName + ".html", "text/html", out -> {
+        getHttpd().addHandler(reportName + ".html", "text/html", out -> {
           try {
             subreport.writeHtmlAndPdf(root, subreport.getName());
             try (FileInputStream input = new FileInputStream(new File(root, subreport.getName() + ".html"))) {
@@ -763,7 +778,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
             throw new RuntimeException(e);
           }
         });
-        this.getHttpd().addHandler(reportName + ".pdf", "application/pdf", out -> {
+        getHttpd().addHandler(reportName + ".pdf", "application/pdf", out -> {
           try {
             subreport.writeHtmlAndPdf(root, subreport.getName());
             try (FileInputStream input = new FileInputStream(new File(root, subreport.getName() + ".pdf"))) {
@@ -773,7 +788,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
             throw new RuntimeException(e);
           }
         });
-        return fn.apply(subreport);
+        try {
+          return fn.apply(subreport);
+        } catch (Throwable e) {
+          return subreport.code(() -> {
+            throw e;
+          });
+        }
       } finally {
         try {
           subreport.close();

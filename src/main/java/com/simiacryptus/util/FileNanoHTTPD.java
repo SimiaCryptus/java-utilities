@@ -21,6 +21,8 @@ package com.simiacryptus.util;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import fi.iki.elonen.NanoHTTPD;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
@@ -41,6 +43,7 @@ import java.util.function.Function;
  * The type File nano httpd.
  */
 public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
+  static final Logger log = LoggerFactory.getLogger(FileNanoHTTPD.class);
   
   /**
    * The Custom handlers.
@@ -80,12 +83,15 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
   /**
    * Sync handler function.
    *
-   * @param pool     the pool
    * @param mimeType the mime type
    * @param logic    the logic
    * @return the function
    */
-  public static Function<IHTTPSession, Response> handler(final ExecutorService pool, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+  public static Function<IHTTPSession, Response> handler(
+    final String mimeType,
+    @Nonnull final Consumer<OutputStream> logic
+  )
+  {
     return session -> {
       try (@javax.annotation.Nonnull ByteArrayOutputStream out = new ByteArrayOutputStream()) {
         logic.accept(out);
@@ -93,7 +99,6 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
         final byte[] bytes = out.toByteArray();
         return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, mimeType, new ByteArrayInputStream(bytes), bytes.length);
       } catch (@javax.annotation.Nonnull final IOException e) {
-        e.printStackTrace();
         throw new RuntimeException(e);
       }
     };
@@ -118,7 +123,7 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
    * @param logic    the logic
    */
   public void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
-    addSessionHandler(path, FileNanoHTTPD.handler(pool, mimeType, logic));
+    addSessionHandler(path, FileNanoHTTPD.handler(mimeType, logic));
   }
   
   /**
@@ -157,6 +162,14 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
         }
       }
       else {
+        log.warn(String.format(
+          "Not Found: %s\n\tCurrent Path: %s\n\t%s",
+          requestPath,
+          root.getAbsolutePath(),
+          handlers.keySet().stream()
+            .map(handlerPath -> "Installed Handler: " + handlerPath)
+            .reduce((a, b) -> a + "\n\t" + b).get()
+        ));
         return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found");
       }
     }
