@@ -74,7 +74,7 @@ public class LOG {
       if (null == args[i]) {
         continue;
       }
-      final Class<? extends Object> c = args[i].getClass();
+      final Class<?> c = args[i].getClass();
       if (c.isArray()) {
         if (args[i] instanceof double[]) {
           args[i] = LOG.toString((double[]) args[i]);

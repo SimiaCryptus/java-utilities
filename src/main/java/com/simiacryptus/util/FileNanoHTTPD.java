@@ -148,7 +148,6 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
       try {
         return handlers.get(requestPath).apply(session);
       } catch (Throwable e) {
-        e.printStackTrace();
         throw new RuntimeException(e);
       }
     }

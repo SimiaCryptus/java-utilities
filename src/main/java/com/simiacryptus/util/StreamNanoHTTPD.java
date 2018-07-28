@@ -136,7 +136,6 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
             onComplete.release();
           }
         } catch (@javax.annotation.Nonnull final IOException e) {
-          e.printStackTrace();
           throw new RuntimeException(e);
         }
       });
