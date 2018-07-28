@@ -50,6 +50,7 @@ import java.io.PrintStream;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -582,5 +583,35 @@ public class Util {
   @Nonnull
   public static String dateStr(final String formatStr) {
     return new SimpleDateFormat(formatStr).format(new Date());
+  }
+  
+  @Nonnull
+  public static String stripPrefix(String str, final String prefix) {
+    while (str.startsWith(prefix)) {
+      str = str.substring(prefix.length());
+    }
+    return str;
+  }
+  
+  /**
+   * Path to code file path.
+   *
+   * @param baseFile
+   * @param file     the file
+   * @return the path
+   */
+  public static Path pathToFile(final File baseFile, @Nonnull File file) {
+    try {
+      Path basePath = baseFile.getCanonicalFile().toPath().getParent();
+      Path path = file.getCanonicalFile().toPath();
+      return basePath.relativize(path);
+    } catch (IOException e) {
+      throw new RuntimeException(String.format("Base: %s; File: %s", baseFile, file), e);
+    }
+  }
+  
+  @Nonnull
+  public static String toString(final Path path) {
+    return path.normalize().toString().replaceAll("\\\\", "/");
   }
 }
