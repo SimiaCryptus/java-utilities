@@ -488,7 +488,7 @@ public class Util {
   public static CharSequence toInlineImage(@javax.annotation.Nonnull final LabeledObject<BufferedImage> img) {
     @javax.annotation.Nonnull final ByteArrayOutputStream b = new ByteArrayOutputStream();
     try {
-      ImageIO.write(img.data, "PNG", b);
+      ImageIO.write(img.data, "png", b);
     } catch (@javax.annotation.Nonnull final RuntimeException e) {
       throw e;
     } catch (@javax.annotation.Nonnull final Exception e) {
