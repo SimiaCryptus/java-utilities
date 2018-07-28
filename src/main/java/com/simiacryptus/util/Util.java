@@ -138,7 +138,7 @@ public class Util {
         return inner.apply(key);
       }
     });
-    return cache::apply;
+    return cache::getUnchecked;
   }
   
   /**
