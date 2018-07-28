@@ -72,6 +72,8 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static com.simiacryptus.util.Util.*;
+
 /**
  * The type Markdown notebook output.
  */
@@ -249,23 +251,6 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     if (e.getCause() != null && e.getCause() != e)
       return e.getClass().getSimpleName() + " / " + getExceptionString(e.getCause());
     return e.getClass().getSimpleName();
-  }
-  
-  /**
-   * Path to code file path.
-   *
-   * @param baseFile
-   * @param file     the file
-   * @return the path
-   */
-  public static Path pathToCodeFile(final File baseFile, @Nonnull File file) {
-    try {
-      Path basePath = baseFile.getCanonicalFile().toPath().getParent();
-      Path path = file.getCanonicalFile().toPath();
-      return basePath.relativize(path);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Base: %s; File: %s", baseFile, file), e);
-    }
   }
   
   @Override
@@ -660,7 +645,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @javax.annotation.Nonnull
   @Override
   public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
-    return "[" + text + "](" + pathToReportResource(file) + ")";
+    return "[" + text + "](" + pathToResource(file) + ")";
   }
   
   /**
@@ -669,15 +654,13 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * @param file the file
    * @return the string
    */
-  public CharSequence pathToReportResource(@javax.annotation.Nonnull File file) {
-    Path path = pathToCodeFile(this.reportFile, file);
-    String pathSlash = path.normalize().toString().replaceAll("\\\\", "/");
-    return pathSlash;
+  public CharSequence pathToResource(@javax.annotation.Nonnull File file) {
+    return stripPrefix(Util.toString(pathToFile(reportFile, file)), "/");
   }
   
   public CharSequence pathToGitResource(@javax.annotation.Nonnull File file) {
-    Path path = pathToCodeFile(new File("."), file);
-    String pathSlash = path.normalize().toString().replaceAll("\\\\", "/");
+    Path path = pathToFile(new File("."), file);
+    String pathSlash = Util.toString(path);
     if (null != baseCodeUrl) {
       try {
         URI resolve = new URI(baseCodeUrl).resolve(pathSlash);

@@ -140,23 +140,20 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
   
   @Override
   public Response serve(final IHTTPSession session) {
-    String requestPath = session.getUri();
-    while (requestPath.startsWith("/")) {
-      requestPath = requestPath.substring(1);
-    }
-    if (handlers.containsKey(requestPath)) {
+    String requestPath = Util.stripPrefix(session.getUri(), "/");
+    @javax.annotation.Nonnull final File file = new File(root, requestPath);
+    if (null != file && file.exists() && file.isFile()) {
       try {
-        return handlers.get(requestPath).apply(session);
-      } catch (Throwable e) {
+        return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
+      } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
         throw new RuntimeException(e);
       }
     }
     else {
-      @javax.annotation.Nonnull final File file = new File(root, requestPath);
-      if (null != file && file.exists() && file.isFile()) {
+      if (handlers.containsKey(requestPath)) {
         try {
-          return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
-        } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
+          return handlers.get(requestPath).apply(session);
+        } catch (Throwable e) {
           throw new RuntimeException(e);
         }
       }
