@@ -453,7 +453,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Override
   public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
     try {
-      return new FileOutputStream(new File(getResourceDir(), name.toString()));
+      return new FileOutputStream(new File(getResourceDir(), Util.stripPrefix(name.toString(), "etc/")));
     } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
       throw new RuntimeException(e);
     }
