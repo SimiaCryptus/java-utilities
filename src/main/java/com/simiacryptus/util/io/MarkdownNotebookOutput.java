@@ -169,6 +169,18 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         throw new RuntimeException(e);
       }
     });
+    if (null != this.httpd) this.httpd.addHandler("shutdown", "text/plain", out -> {
+      try (PrintStream printStream = new PrintStream(out)) {
+        printStream.print("Closing...");
+        try {
+          close();
+          printStream.print("Done");
+        } catch (IOException e) {
+          e.printStackTrace(printStream);
+        }
+      }
+      System.exit(0);
+    });
     this.autobrowse = autobrowse;
     try {
       log.info(String.format("Serving %s at http://localhost:%d", reportFile.getAbsoluteFile(), httpPort));
