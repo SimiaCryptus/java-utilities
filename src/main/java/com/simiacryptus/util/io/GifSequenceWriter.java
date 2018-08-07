@@ -131,7 +131,7 @@ public class GifSequenceWriter {
    *
    * @param format
    * @return a GIF ImageWriter object
-   * @throws IIOException if no GIF image writers are returned
+   * @throws IIOException if no GIF png writers are returned
    */
   private static ImageWriter getWriter(@Nonnull String format) throws IIOException {
     Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix(format);

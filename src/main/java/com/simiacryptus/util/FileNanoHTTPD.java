@@ -143,6 +143,7 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
     String requestPath = Util.stripPrefix(session.getUri(), "/");
     @javax.annotation.Nonnull final File file = new File(root, requestPath);
     if (null != file && file.exists() && file.isFile()) {
+      handlers.remove(requestPath);
       try {
         return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
       } catch (@javax.annotation.Nonnull final FileNotFoundException e) {

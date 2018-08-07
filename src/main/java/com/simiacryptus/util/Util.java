@@ -428,11 +428,11 @@ public class Util {
   }
   
   /**
-   * Resize buffered image.
+   * Resize buffered png.
    *
-   * @param image the image
+   * @param image the png
    * @param width
-   * @return the buffered image
+   * @return the buffered png
    */
   @Nullable
   public static BufferedImage maximumSize(@Nullable final BufferedImage image, int width) {
@@ -449,10 +449,10 @@ public class Util {
   }
   
   /**
-   * To image buffered image.
+   * To png buffered png.
    *
    * @param component the component
-   * @return the buffered image
+   * @return the buffered png
    */
   public static BufferedImage toImage(final Component component) {
     if (null == component) return null;
@@ -470,7 +470,7 @@ public class Util {
   }
   
   /**
-   * To inline image string.
+   * To inline png string.
    *
    * @param img the img
    * @param alt the alt
@@ -481,7 +481,7 @@ public class Util {
   }
   
   /**
-   * To inline image string.
+   * To inline png string.
    *
    * @param img the img
    * @return the string
@@ -497,7 +497,7 @@ public class Util {
     }
     final byte[] byteArray = b.toByteArray();
     final CharSequence encode = Base64.getEncoder().encodeToString(byteArray);
-    return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
+    return "<img src=\"data:png/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
   
   /**
