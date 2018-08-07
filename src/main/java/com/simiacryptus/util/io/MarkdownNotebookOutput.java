@@ -465,10 +465,15 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Override
   public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
     try {
-      return new FileOutputStream(new File(getResourceDir(), Util.stripPrefix(name.toString(), "etc/")));
+      return new FileOutputStream(resolveResource(name));
     } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
       throw new RuntimeException(e);
     }
+  }
+  
+  @Nonnull
+  public File resolveResource(@Nonnull final CharSequence name) {
+    return new File(getResourceDir(), Util.stripPrefix(name.toString(), "etc/"));
   }
   
   @javax.annotation.Nonnull
@@ -534,23 +539,50 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String image(@Nullable final BufferedImage rawImage, final CharSequence caption) {
+  public String png(@Nullable final BufferedImage rawImage, final CharSequence caption) {
     if (null == rawImage) return "";
-    new ByteArrayOutputStream();
-    final int thisImage = ++com.simiacryptus.util.io.MarkdownNotebookOutput.imageNumber;
-    @javax.annotation.Nonnull final String fileName = name + "." + thisImage + ".png";
-    @javax.annotation.Nonnull final File file = new File(getResourceDir(), fileName);
+    @Nonnull final File file = pngFile(rawImage, new File(getResourceDir(), name + "." + ++MarkdownNotebookOutput.imageNumber + ".png"));
+    return anchor(anchorId()) + "![" + caption + "](etc/" + file.getName() + ")";
+  }
+  
+  @Override
+  @Nonnull
+  public File pngFile(@Nonnull final BufferedImage rawImage, final File file) {
     @Nullable final BufferedImage stdImage = Util.maximumSize(rawImage, getMaxImageSize());
     try {
       if (stdImage != rawImage) {
-        @javax.annotation.Nonnull final String rawName = name + "_raw." + thisImage + ".png";
-        ImageIO.write(rawImage, "png", new File(getResourceDir(), rawName));
+        @Nonnull final String rawName = file.getName().replace(".png", "_raw.png");
+        ImageIO.write(rawImage, "png", new File(file.getParent(), rawName));
       }
       ImageIO.write(stdImage, "png", file);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    return file;
+  }
+  
+  @javax.annotation.Nonnull
+  @Override
+  public String jpg(@Nullable final BufferedImage rawImage, final CharSequence caption) {
+    if (null == rawImage) return "";
+    @Nonnull final File file = jpgFile(rawImage, new File(getResourceDir(), name + "." + ++MarkdownNotebookOutput.imageNumber + ".jpg"));
     return anchor(anchorId()) + "![" + caption + "](etc/" + file.getName() + ")";
+  }
+  
+  @Override
+  @Nonnull
+  public File jpgFile(@Nonnull final BufferedImage rawImage, final File file) {
+    @Nullable final BufferedImage stdImage = Util.maximumSize(rawImage, getMaxImageSize());
+    try {
+      if (stdImage != rawImage) {
+        @Nonnull final String rawName = file.getName().replace(".jpg", "_raw.jpg");
+        ImageIO.write(rawImage, "jpg", new File(file.getParent(), rawName));
+      }
+      ImageIO.write(stdImage, "jpg", file);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return file;
   }
   
   @Override
@@ -616,11 +648,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           escape = true;//
         }
         else if (eval instanceof Component) {
-          str = image(Util.toImage((Component) eval), "Result");
+          str = png(Util.toImage((Component) eval), "Result");
           escape = false;
         }
         else if (eval instanceof BufferedImage) {
-          str = image((BufferedImage) eval, "Result");
+          str = png((BufferedImage) eval, "Result");
           escape = false;
         }
         else if (eval instanceof TableOutput) {

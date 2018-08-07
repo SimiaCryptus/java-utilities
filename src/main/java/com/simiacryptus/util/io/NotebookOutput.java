@@ -85,6 +85,15 @@ public interface NotebookOutput extends Closeable {
     return code(fn, Integer.MAX_VALUE, 3);
   }
   
+  @Nonnull
+  File pngFile(@Nonnull BufferedImage rawImage, File file);
+  
+  @Nonnull
+  String jpg(@Nullable BufferedImage rawImage, CharSequence caption);
+  
+  @Nonnull
+  File jpgFile(@Nonnull BufferedImage rawImage, File file);
+  
   /**
    * Code t.
    *
@@ -164,12 +173,12 @@ public interface NotebookOutput extends Closeable {
   /**
    * Image string.
    *
-   * @param rawImage the raw image
+   * @param rawImage the raw png
    * @param caption  the caption
    * @return the string
    */
   @Nonnull
-  String image(BufferedImage rawImage, CharSequence caption);
+  String png(BufferedImage rawImage, CharSequence caption);
   
   /**
    * Link string.

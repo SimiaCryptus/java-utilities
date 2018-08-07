@@ -60,6 +60,24 @@ public class NullNotebookOutput implements NotebookOutput {
   
   }
   
+  @Nonnull
+  @Override
+  public File pngFile(@Nonnull final BufferedImage rawImage, final File file) {
+    return new File(getResourceDir(), "");
+  }
+  
+  @Nonnull
+  @Override
+  public String jpg(@Nullable final BufferedImage rawImage, final CharSequence caption) {
+    return "";
+  }
+  
+  @Nonnull
+  @Override
+  public File jpgFile(@Nonnull final BufferedImage rawImage, final File file) {
+    return null;
+  }
+  
   @Override
   public <T> T code(@javax.annotation.Nonnull UncheckedSupplier<T> fn, int maxLog, int framesNo) {
     try {
@@ -127,7 +145,7 @@ public class NullNotebookOutput implements NotebookOutput {
   
   @javax.annotation.Nonnull
   @Override
-  public String image(BufferedImage rawImage, CharSequence caption) {
+  public String png(BufferedImage rawImage, CharSequence caption) {
     return "";
   }
   
