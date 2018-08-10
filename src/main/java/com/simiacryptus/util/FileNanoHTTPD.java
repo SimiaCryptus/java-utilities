@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -111,19 +112,19 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
    * @param value the value
    * @return the function
    */
-  public Function<IHTTPSession, Response> addSessionHandler(final CharSequence path, final Function<IHTTPSession, Response> value) {
-    return handlers.put(path, value);
+  public Closeable addSessionHandler(final CharSequence path, final Function<IHTTPSession, Response> value) {
+    Function<IHTTPSession, Response> put = handlers.put(path, value);
+    return () -> handlers.put(path, put);
   }
   
   /**
    * Add sync handler.
-   *
-   * @param path     the path
+   *  @param path     the path
    * @param mimeType the mime type
    * @param logic    the logic
    */
-  public void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
-    addSessionHandler(path, FileNanoHTTPD.handler(mimeType, logic));
+  public Closeable addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+    return addSessionHandler(path, FileNanoHTTPD.handler(mimeType, logic));
   }
   
   /**
@@ -142,8 +143,14 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
   public Response serve(final IHTTPSession session) {
     String requestPath = Util.stripPrefix(session.getUri(), "/");
     @javax.annotation.Nonnull final File file = new File(root, requestPath);
-    if (null != file && file.exists() && file.isFile()) {
-      handlers.remove(requestPath);
+    if (handlers.containsKey(requestPath)) {
+      try {
+        return handlers.get(requestPath).apply(session);
+      } catch (Throwable e) {
+        throw new RuntimeException(e);
+      }
+    }
+    else if (null != file && file.exists() && file.isFile()) {
       try {
         return NanoHTTPD.newFixedLengthResponse(Response.Status.OK, null, new FileInputStream(file), file.length());
       } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
@@ -151,24 +158,15 @@ public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
       }
     }
     else {
-      if (handlers.containsKey(requestPath)) {
-        try {
-          return handlers.get(requestPath).apply(session);
-        } catch (Throwable e) {
-          throw new RuntimeException(e);
-        }
-      }
-      else {
-        log.warn(String.format(
-          "Not Found: %s\n\tCurrent Path: %s\n\t%s",
-          requestPath,
-          root.getAbsolutePath(),
-          handlers.keySet().stream()
-            .map(handlerPath -> "Installed Handler: " + handlerPath)
-            .reduce((a, b) -> a + "\n\t" + b).get()
-        ));
-        return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found");
-      }
+      log.warn(String.format(
+        "Not Found: %s\n\tCurrent Path: %s\n\t%s",
+        requestPath,
+        root.getAbsolutePath(),
+        handlers.keySet().stream()
+          .map(handlerPath -> "Installed Handler: " + handlerPath)
+          .reduce((a, b) -> a + "\n\t" + b).get()
+      ));
+      return NanoHTTPD.newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "Not Found");
     }
   }
   

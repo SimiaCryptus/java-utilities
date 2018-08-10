@@ -497,7 +497,7 @@ public class Util {
     }
     final byte[] byteArray = b.toByteArray();
     final CharSequence encode = Base64.getEncoder().encodeToString(byteArray);
-    return "<img src=\"data:png/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
+    return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
   
   /**
