@@ -23,9 +23,11 @@ import com.simiacryptus.util.io.AsyncOutputStream;
 import com.simiacryptus.util.io.TeeOutputStream;
 import fi.iki.elonen.NanoHTTPD;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -152,14 +154,13 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
   
   /**
    * Add async handler.
-   *
-   * @param path     the path
+   *  @param path     the path
    * @param mimeType the mime type
    * @param logic    the logic
    * @param async    the async
    */
-  public void addAsyncHandler(final CharSequence path, final String mimeType, @javax.annotation.Nonnull final Consumer<OutputStream> logic, final boolean async) {
-    addSessionHandler(path, com.simiacryptus.util.StreamNanoHTTPD.asyncHandler(pool, mimeType, logic, async));
+  public Closeable addAsyncHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic, final boolean async) {
+    return addSessionHandler(path, com.simiacryptus.util.StreamNanoHTTPD.asyncHandler(pool, mimeType, logic, async));
   }
   
   @Override

@@ -20,9 +20,10 @@
 package com.simiacryptus.util;
 
 import javax.annotation.Nonnull;
+import java.io.Closeable;
 import java.io.OutputStream;
 import java.util.function.Consumer;
 
 public interface FileHTTPD {
-  void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic);
+  Closeable addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic);
 }

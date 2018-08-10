@@ -46,6 +46,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -769,7 +770,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   public FileHTTPD getHttpd() {
     return (null != this.httpd) ? httpd : new FileHTTPD() {
       @Override
-      public void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+      public Closeable addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+        return () -> {};
       }
     };
   }

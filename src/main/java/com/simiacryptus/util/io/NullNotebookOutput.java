@@ -26,6 +26,7 @@ import org.apache.commons.io.IOUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -192,7 +193,8 @@ public class NullNotebookOutput implements NotebookOutput {
   public FileHTTPD getHttpd() {
     return new FileHTTPD() {
       @Override
-      public void addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+      public Closeable addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
+        return () -> {};
       }
     };
   }
