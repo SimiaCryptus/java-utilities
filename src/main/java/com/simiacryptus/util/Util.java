@@ -94,6 +94,11 @@ public class Util {
   private static final String jvmId = UUID.randomUUID().toString();
   public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(true)));
   
+  public static void browse(final URI uri) throws IOException {
+    if (Util.AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+      Desktop.getDesktop().browse(uri);
+  }
+  
   /**
    * Add.
    *
@@ -594,7 +599,7 @@ public class Util {
   }
   
   /**
-   * Path to code file path.
+   * Path to run file path.
    *
    * @param baseFile
    * @param file     the file

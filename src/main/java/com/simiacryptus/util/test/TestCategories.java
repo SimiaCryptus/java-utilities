@@ -31,7 +31,7 @@ public class TestCategories {
   }
   
   /**
-   * The type Research code.
+   * The type Research run.
    */
   public static class ResearchCode {
   }

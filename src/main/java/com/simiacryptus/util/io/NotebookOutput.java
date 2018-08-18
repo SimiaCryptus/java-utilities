@@ -56,8 +56,8 @@ public interface NotebookOutput extends Closeable {
    *
    * @param fn the fn
    */
-  default void code(@Nonnull final Runnable fn) {
-    this.code(() -> {
+  default void run(@Nonnull final Runnable fn) {
+    this.eval(() -> {
       fn.run();
       return null;
     }, getMaxOutSize(), 3);
@@ -70,8 +70,8 @@ public interface NotebookOutput extends Closeable {
    * @param fn  the fn
    * @return the t
    */
-  default <T> T code(final UncheckedSupplier<T> fn) {
-    return code(fn, getMaxOutSize(), 3);
+  default <T> T eval(final UncheckedSupplier<T> fn) {
+    return eval(fn, getMaxOutSize(), 3);
   }
   
   /**
@@ -82,7 +82,7 @@ public interface NotebookOutput extends Closeable {
    * @return the t
    */
   default <T> T out(final UncheckedSupplier<T> fn) {
-    return code(fn, Integer.MAX_VALUE, 3);
+    return eval(fn, Integer.MAX_VALUE, 3);
   }
   
   @Nonnull
@@ -103,7 +103,7 @@ public interface NotebookOutput extends Closeable {
    * @param framesNo the frames no
    * @return the t
    */
-  <T> T code(UncheckedSupplier<T> fn, int maxLog, int framesNo);
+  <T> T eval(UncheckedSupplier<T> fn, int maxLog, int framesNo);
   
   /**
    * File output stream.

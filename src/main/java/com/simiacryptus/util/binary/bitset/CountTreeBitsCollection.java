@@ -183,7 +183,7 @@ public class CountTreeBitsCollection extends
    * Read branch counts branch counts.
    *
    * @param in   the in
-   * @param code the code
+   * @param code the run
    * @param size the size
    * @return the branch counts
    * @throws IOException the io exception
@@ -241,7 +241,7 @@ public class CountTreeBitsCollection extends
    *
    * @param in   the in
    * @param max  the max
-   * @param code the code
+   * @param code the run
    * @return the long
    * @throws IOException the io exception
    */
