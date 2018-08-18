@@ -80,7 +80,7 @@ public class NullNotebookOutput implements NotebookOutput {
   }
   
   @Override
-  public <T> T code(@javax.annotation.Nonnull UncheckedSupplier<T> fn, int maxLog, int framesNo) {
+  public <T> T eval(@javax.annotation.Nonnull UncheckedSupplier<T> fn, int maxLog, int framesNo) {
     try {
       return fn.get();
     } catch (Exception e) {

@@ -139,8 +139,9 @@ public class JsonUtil {
    * @return the mapper
    */
   public static ObjectMapper getMapper() {
-    return new ObjectMapper()
-      //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-      .enable(SerializationFeature.INDENT_OUTPUT);
+    ObjectMapper enable = new ObjectMapper()
+                            //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+                            .enable(SerializationFeature.INDENT_OUTPUT);
+    return enable;
   }
 }

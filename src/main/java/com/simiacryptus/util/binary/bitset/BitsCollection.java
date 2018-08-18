@@ -102,13 +102,13 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
    */
   public enum CodeType {
     /**
-     * Terminal code type.
+     * Terminal run type.
      */
     Terminal, /**
-     * Prefix code type.
+     * Prefix run type.
      */
     Prefix, /**
-     * Unknown code type.
+     * Unknown run type.
      */
     Unknown
   }

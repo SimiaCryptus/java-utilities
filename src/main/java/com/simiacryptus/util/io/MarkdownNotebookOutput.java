@@ -588,7 +588,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   
   @Override
   @SuppressWarnings("unchecked")
-  public <T> T code(@javax.annotation.Nonnull final UncheckedSupplier<T> fn, final int maxLog, final int framesNo) {
+  public <T> T eval(@javax.annotation.Nonnull final UncheckedSupplier<T> fn, final int maxLog, final int framesNo) {
     try {
       final StackTraceElement callingFrame = Thread.currentThread().getStackTrace()[framesNo];
       final String sourceCode = CodeUtil.getInnerText(callingFrame);
@@ -820,7 +820,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
         try {
           return fn.apply(subreport);
         } catch (Throwable e) {
-          return subreport.code(() -> {
+          return subreport.eval(() -> {
             throw e;
           });
         }

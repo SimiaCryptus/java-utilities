@@ -35,7 +35,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * The type Hamming code.
+ * The type Hamming run.
  *
  * @param <T> the type parameter
  */
@@ -58,7 +58,7 @@ public class HammingCode<T extends Comparable<T>> {
   protected final long totalWeight;
   
   /**
-   * Instantiates a new Hamming code.
+   * Instantiates a new Hamming run.
    *
    * @param symbols the symbols
    */
@@ -87,7 +87,7 @@ public class HammingCode<T extends Comparable<T>> {
   }
   
   /**
-   * Is prefix free code boolean.
+   * Is prefix free run boolean.
    *
    * @param keySet the key set
    * @return the boolean
@@ -276,7 +276,7 @@ public class HammingCode<T extends Comparable<T>> {
     final TreeMap<X, Bits> index;
   
     /**
-     * Instantiates a new Sub code.
+     * Instantiates a new Sub run.
      *
      * @param count the count
      * @param item  the item
@@ -291,7 +291,7 @@ public class HammingCode<T extends Comparable<T>> {
     }
   
     /**
-     * Instantiates a new Sub code.
+     * Instantiates a new Sub run.
      *
      * @param zero the zero
      * @param one  the one
@@ -334,18 +334,18 @@ public class HammingCode<T extends Comparable<T>> {
   }
   
   /**
-   * The type Hamming code collection.
+   * The type Hamming run collection.
    */
   public class HammingCodeCollection extends CountTreeBitsCollection {
     /**
-     * Instantiates a new Hamming code collection.
+     * Instantiates a new Hamming run collection.
      */
     public HammingCodeCollection() {
       super();
     }
   
     /**
-     * Instantiates a new Hamming code collection.
+     * Instantiates a new Hamming run collection.
      *
      * @param data the data
      * @throws IOException the io exception
@@ -355,7 +355,7 @@ public class HammingCode<T extends Comparable<T>> {
     }
   
     /**
-     * Instantiates a new Hamming code collection.
+     * Instantiates a new Hamming run collection.
      *
      * @param data the data
      * @throws IOException the io exception
