@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>java-util</artifactId>
-    <version>1.4.23</version>
+    <version>1.5.0</version>
     <description>Miscellaneous utilities for Java 8</description>
 
     <properties>

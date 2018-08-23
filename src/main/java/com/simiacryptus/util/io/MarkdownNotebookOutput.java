@@ -266,6 +266,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return e.getClass().getSimpleName();
   }
   
+  public static NotebookOutput get(final String s) {
+    return get(new File(s), true);
+  }
+  
   @Override
   public void close() throws IOException {
     if (null != primaryOut) {
