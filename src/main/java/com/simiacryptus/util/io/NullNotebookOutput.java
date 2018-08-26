@@ -21,18 +21,14 @@ package com.simiacryptus.util.io;
 
 import com.simiacryptus.util.FileHTTPD;
 import com.simiacryptus.util.lang.UncheckedSupplier;
-import org.apache.commons.io.IOUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -64,7 +60,7 @@ public class NullNotebookOutput implements NotebookOutput {
   @Nonnull
   @Override
   public File pngFile(@Nonnull final BufferedImage rawImage, final File file) {
-    return new File(getResourceDir(), "");
+    return null;
   }
   
   @Nonnull
@@ -92,41 +88,25 @@ public class NullNotebookOutput implements NotebookOutput {
   @javax.annotation.Nonnull
   @Override
   public OutputStream file(@javax.annotation.Nonnull CharSequence name) {
-    try {
-      return new FileOutputStream(name.toString());
-    } catch (FileNotFoundException e) {
-      throw new RuntimeException(e);
-    }
+    return new ByteArrayOutputStream();
   }
   
   @javax.annotation.Nonnull
   @Override
   public String file(@javax.annotation.Nonnull CharSequence data, CharSequence caption) {
-    try {
-      @javax.annotation.Nonnull File file = File.createTempFile("temp", "bin");
-      IOUtils.write(data.toString().getBytes(Charset.forName("UTF-8")), new FileOutputStream(file));
-      return file.getCanonicalPath();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return "";
   }
   
   @javax.annotation.Nonnull
   @Override
   public CharSequence file(@javax.annotation.Nonnull byte[] data, @javax.annotation.Nonnull CharSequence filename, CharSequence caption) {
-    return file(new String(data, Charset.forName("UTF-8")), filename, caption);
+    return "";
   }
   
   @javax.annotation.Nonnull
   @Override
   public String file(@javax.annotation.Nonnull CharSequence data, @javax.annotation.Nonnull CharSequence fileName, CharSequence caption) {
-    try {
-      @javax.annotation.Nonnull File file = new File(fileName.toString());
-      IOUtils.write(data.toString().getBytes(Charset.forName("UTF-8")), new FileOutputStream(file));
-      return file.getCanonicalPath();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return "";
   }
   
   @Override
