@@ -606,12 +606,17 @@ public class Bits implements Comparable<Bits> {
   /**
    * Pad right bits.
    *
-   * @param peekBits the peek bits
+   * @param targetLength the peek bits
    * @return the bits
    */
-  public Bits padRight(int peekBits) {
-    if (bitLength >= peekBits) return this;
-    return this.concatenate(ZERO).padRight(peekBits);
+  public Bits padRight(long targetLength) {
+    if (bitLength >= targetLength) return this;
+    return this.concatenate(ZERO).padRight(targetLength);
+  }
+  
+  public Bits padLeft(int targetLength) {
+    if (bitLength >= targetLength) return this;
+    return ZERO.concatenate(this).padLeft(targetLength);
   }
   
 }

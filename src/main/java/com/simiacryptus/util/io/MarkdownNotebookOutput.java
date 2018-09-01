@@ -578,14 +578,18 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Nonnull
   public File jpgFile(@Nonnull final BufferedImage rawImage, final File file) {
     @Nullable final BufferedImage stdImage = Util.maximumSize(rawImage, getMaxImageSize());
-    try {
-      if (stdImage != rawImage) {
+    if (stdImage != rawImage) {
+      try {
         @Nonnull final String rawName = file.getName().replace(".jpg", "_raw.jpg");
         ImageIO.write(rawImage, "jpg", new File(file.getParent(), rawName));
+      } catch (IOException e) {
+        throw new RuntimeException(String.format("Error processing image with dims (%d,%d)", rawImage.getWidth(), rawImage.getHeight()), e);
       }
+    }
+    try {
       ImageIO.write(stdImage, "jpg", file);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new RuntimeException(String.format("Error processing image with dims (%d,%d)", stdImage.getWidth(), stdImage.getHeight()), e);
     }
     return file;
   }
