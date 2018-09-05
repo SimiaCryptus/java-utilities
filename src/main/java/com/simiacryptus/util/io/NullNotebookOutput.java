@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -140,10 +141,16 @@ public class NullNotebookOutput implements NotebookOutput {
   public void p(CharSequence fmt, Object... args) {
   
   }
-  
+
   @Nonnull
   @Override
-  public NotebookOutput onComplete(final Consumer<File>... tasks) {
+  public File getRoot() {
+    return new File(".");
+  }
+
+  @Nonnull
+  @Override
+  public NotebookOutput onComplete(final Runnable... tasks) {
     return this;
   }
   
@@ -171,16 +178,41 @@ public class NullNotebookOutput implements NotebookOutput {
   
   @Override
   public FileHTTPD getHttpd() {
-    return new FileHTTPD() {
-      @Override
-      public Closeable addHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic) {
-        return () -> {};
-      }
-    };
+    return new NullHTTPD();
   }
   
   @Override
   public <T> T subreport(String reportName, Function<NotebookOutput, T> fn) {
     return fn.apply(new NullNotebookOutput(reportName));
+  }
+
+  @Override
+  public URI getCurrentHome() {
+    return new File(".").toURI();
+  }
+
+  @Override
+  public NotebookOutput setCurrentHome(URI currentHome) {
+    return this;
+  }
+
+  @Override
+  public URI getArchiveHome() {
+    return new File(".").toURI();
+  }
+
+  @Override
+  public NotebookOutput setArchiveHome(URI archiveHome) {
+    return this;
+  }
+
+  @Override
+  public NotebookOutput setName(String name) {
+    return this;
+  }
+
+  @Override
+  public NotebookOutput setAutobrowse(boolean autobrowse) {
+    return this;
   }
 }

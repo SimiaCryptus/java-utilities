@@ -29,6 +29,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -206,9 +207,12 @@ public interface NotebookOutput extends Closeable {
    * @param args the args
    */
   void p(CharSequence fmt, Object... args);
-  
+
   @Nonnull
-  NotebookOutput onComplete(Consumer<File>... tasks);
+  File getRoot();
+
+  @Nonnull
+  NotebookOutput onComplete(Runnable... tasks);
   
   @Override
   void close() throws IOException;
@@ -274,4 +278,16 @@ public interface NotebookOutput extends Closeable {
   FileHTTPD getHttpd();
   
   <T> T subreport(String reportName, Function<NotebookOutput, T> fn);
+
+  URI getCurrentHome();
+
+  NotebookOutput setCurrentHome(URI currentHome);
+
+  URI getArchiveHome();
+
+  NotebookOutput setArchiveHome(URI archiveHome);
+
+  NotebookOutput setName(String name);
+
+  NotebookOutput setAutobrowse(boolean autobrowse);
 }
