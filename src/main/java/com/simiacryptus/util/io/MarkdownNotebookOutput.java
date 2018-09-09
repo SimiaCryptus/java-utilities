@@ -53,7 +53,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.function.Consumer;
@@ -102,8 +101,6 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * The Anchor.
    */
   int anchor = 0;
-  @Nullable
-  private final String baseCodeUrl = CodeUtil.getGitBase();
   public static final Random random = new Random();
 
 
@@ -623,7 +620,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       });
       out(anchor(anchorId()) + "Code from [%s:%s](%s#L%s) executed in %.2f seconds (%.3f gc): ",
           callingFrame.getFileName(), callingFrame.getLineNumber(),
-          codeUrl(callingFrame), callingFrame.getLineNumber(),
+          CodeUtil.codeUrl(callingFrame), callingFrame.getLineNumber(),
           result.obj.seconds(), result.obj.gc_seconds()
       );
       CharSequence text = sourceCode.replaceAll("\n", "\n  ");
@@ -685,19 +682,6 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
 
-  private CharSequence codeUrl(StackTraceElement callingFrame) {
-    try {
-      return codeUrl(CodeUtil.findFile(callingFrame));
-    } catch (Throwable e) {
-      String[] split = callingFrame.getClassName().split("\\.");
-      String packagePath = Arrays.asList(split).subList(0, split.length - 1).stream().reduce((a, b) -> a + "/" + b).orElse("");
-      String[] fileSplit = callingFrame.getFileName().split("\\.");
-      String language = fileSplit[fileSplit.length - 1];
-      String codePath = ("/src/main/" + language + "/" + packagePath + "/" + callingFrame.getFileName()).replaceAll("//", "/");
-      return this.baseCodeUrl + codePath;
-    }
-  }
-
   @javax.annotation.Nonnull
   @Override
   public CharSequence link(@javax.annotation.Nonnull final File file, final CharSequence text) {
@@ -716,21 +700,6 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   public CharSequence pathTo(@javax.annotation.Nonnull File file) {
     return stripPrefix(Util.toString(pathToFile(getReportFile(), file)), "/");
-  }
-
-  public CharSequence codeUrl(@javax.annotation.Nonnull File file) {
-    Path path = pathToFile(new File("."), file);
-    String pathSlash = Util.toString(path);
-    if (null != baseCodeUrl) {
-      try {
-        URI resolve = new URI(baseCodeUrl).resolve(pathSlash);
-        return resolve.normalize().toString();
-      } catch (URISyntaxException e) {
-        throw new RuntimeException(e);
-      }
-    } else {
-      return pathSlash;
-    }
   }
 
   @Override
