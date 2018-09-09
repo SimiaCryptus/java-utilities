@@ -686,15 +686,16 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
 
   private CharSequence codeUrl(StackTraceElement callingFrame) {
-    CharSequence codeLink;
     try {
-      codeLink = codeUrl(CodeUtil.findFile(callingFrame));
+      return codeUrl(CodeUtil.findFile(callingFrame));
     } catch (Throwable e) {
       String[] split = callingFrame.getClassName().split("\\.");
-      String packagePath = Arrays.asList(split).subList(0, split.length - 1).stream().reduce((a, b) -> a + "/" + b).get();
-      codeLink = this.baseCodeUrl + "/src/main/java/" + packagePath + "/" + callingFrame.getFileName();
+      String packagePath = Arrays.asList(split).subList(0, split.length - 1).stream().reduce((a, b) -> a + "/" + b).orElse("");
+      String[] fileSplit = callingFrame.getFileName().split("\\.");
+      String language = fileSplit[fileSplit.length - 1];
+      String codePath = ("/src/main/" + language + "/" + packagePath + "/" + callingFrame.getFileName()).replaceAll("//", "/");
+      return this.baseCodeUrl + codePath;
     }
-    return codeLink;
   }
 
   @javax.annotation.Nonnull
