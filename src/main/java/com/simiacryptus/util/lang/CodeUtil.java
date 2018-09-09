@@ -123,7 +123,7 @@ public class CodeUtil {
   public static String getInnerText(@javax.annotation.Nonnull final StackTraceElement callingFrame) {
   
     String[] split = callingFrame.getClassName().split("\\.");
-    String fileResource = Arrays.stream(split).limit(split.length - 1).reduce((a, b) -> a + "/" + b).get() + "/" + callingFrame.getFileName();
+    String fileResource = Arrays.stream(split).limit(split.length - 1).reduce((a, b) -> a + "/" + b).orElse("") + "/" + callingFrame.getFileName();
     InputStream resourceAsStream = CodeUtil.class.getClassLoader().getResourceAsStream(fileResource);
   
     try {

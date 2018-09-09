@@ -105,7 +105,9 @@ public interface NotebookOutput extends Closeable {
    * @return the t
    */
   <T> T eval(UncheckedSupplier<T> fn, int maxLog, int framesNo);
-  
+
+  void write() throws IOException;
+
   /**
    * File output stream.
    *

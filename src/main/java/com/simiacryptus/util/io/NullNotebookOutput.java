@@ -25,10 +25,7 @@ import com.simiacryptus.util.lang.UncheckedSupplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.File;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -85,7 +82,11 @@ public class NullNotebookOutput implements NotebookOutput {
     }
     
   }
-  
+
+  @Override
+  public void write() throws IOException {
+  }
+
   @javax.annotation.Nonnull
   @Override
   public OutputStream file(@javax.annotation.Nonnull CharSequence name) {

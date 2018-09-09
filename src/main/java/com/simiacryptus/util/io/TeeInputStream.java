@@ -37,7 +37,7 @@ public class TeeInputStream extends InputStream {
    * Instantiates a new Tee input stream.
    *
    * @param inputStream the input stream
-   * @param cache       the cache
+   * @param cache       the cacheLocal
    */
   public TeeInputStream(final InputStream inputStream, final OutputStream cache) {
     this.inputStream = inputStream;
