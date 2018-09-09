@@ -38,18 +38,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -69,6 +59,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -78,7 +69,7 @@ import java.util.zip.GZIPInputStream;
  * The type Util.
  */
 public class Util {
-  
+
   /**
    * The constant R.
    */
@@ -146,52 +137,65 @@ public class Util {
     });
     return cache::getUnchecked;
   }
-  
+
   /**
    * Cache input stream.
    *
-   * @param url  the url
    * @param file the file
+   * @param url
    * @return the input stream
    * @throws IOException              the io exception
    * @throws NoSuchAlgorithmException the no such algorithm exception
    * @throws KeyManagementException   the key management exception
    */
-  public static InputStream cache(String url, String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    if (new File(file).exists()) {
-      return new FileInputStream(file);
-    }
-    else {
-      TrustManager[] trustManagers = {
-        new X509TrustManager() {
-          public X509Certificate[] getAcceptedIssuers() {
-            return new X509Certificate[0];
-          }
-          
-          public void checkClientTrusted(
-            X509Certificate[] certs, String authType) {
-          }
-          
-          public void checkServerTrusted(
-            X509Certificate[] certs, String authType) {
-          }
-        }
-      };
-      SSLContext ctx = SSLContext.getInstance("TLS");
-      ctx.init(null, trustManagers, null);
-      SSLSocketFactory sslFactory = ctx.getSocketFactory();
-      URLConnection urlConnection = new URL(url).openConnection();
-      if (urlConnection instanceof javax.net.ssl.HttpsURLConnection) {
-        HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
-        conn.setSSLSocketFactory(sslFactory);
-        conn.setRequestMethod("GET");
-      }
-      InputStream inputStream = urlConnection.getInputStream();
+  public static InputStream cacheLocal(String file, URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    return cacheLocal(file, getStreamSupplier(url));
+  }
+
+  public static InputStream cacheLocal(String file, Supplier<InputStream> fn) throws FileNotFoundException {
+    File f = new File(file);
+    if (f.exists()) {
+      return new FileInputStream(f);
+    } else {
       FileOutputStream cache = new FileOutputStream(file);
-      return new TeeInputStream(inputStream, cache);
+      return new TeeInputStream(fn.get(), cache);
     }
   }
-  
+
+  public static Supplier<InputStream> getStreamSupplier(URI url) {
+    return () -> {
+      TrustManager[] trustManagers = {
+          new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+              return new X509Certificate[0];
+            }
+
+            public void checkClientTrusted(
+                X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(
+                X509Certificate[] certs, String authType) {
+            }
+          }
+      };
+      try {
+        SSLContext ctx = SSLContext.getInstance("TLS");
+        ctx.init(null, trustManagers, null);
+        SSLSocketFactory sslFactory = ctx.getSocketFactory();
+        URLConnection urlConnection = url.toURL().openConnection();
+        if (urlConnection instanceof HttpsURLConnection) {
+          HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
+          conn.setSSLSocketFactory(sslFactory);
+          conn.setRequestMethod("GET");
+        }
+        return urlConnection.getInputStream();
+      } catch (KeyManagementException | NoSuchAlgorithmException | IOException e) {
+        throw new RuntimeException(e);
+      }
+    };
+  }
+
   /**
    * Cache input stream.
    *

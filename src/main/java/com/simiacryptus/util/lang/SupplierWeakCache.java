@@ -24,7 +24,7 @@ import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
 /**
- * The type Supplier weak cache.
+ * The type Supplier weak cacheLocal.
  *
  * @param <T> the type parameter
  */
@@ -34,7 +34,7 @@ public class SupplierWeakCache<T> implements Supplier<T> {
   private WeakReference<T> ptr;
   
   /**
-   * Instantiates a new Supplier weak cache.
+   * Instantiates a new Supplier weak cacheLocal.
    *
    * @param fn the fn
    */
