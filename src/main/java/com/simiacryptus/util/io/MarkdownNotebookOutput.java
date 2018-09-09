@@ -623,9 +623,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
           CodeUtil.codeUrl(callingFrame), callingFrame.getLineNumber(),
           result.obj.seconds(), result.obj.gc_seconds()
       );
-      CharSequence text = sourceCode.replaceAll("\n", "\n  ");
       out("```java");
-      out("  " + text);
+      out("  " + sourceCode.replaceAll("\n", "\n  "));
       out("```");
 
       if (!result.log.isEmpty()) {

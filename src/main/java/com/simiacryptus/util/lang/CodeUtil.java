@@ -87,7 +87,9 @@ public class CodeUtil {
   @javax.annotation.Nonnull
   public static URI findFile(@Nonnull final StackTraceElement callingFrame) {
     @javax.annotation.Nonnull final CharSequence[] packagePath = callingFrame.getClassName().split("\\.");
-    @javax.annotation.Nonnull final String path = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator)) + File.separator + callingFrame.getFileName();
+    String pkg = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator));
+    if (!pkg.isEmpty()) pkg += File.separator;
+    @javax.annotation.Nonnull final String path = pkg + callingFrame.getFileName();
     return com.simiacryptus.util.lang.CodeUtil.findFile(path);
   }
 
@@ -99,7 +101,7 @@ public class CodeUtil {
    */
   @javax.annotation.Nonnull
   public static URI findFile(@Nonnull final String path) {
-    URL classpathEntry = System.class.getClassLoader().getResource(path);
+    URL classpathEntry = ClassLoader.getSystemResource(path);
     if (classpathEntry != null) {
       try {
         logger.info(String.format("Resolved %s to %s", path, classpathEntry));
@@ -140,34 +142,37 @@ public class CodeUtil {
 
     String[] split = callingFrame.getClassName().split("\\.");
     String fileResource = Arrays.stream(split).limit(split.length - 1).reduce((a, b) -> a + "/" + b).orElse("") + "/" + callingFrame.getFileName();
-    InputStream resourceAsStream = ClassLoader.getSystemResourceAsStream(fileResource);
+    URL resource = ClassLoader.getSystemResource(fileResource);
 
     try {
-      List<String> allLines = null;
-      if (null != resourceAsStream) {
+      final List<String> allLines;
+      if (null != resource) {
         try {
-          allLines = IOUtils.readLines(resourceAsStream, "UTF-8");
+          allLines = IOUtils.readLines(resource.openStream(), "UTF-8");
+          logger.info(String.format("Resolved %s to %s (%s lines)", callingFrame, resource, allLines.size()));
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
-      }
-      if (null == allLines) {
+      } else {
         @Nonnull final URI file = CodeUtil.findFile(callingFrame);
         assert null != file;
         allLines = IOUtils.readLines(file.toURL().openStream(), "UTF-8");
+        logger.info(String.format("Resolved %s to %s (%s lines)", callingFrame, file, allLines.size()));
       }
 
       final int start = callingFrame.getLineNumber() - 1;
       final CharSequence txt = allLines.get(start);
       @javax.annotation.Nonnull final CharSequence indent = com.simiacryptus.util.lang.CodeUtil.getIndent(txt);
       @javax.annotation.Nonnull final ArrayList<CharSequence> lines = new ArrayList<>();
-      for (int i = start + 1; i < allLines.size() && (com.simiacryptus.util.lang.CodeUtil.getIndent(allLines.get(i)).length() > indent.length() || String.valueOf(allLines.get(i)).trim().isEmpty()); i++) {
-        final String line = allLines.get(i);
-        lines.add(line.substring(Math.min(indent.length(), line.length())));
+      int lineNum = start + 1;
+      for (; lineNum < allLines.size() && (com.simiacryptus.util.lang.CodeUtil.getIndent(allLines.get(lineNum)).length() > indent.length() || String.valueOf(allLines.get(lineNum)).trim().isEmpty()); lineNum++) {
+        final String line = allLines.get(lineNum);
+        lines.add(line.substring(Math.min(indent.length(), line.length())).toString());
       }
+      logger.info(String.format("Selected %s lines (%s to %s) for %s", lines.size(), start, lineNum, callingFrame));
       return lines.stream().collect(Collectors.joining("\n"));
-
     } catch (@javax.annotation.Nonnull final Throwable e) {
+      logger.warn("Error assembling lines", e);
       return "";
     }
   }
