@@ -104,7 +104,7 @@ public class CodeUtil {
     URL classpathEntry = ClassLoader.getSystemResource(path);
     if (classpathEntry != null) {
       try {
-        logger.info(String.format("Resolved %s to %s", path, classpathEntry));
+        logger.debug(String.format("Resolved %s to %s", path, classpathEntry));
         return classpathEntry.toURI();
       } catch (URISyntaxException e) {
         throw new RuntimeException(e);
@@ -113,7 +113,7 @@ public class CodeUtil {
     for (final File root : com.simiacryptus.util.lang.CodeUtil.codeRoots) {
       @javax.annotation.Nonnull final File file = new File(root, path);
       if (file.exists()) {
-        logger.info(String.format("Resolved %s to %s", path, file));
+        logger.debug(String.format("Resolved %s to %s", path, file));
         return file.toURI();
       }
     }
@@ -149,7 +149,7 @@ public class CodeUtil {
       if (null != resource) {
         try {
           allLines = IOUtils.readLines(resource.openStream(), "UTF-8");
-          logger.info(String.format("Resolved %s to %s (%s lines)", callingFrame, resource, allLines.size()));
+          logger.debug(String.format("Resolved %s to %s (%s lines)", callingFrame, resource, allLines.size()));
         } catch (IOException e) {
           throw new RuntimeException(e);
         }
@@ -157,7 +157,7 @@ public class CodeUtil {
         @Nonnull final URI file = CodeUtil.findFile(callingFrame);
         assert null != file;
         allLines = IOUtils.readLines(file.toURL().openStream(), "UTF-8");
-        logger.info(String.format("Resolved %s to %s (%s lines)", callingFrame, file, allLines.size()));
+        logger.debug(String.format("Resolved %s to %s (%s lines)", callingFrame, file, allLines.size()));
       }
 
       final int start = callingFrame.getLineNumber() - 1;
@@ -169,7 +169,7 @@ public class CodeUtil {
         final String line = allLines.get(lineNum);
         lines.add(line.substring(Math.min(indent.length(), line.length())).toString());
       }
-      logger.info(String.format("Selected %s lines (%s to %s) for %s", lines.size(), start, lineNum, callingFrame));
+      logger.debug(String.format("Selected %s lines (%s to %s) for %s", lines.size(), start, lineNum, callingFrame));
       return lines.stream().collect(Collectors.joining("\n"));
     } catch (@javax.annotation.Nonnull final Throwable e) {
       logger.warn("Error assembling lines", e);

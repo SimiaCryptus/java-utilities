@@ -455,8 +455,10 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     );
     Parser parser = Parser.builder(options).extensions(extensions).build();
     HtmlRenderer renderer = HtmlRenderer.builder(options).extensions(extensions).escapeHtml(false).indentSize(2).softBreak("\n").build();
+    String txt = toString(toc) + "\n\n" + toString(markdownData);
+    FileUtils.write(new File(getRoot(), getName() + ".md"), txt, "UTF-8");
     File htmlFile = new File(getRoot(), getName() + ".html");
-    String html = renderer.render(parser.parse(toString(toc) + "\n\n" + toString(markdownData)));
+    String html = renderer.render(parser.parse(txt));
     html = "<html><body>" + html + "</body></html>";
     try (FileOutputStream out = new FileOutputStream(htmlFile)) {
       IOUtils.write(html, out, Charset.forName("UTF-8"));
