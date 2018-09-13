@@ -20,6 +20,8 @@
 package com.simiacryptus.util;
 
 import com.simiacryptus.util.data.DoubleStatistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,7 +45,7 @@ import java.util.stream.Collectors;
  * The type Table output.
  */
 public class TableOutput {
-  
+  public static final Logger logger = LoggerFactory.getLogger(TableOutput.class);
   /**
    * The Rows.
    */
@@ -106,11 +108,14 @@ public class TableOutput {
   public void putRow(@javax.annotation.Nonnull final Map<CharSequence, Object> properties) {
     for (@javax.annotation.Nonnull final Entry<CharSequence, Object> prop : properties.entrySet()) {
       final CharSequence propKey = prop.getKey();
-      final Class<?> propClass = prop.getValue().getClass();
-      if (!propClass.equals(schema.getOrDefault(propKey, propClass))) {
-        throw new RuntimeException("Schema mismatch for " + propKey);
+      if (null != propKey) {
+        final Class<?> propClass = prop.getValue().getClass();
+        Class<?> currentClass = schema.getOrDefault(propKey, propClass);
+        if (!propClass.equals(currentClass)) {
+          logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, currentClass, propClass));
+        }
+        schema.putIfAbsent(propKey, propClass);
       }
-      schema.putIfAbsent(propKey, propClass);
     }
     rows.add(new HashMap<>(properties));
   }
