@@ -17,22 +17,50 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+package com.simiacryptus.lang;
 
 /**
- * The interface Json formattable.
+ * The type Tuple 2.
+ *
+ * @param <A> the type parameter
+ * @param <B> the type parameter
  */
-public interface JsonFormattable {
-  
+public class Tuple2<A, B> {
   /**
-   * To json json object.
-   *
-   * @return the json object
-   * @throws JSONException the json exception
+   * The 1.
    */
-  JSONObject toJson() throws JSONException;
-  
+  public final A _1;
+  /**
+   * The 2.
+   */
+  public final B _2;
+
+  /**
+   * Instantiates a new Tuple 2.
+   *
+   * @param a the a
+   * @param b the b
+   */
+  public Tuple2(final A a, final B b) {
+    _1 = a;
+    _2 = b;
+  }
+
+  /**
+   * Gets first.
+   *
+   * @return the first
+   */
+  public A getFirst() {
+    return _1;
+  }
+
+  /**
+   * Gets second.
+   *
+   * @return the second
+   */
+  public B getSecond() {
+    return _2;
+  }
 }

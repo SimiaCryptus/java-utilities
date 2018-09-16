@@ -26,12 +26,12 @@ import java.util.Arrays;
  * The type Int array.
  */
 public class IntArray {
-  
+
   /**
    * The Data.
    */
   public final int[] data;
-  
+
   /**
    * Instantiates a new Int array.
    *
@@ -40,17 +40,17 @@ public class IntArray {
   public IntArray(final int[] data) {
     this.data = data;
   }
-  
+
   @Override
   public boolean equals(@Nullable final Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    
+
     @javax.annotation.Nonnull final com.simiacryptus.util.data.IntArray intArray = (com.simiacryptus.util.data.IntArray) o;
-    
+
     return Arrays.equals(data, intArray.data);
   }
-  
+
   /**
    * Get int.
    *
@@ -60,12 +60,12 @@ public class IntArray {
   public int get(final int i) {
     return data[i];
   }
-  
+
   @Override
   public int hashCode() {
     return Arrays.hashCode(data);
   }
-  
+
   /**
    * Size int.
    *

@@ -33,7 +33,7 @@ public class FairAsyncWorkQueue implements Runnable {
   private final AtomicBoolean isRunning = new AtomicBoolean(false);
   private final ExecutorService pool = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());
   private final LinkedBlockingDeque<Runnable> queue = new LinkedBlockingDeque<>();
-  
+
   @Override
   public void run() {
     if (isRunning.getAndSet(true)) {
@@ -42,8 +42,7 @@ public class FairAsyncWorkQueue implements Runnable {
           final Runnable poll = queue.poll();
           if (null != poll) {
             poll.run();
-          }
-          else {
+          } else {
             break;
           }
         }
@@ -52,7 +51,7 @@ public class FairAsyncWorkQueue implements Runnable {
       }
     }
   }
-  
+
   /**
    * Submit.
    *

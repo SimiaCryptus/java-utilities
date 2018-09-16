@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.io;
+package com.simiacryptus.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
@@ -53,7 +53,7 @@ public class IOUtil {
       return new byte[8 * 1024 * 1024];
     }
   };
-  
+
   /**
    * Write json.
    *
@@ -70,7 +70,7 @@ public class IOUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Read json t.
    *
@@ -86,7 +86,7 @@ public class IOUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Write kryo.
    *
@@ -105,7 +105,7 @@ public class IOUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Write string.
    *
@@ -120,7 +120,7 @@ public class IOUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Read kryo t.
    *

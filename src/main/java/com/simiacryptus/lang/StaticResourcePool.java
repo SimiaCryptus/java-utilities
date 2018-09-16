@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -34,11 +34,11 @@ import java.util.function.Predicate;
  * @param <T> the type parameter
  */
 public class StaticResourcePool<T> {
-  
+
   @javax.annotation.Nonnull
   private final List<T> all;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
-  
+
   /**
    * Instantiates a new Static resource pool.
    *
@@ -49,14 +49,16 @@ public class StaticResourcePool<T> {
     this.all = Collections.unmodifiableList(new ArrayList<>(items));
     pool.addAll(getAll());
   }
-  
+
   /**
    * With u.
    *
    * @param f the f
    */
-  public void apply(@Nonnull final Consumer<T> f) {apply(f, x -> true, false);}
-  
+  public void apply(@Nonnull final Consumer<T> f) {
+    apply(f, x -> true, false);
+  }
+
   /**
    * With u.
    *
@@ -72,7 +74,7 @@ public class StaticResourcePool<T> {
       this.pool.add(poll);
     }
   }
-  
+
   @Nonnull
   private T get(Predicate<T> filter, final boolean exclusive) {
     ArrayList<T> sampled = new ArrayList<>();
@@ -81,8 +83,7 @@ public class StaticResourcePool<T> {
       while (null != poll) {
         if (filter.test(poll)) {
           return poll;
-        }
-        else {
+        } else {
           sampled.add(poll);
           poll = this.pool.poll();
         }
@@ -98,8 +99,7 @@ public class StaticResourcePool<T> {
         if (exclusive && !filter.test(poll)) {
           this.pool.add(poll);
           Thread.sleep(0);
-        }
-        else {
+        } else {
           return poll;
         }
       }
@@ -107,7 +107,7 @@ public class StaticResourcePool<T> {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Gets all.
    *
@@ -117,7 +117,7 @@ public class StaticResourcePool<T> {
   public List<T> getAll() {
     return all;
   }
-  
+
   /**
    * With u.
    *
@@ -125,8 +125,10 @@ public class StaticResourcePool<T> {
    * @param f   the f
    * @return the u
    */
-  public <U> U run(@Nonnull final Function<T, U> f) {return run(f, x -> true, false);}
-  
+  public <U> U run(@Nonnull final Function<T, U> f) {
+    return run(f, x -> true, false);
+  }
+
   /**
    * With u.
    *
@@ -145,7 +147,7 @@ public class StaticResourcePool<T> {
       this.pool.add(poll);
     }
   }
-  
+
   /**
    * Size int.
    *

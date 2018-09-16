@@ -38,7 +38,7 @@ public class SerialArrayList<U> {
   private final SerialType<U> factory;
   private byte[] buffer;
   private int maxByte = 0;
-  
+
   /**
    * Instantiates a new Serial array list.
    *
@@ -57,7 +57,7 @@ public class SerialArrayList<U> {
       cursor += item.maxByte;
     }
   }
-  
+
   /**
    * Instantiates a new Serial array list.
    *
@@ -71,7 +71,7 @@ public class SerialArrayList<U> {
     int i = 0;
     for (U x : items) set(i++, x);
   }
-  
+
   /**
    * Instantiates a new Serial array list.
    *
@@ -84,7 +84,7 @@ public class SerialArrayList<U> {
     this.buffer = new byte[items.length * unitSize];
     for (int i = 0; i < items.length; i++) set(i, items[i]);
   }
-  
+
   /**
    * Instantiates a new Serial array list.
    *
@@ -95,7 +95,7 @@ public class SerialArrayList<U> {
     this.unitSize = factory.getSize();
     this.buffer = new byte[1024];
   }
-  
+
   /**
    * Instantiates a new Serial array list.
    *
@@ -107,7 +107,7 @@ public class SerialArrayList<U> {
     this.unitSize = factory.getSize();
     this.buffer = new byte[this.unitSize * size];
   }
-  
+
   /**
    * Add serial array list.
    *
@@ -117,7 +117,7 @@ public class SerialArrayList<U> {
   public SerialArrayList<U> add(SerialArrayList<U> right) {
     return new SerialArrayList<U>(factory, this, right);
   }
-  
+
   /**
    * Clear.
    */
@@ -125,7 +125,7 @@ public class SerialArrayList<U> {
     buffer = new byte[]{};
     maxByte = 0;
   }
-  
+
   /**
    * Length int.
    *
@@ -134,7 +134,7 @@ public class SerialArrayList<U> {
   public int length() {
     return maxByte / unitSize;
   }
-  
+
   /**
    * Get u.
    *
@@ -149,7 +149,7 @@ public class SerialArrayList<U> {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Add int.
    *
@@ -161,7 +161,7 @@ public class SerialArrayList<U> {
     set(length, value);
     return length;
   }
-  
+
   /**
    * Update u.
    *
@@ -174,7 +174,7 @@ public class SerialArrayList<U> {
     set(i, updated);
     return updated;
   }
-  
+
   /**
    * Set.
    *
@@ -190,13 +190,13 @@ public class SerialArrayList<U> {
       throw new RuntimeException(e);
     }
   }
-  
+
   private ByteBuffer getView(int i) {
     ByteBuffer duplicate = ByteBuffer.wrap(buffer);
     duplicate.position(unitSize * i);
     return duplicate;
   }
-  
+
   private synchronized void ensureCapacity(int bytes) {
     if (maxByte < bytes) {
       maxByte = bytes;
@@ -207,7 +207,7 @@ public class SerialArrayList<U> {
       buffer = Arrays.copyOf(buffer, targetBytes);
     }
   }
-  
+
   /**
    * Add all int.
    *
@@ -219,7 +219,7 @@ public class SerialArrayList<U> {
     putAll(data, startIndex);
     return startIndex;
   }
-  
+
   /**
    * Put all.
    *
@@ -229,7 +229,7 @@ public class SerialArrayList<U> {
   public synchronized void putAll(Collection<U> data, int startIndex) {
     putAll(new SerialArrayList<U>(factory, data), startIndex);
   }
-  
+
   /**
    * Put all.
    *
@@ -240,7 +240,7 @@ public class SerialArrayList<U> {
     ensureCapacity((startIndex * unitSize) + data.maxByte);
     System.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
   }
-  
+
   /**
    * Gets memory size.
    *
@@ -249,7 +249,7 @@ public class SerialArrayList<U> {
   public int getMemorySize() {
     return buffer.length;
   }
-  
+
   /**
    * Copy serial array list.
    *
@@ -258,20 +258,20 @@ public class SerialArrayList<U> {
   public SerialArrayList<U> copy() {
     return new SerialArrayList<U>(factory, this);
   }
-  
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    
+
     SerialArrayList<?> that = (SerialArrayList<?>) o;
-    
+
     if (unitSize != that.unitSize) return false;
     if (maxByte != that.maxByte) return false;
     if (!factory.equals(that.factory)) return false;
     return Arrays.equals(buffer, that.buffer);
   }
-  
+
   @Override
   public int hashCode() {
     int result = factory.hashCode();

@@ -32,7 +32,7 @@ public class TimerText {
    */
   final long start = System.currentTimeMillis();
   private final SimpleDateFormat formatter;
-  
+
   /**
    * Instantiates a new Timer text.
    */
@@ -40,7 +40,7 @@ public class TimerText {
     formatter = new SimpleDateFormat("[HH:mm:ss]");
     formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
   }
-  
+
   @Override
   public String toString() {
     return formatter.format(new Date(System.currentTimeMillis() - start));

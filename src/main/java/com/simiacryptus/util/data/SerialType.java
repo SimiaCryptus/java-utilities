@@ -36,7 +36,7 @@ public interface SerialType<T> {
   default SerialArrayList<T> newList() {
     return new SerialArrayList<T>(this);
   }
-  
+
   /**
    * New list serial array list.
    *
@@ -46,7 +46,7 @@ public interface SerialType<T> {
   default SerialArrayList<T> newList(int size) {
     return new SerialArrayList<T>(this, size);
   }
-  
+
   /**
    * New list serial array list.
    *
@@ -56,14 +56,14 @@ public interface SerialType<T> {
   default SerialArrayList<T> newList(T... items) {
     return new SerialArrayList<T>(this, items);
   }
-  
+
   /**
    * Gets size.
    *
    * @return the size
    */
   int getSize();
-  
+
   /**
    * Read t.
    *
@@ -72,7 +72,7 @@ public interface SerialType<T> {
    * @throws IOException the io exception
    */
   T read(ByteBuffer input) throws IOException;
-  
+
   /**
    * Read t.
    *
@@ -84,7 +84,7 @@ public interface SerialType<T> {
     assert (input.length == getSize());
     return read(ByteBuffer.wrap(input));
   }
-  
+
   /**
    * Write.
    *
@@ -93,7 +93,7 @@ public interface SerialType<T> {
    * @throws IOException the io exception
    */
   void write(ByteBuffer output, T value) throws IOException;
-  
+
   /**
    * Write byte [ ].
    *

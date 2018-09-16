@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -32,7 +32,7 @@ public class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   @Nullable
   private WeakReference<T> ptr;
-  
+
   /**
    * Instantiates a new Supplier weak cacheLocal.
    *
@@ -42,7 +42,7 @@ public class SupplierWeakCache<T> implements Supplier<T> {
     this.fn = fn;
     this.ptr = null;
   }
-  
+
   @Nullable
   @Override
   public T get() {

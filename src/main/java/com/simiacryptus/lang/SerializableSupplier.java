@@ -17,10 +17,15 @@
  * under the License.
  */
 
-package com.simiacryptus.util.io;
+package com.simiacryptus.lang;
+
+import java.io.Serializable;
+import java.util.function.Supplier;
 
 /**
- * The type Aws util.
+ * The interface Serializable callable.
+ *
+ * @param <T> the type parameter
  */
-public class AwsUtil {
+public interface SerializableSupplier<T> extends Supplier<T>, Serializable {
 }

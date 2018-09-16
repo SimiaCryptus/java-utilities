@@ -28,9 +28,9 @@ import java.util.function.Supplier;
  * The type Monitored object.
  */
 public class MonitoredObject implements MonitoredItem {
-  
+
   private final Map<CharSequence, Object> items = new HashMap<>();
-  
+
   /**
    * Add const monitored object.
    *
@@ -43,7 +43,7 @@ public class MonitoredObject implements MonitoredItem {
     items.put(key, item);
     return this;
   }
-  
+
   /**
    * Add field monitored object.
    *
@@ -56,7 +56,7 @@ public class MonitoredObject implements MonitoredItem {
     items.put(key, item);
     return this;
   }
-  
+
   /**
    * Add obj monitored object.
    *
@@ -69,7 +69,7 @@ public class MonitoredObject implements MonitoredItem {
     items.put(key, item);
     return this;
   }
-  
+
   /**
    * Clear constants monitored object.
    *
@@ -82,14 +82,13 @@ public class MonitoredObject implements MonitoredItem {
       final Object v = items.get(k);
       if (v instanceof com.simiacryptus.util.MonitoredObject) {
         ((com.simiacryptus.util.MonitoredObject) v).clearConstants();
-      }
-      else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
+      } else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
         items.remove(k);
       }
     }
     return this;
   }
-  
+
   @javax.annotation.Nonnull
   @Override
   public Map<CharSequence, Object> getMetrics() {
@@ -99,11 +98,9 @@ public class MonitoredObject implements MonitoredItem {
       final Object v = e.getValue();
       if (v instanceof MonitoredItem) {
         returnValue.put(k, ((MonitoredItem) v).getMetrics());
-      }
-      else if (v instanceof Supplier) {
+      } else if (v instanceof Supplier) {
         returnValue.put(k, ((Supplier<?>) v).get());
-      }
-      else {
+      } else {
         returnValue.put(k, v);
       }
     });

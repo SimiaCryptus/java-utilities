@@ -29,11 +29,11 @@ import java.util.function.Supplier;
  * @param <T> the type parameter
  */
 public class SoftCachedSupplier<T> implements Supplier<T> {
-  
+
   private final Supplier<T> fn;
   @Nullable
   private volatile SoftReference<T> cached;
-  
+
   /**
    * Instantiates a new Soft cached supplier.
    *
@@ -42,7 +42,7 @@ public class SoftCachedSupplier<T> implements Supplier<T> {
   public SoftCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
   }
-  
+
   @Nullable
   @Override
   public T get() {

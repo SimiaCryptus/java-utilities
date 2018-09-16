@@ -17,12 +17,15 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 /**
- * The interface Serializable runnable.
+ * The interface Serializable consumer.
+ *
+ * @param <T> the type parameter
  */
-public interface SerializableRunnable extends Runnable, Serializable {
+public interface SerializableFunction<T, U> extends Function<T, U>, Serializable {
 }

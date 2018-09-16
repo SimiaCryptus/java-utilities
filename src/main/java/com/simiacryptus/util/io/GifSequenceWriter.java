@@ -27,12 +27,7 @@ package com.simiacryptus.util.io;
 // Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
 import javax.annotation.Nonnull;
-import javax.imageio.IIOException;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
+import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.FileImageOutputStream;
@@ -47,7 +42,7 @@ import java.util.Iterator;
  * The type Gif sequence writer.
  */
 public class GifSequenceWriter {
-  
+
   /**
    * The Gif writer.
    */
@@ -60,7 +55,7 @@ public class GifSequenceWriter {
    * The Image meta data.
    */
   protected IIOMetadata imageMetaData;
-  
+
   /**
    * Creates a new GifSequenceWriter
    *
@@ -72,11 +67,11 @@ public class GifSequenceWriter {
    * @author Elliot Kroo (elliot[at]kroo[dot]net)
    */
   public GifSequenceWriter(
-    ImageOutputStream outputStream,
-    int imageType,
-    int timeBetweenFramesMS,
-    boolean loopContinuously) throws IOException {
-    
+      ImageOutputStream outputStream,
+      int imageType,
+      int timeBetweenFramesMS,
+      boolean loopContinuously) throws IOException {
+
     gifWriter = getWriter("gif");
     imageWriteParam = gifWriter.getDefaultWriteParam();
     ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
@@ -95,7 +90,7 @@ public class GifSequenceWriter {
     @Nonnull IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
     child.setAttribute("applicationID", "NETSCAPE");
     child.setAttribute("authenticationCode", "2.0");
-    
+
     int loop = loopContinuously ? 0 : 1;
     child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF)});
     appEntensionsNode.appendChild(child);
@@ -103,7 +98,7 @@ public class GifSequenceWriter {
     gifWriter.setOutput(outputStream);
     gifWriter.prepareWriteSequence(null);
   }
-  
+
   /**
    * Write.
    *
@@ -125,7 +120,7 @@ public class GifSequenceWriter {
       output.close();
     }
   }
-  
+
   /**
    * Returns the first available GIF ImageWriter using ImageIO.getImageWritersBySuffix("gif").
    *
@@ -137,12 +132,11 @@ public class GifSequenceWriter {
     Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix(format);
     if (!iter.hasNext()) {
       throw new IIOException("No GIF Image Writers Exist");
-    }
-    else {
+    } else {
       return iter.next();
     }
   }
-  
+
   /**
    * Returns an existing child node, or creates and returns a new child node (if the requested node does not exist).
    *
@@ -152,12 +146,12 @@ public class GifSequenceWriter {
    */
   @Nonnull
   private static IIOMetadataNode getNode(
-    @Nonnull IIOMetadataNode rootNode,
-    String nodeName) {
+      @Nonnull IIOMetadataNode rootNode,
+      String nodeName) {
     int nNodes = rootNode.getLength();
     for (int i = 0; i < nNodes; i++) {
       if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName)
-        == 0) {
+          == 0) {
         @Nonnull IIOMetadataNode item = (IIOMetadataNode) rootNode.item(i);
         if (null == item) throw new IllegalStateException();
         return item;
@@ -167,7 +161,7 @@ public class GifSequenceWriter {
     rootNode.appendChild(node);
     return (node);
   }
-  
+
   /**
    * Write to sequence.
    *
@@ -176,13 +170,13 @@ public class GifSequenceWriter {
    */
   public void writeToSequence(@Nonnull RenderedImage img) throws IOException {
     gifWriter.writeToSequence(
-      new IIOImage(
-        img,
-        null,
-        imageMetaData),
-      imageWriteParam);
+        new IIOImage(
+            img,
+            null,
+            imageMetaData),
+        imageWriteParam);
   }
-  
+
   /**
    * Close this GifSequenceWriter object. This does not close the underlying stream, just finishes off the GIF.
    *

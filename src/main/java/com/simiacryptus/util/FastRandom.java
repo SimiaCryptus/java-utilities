@@ -31,12 +31,14 @@ public class FastRandom {
   private long x;
   private long y;
   private long z;
-  
+
   /**
    * Instantiates a new Fast random.
    */
-  public FastRandom() {this(System.nanoTime());}
-  
+  public FastRandom() {
+    this(System.nanoTime());
+  }
+
   /**
    * Instantiates a new Fast random.
    *
@@ -48,7 +50,7 @@ public class FastRandom {
     y = seed >>> 8;
     z = seed >>> 16;
   }
-  
+
   /**
    * Xorshift long.
    *
@@ -61,7 +63,7 @@ public class FastRandom {
     x ^= x << 1;
     return x;
   }
-  
+
   /**
    * Random double.
    *
@@ -83,7 +85,7 @@ public class FastRandom {
     }
     return x;
   }
-  
+
   /**
    * Next long.
    *
@@ -96,5 +98,5 @@ public class FastRandom {
     z = this.x ^ x ^ y;
     return z;
   }
-  
+
 }

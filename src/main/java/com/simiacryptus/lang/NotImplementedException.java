@@ -17,16 +17,31 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
-
-import java.io.Serializable;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
+package com.simiacryptus.lang;
 
 /**
- * The interface Serializable callable.
- *
- * @param <T> the type parameter
+ * The type Not implemented exception.
  */
-public interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+public class NotImplementedException extends RuntimeException {
+
+  /**
+   * Instantiates a new Not implemented exception.
+   */
+// Show a warning whenever this is referenced - We shoud implement it!
+  @Deprecated
+  public NotImplementedException() {
+    super();
+  }
+
+  /**
+   * Instantiates a new Not implemented exception.
+   *
+   * @param arg0 the arg 0
+   */
+// Show a warning whenever this is referenced - We shoud implement it!
+  @Deprecated
+  public NotImplementedException(final String arg0) {
+    super(arg0);
+  }
+
 }

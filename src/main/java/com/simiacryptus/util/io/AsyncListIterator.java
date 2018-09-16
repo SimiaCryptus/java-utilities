@@ -35,7 +35,7 @@ public class AsyncListIterator<T> implements Iterator<T> {
    * The Index.
    */
   int index = -1;
-  
+
   /**
    * Instantiates a new Async list iterator.
    *
@@ -46,17 +46,17 @@ public class AsyncListIterator<T> implements Iterator<T> {
     this.thread = thread;
     this.queue = queue;
   }
-  
+
   @Override
   protected void finalize() throws Throwable {
     super.finalize();
   }
-  
+
   @Override
   public boolean hasNext() {
     return index < queue.size() || thread.isAlive();
   }
-  
+
   @Nullable
   @Override
   public T next() {
@@ -64,8 +64,7 @@ public class AsyncListIterator<T> implements Iterator<T> {
       while (hasNext()) {
         if (++index < queue.size()) {
           return queue.get(index);
-        }
-        else {
+        } else {
           Thread.sleep(100);
         }
       }

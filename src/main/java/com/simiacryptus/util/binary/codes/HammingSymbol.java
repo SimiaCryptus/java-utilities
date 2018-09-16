@@ -25,8 +25,8 @@ package com.simiacryptus.util.binary.codes;
  * @param <T> the type parameter
  */
 public class HammingSymbol<T extends Comparable<T>> implements
-  Comparable<HammingSymbol<T>> {
-  
+    Comparable<HammingSymbol<T>> {
+
   /**
    * The Key.
    */
@@ -35,7 +35,7 @@ public class HammingSymbol<T extends Comparable<T>> implements
    * The Count.
    */
   public final int count;
-  
+
   /**
    * Instantiates a new Hamming symbol.
    *
@@ -46,10 +46,10 @@ public class HammingSymbol<T extends Comparable<T>> implements
     this.count = count;
     this.key = key;
   }
-  
+
   @Override
   public int compareTo(final HammingSymbol<T> o) {
     return this.key.compareTo(o.key);
   }
-  
+
 }

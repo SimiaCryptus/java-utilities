@@ -35,12 +35,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <C> the type parameter
  */
 public class CountCollection<T, C extends Map<T, AtomicInteger>> {
-  
+
   /**
    * The Map.
    */
   protected final C map;
-  
+
   /**
    * Instantiates a new Count collection.
    *
@@ -50,7 +50,7 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
     super();
     this.map = collection;
   }
-  
+
   /**
    * Add int.
    *
@@ -60,7 +60,7 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
   public int add(final T bits) {
     return this.getCounter(bits).incrementAndGet();
   }
-  
+
   /**
    * Add int.
    *
@@ -71,7 +71,7 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
   public int add(final T bits, final int count) {
     return this.getCounter(bits).addAndGet(count);
   }
-  
+
   /**
    * Count int.
    *
@@ -85,7 +85,7 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
     }
     return counter.get();
   }
-  
+
   private AtomicInteger getCounter(final T bits) {
     AtomicInteger counter = this.map.get(bits);
     if (null == counter) {
@@ -94,7 +94,7 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
     }
     return counter;
   }
-  
+
   /**
    * Gets list.
    *
@@ -109,7 +109,7 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
     }
     return list;
   }
-  
+
   /**
    * Gets map.
    *
@@ -117,12 +117,12 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
    */
   public Map<T, Integer> getMap() {
     return Maps.transformEntries(this.map,
-      new EntryTransformer<T, AtomicInteger, Integer>() {
-        @Override
-        public Integer transformEntry(final T key, final AtomicInteger value) {
-          return value.get();
-        }
-      });
+        new EntryTransformer<T, AtomicInteger, Integer>() {
+          @Override
+          public Integer transformEntry(final T key, final AtomicInteger value) {
+            return value.get();
+          }
+        });
   }
-  
+
 }

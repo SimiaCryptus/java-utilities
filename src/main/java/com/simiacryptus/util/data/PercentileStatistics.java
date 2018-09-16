@@ -30,9 +30,9 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public class PercentileStatistics extends ScalarStatistics {
-  
+
   private final List<double[]> values = new ArrayList<>();
-  
+
   @Nullable
   @Override
   public synchronized ScalarStatistics add(@javax.annotation.Nonnull final double... values) {
@@ -42,13 +42,13 @@ public class PercentileStatistics extends ScalarStatistics {
     super.add(values);
     return null;
   }
-  
+
   @Override
   public void clear() {
     values.clear();
     super.clear();
   }
-  
+
   @Override
   public Map<CharSequence, Object> getMetrics() {
     final Map<CharSequence, Object> map = super.getMetrics();
@@ -57,7 +57,7 @@ public class PercentileStatistics extends ScalarStatistics {
     map.put("tp90", getPercentile(0.9));
     return map;
   }
-  
+
   /**
    * Gets percentile.
    *
@@ -68,5 +68,5 @@ public class PercentileStatistics extends ScalarStatistics {
     if (null == values) return Double.NaN;
     return values.parallelStream().flatMapToDouble(x -> Arrays.stream(x)).sorted().skip((int) (percentile * values.size())).findFirst().orElse(Double.NaN);
   }
-  
+
 }

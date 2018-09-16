@@ -20,11 +20,7 @@
 package com.simiacryptus.util.io;
 
 import javax.annotation.Nullable;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +41,7 @@ public class TeeOutputStream extends OutputStream {
   @Nullable
   private final ByteArrayOutputStream heapBuffer;
   private boolean chainCloses;
-  
+
   /**
    * Instantiates a new Tee output stream.
    *
@@ -58,12 +54,11 @@ public class TeeOutputStream extends OutputStream {
     if (buffer) {
       heapBuffer = new ByteArrayOutputStream();
       branches.add(heapBuffer);
-    }
-    else {
+    } else {
       heapBuffer = null;
     }
   }
-  
+
   /**
    * Instantiates a new Tee output stream.
    *
@@ -74,7 +69,7 @@ public class TeeOutputStream extends OutputStream {
     this(primary, false);
     branches.addAll(Arrays.asList(secondaries));
   }
-  
+
   @Override
   public void close() throws IOException {
     primary.close();
@@ -82,7 +77,7 @@ public class TeeOutputStream extends OutputStream {
       branch.close();
     }
   }
-  
+
   @Override
   public void flush() throws IOException {
     primary.flush();
@@ -90,7 +85,7 @@ public class TeeOutputStream extends OutputStream {
       branch.flush();
     }
   }
-  
+
   /**
    * New input stream piped input stream.
    *
@@ -128,7 +123,7 @@ public class TeeOutputStream extends OutputStream {
     });
     return in;
   }
-  
+
   @Override
   public synchronized void write(final byte[] b) throws IOException {
     primary.write(b);
@@ -136,7 +131,7 @@ public class TeeOutputStream extends OutputStream {
       branch.write(b);
     }
   }
-  
+
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) throws IOException {
     primary.write(b, off, len);
@@ -144,7 +139,7 @@ public class TeeOutputStream extends OutputStream {
       branch.write(b, off, len);
     }
   }
-  
+
   @Override
   public synchronized void write(final int b) throws IOException {
     primary.write(b);
@@ -152,7 +147,7 @@ public class TeeOutputStream extends OutputStream {
       branch.write(b);
     }
   }
-  
+
   /**
    * Is chain closes boolean.
    *
@@ -161,7 +156,7 @@ public class TeeOutputStream extends OutputStream {
   public boolean isChainCloses() {
     return chainCloses;
   }
-  
+
   /**
    * Sets chain closes.
    *

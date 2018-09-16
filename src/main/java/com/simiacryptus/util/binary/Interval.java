@@ -35,7 +35,7 @@ public class Interval {
    * The Length.
    */
   public final long length;
-  
+
   /**
    * Instantiates a new Interval.
    *
@@ -53,7 +53,7 @@ public class Interval {
     this.max = max;
     this.length = length;
   }
-  
+
   /**
    * End long.
    *
@@ -62,7 +62,7 @@ public class Interval {
   public long end() {
     return start + length;
   }
-  
+
   /**
    * To bits bits.
    *
@@ -83,7 +83,7 @@ public class Interval {
     }
     throw new RuntimeException();
   }
-  
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("Interval{");

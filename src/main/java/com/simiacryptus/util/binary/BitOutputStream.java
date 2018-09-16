@@ -29,16 +29,16 @@ import java.util.function.Consumer;
  * The type Bit output stream.
  */
 public class BitOutputStream implements AutoCloseable {
-  
+
   /**
    * The Var long depths.
    */
   static final int varLongDepths[] = {6, 14, 30, 62};
   private final OutputStream inner;
-  
+
   private Bits remainder = Bits.NULL;
   private int totalBitsWritten = 0;
-  
+
   /**
    * Instantiates a new Bit output stream.
    *
@@ -47,7 +47,7 @@ public class BitOutputStream implements AutoCloseable {
   public BitOutputStream(final OutputStream inner) {
     this.inner = inner;
   }
-  
+
   /**
    * To bits bits.
    *
@@ -65,7 +65,7 @@ public class BitOutputStream implements AutoCloseable {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Gets total bits written.
    *
@@ -74,7 +74,7 @@ public class BitOutputStream implements AutoCloseable {
   public int getTotalBitsWritten() {
     return totalBitsWritten;
   }
-  
+
   /**
    * Flush.
    *
@@ -85,7 +85,7 @@ public class BitOutputStream implements AutoCloseable {
     this.inner.flush();
     this.remainder = Bits.NULL;
   }
-  
+
   /**
    * Write.
    *
@@ -105,7 +105,7 @@ public class BitOutputStream implements AutoCloseable {
     this.remainder = newRemainder;
     this.totalBitsWritten += bits.bitLength;
   }
-  
+
   /**
    * Write.
    *
@@ -115,7 +115,7 @@ public class BitOutputStream implements AutoCloseable {
   public void write(final boolean b) throws IOException {
     this.write(new Bits(b ? 1l : 0l, 1));
   }
-  
+
   /**
    * Write.
    *
@@ -125,7 +125,7 @@ public class BitOutputStream implements AutoCloseable {
   public void write(final double value) throws IOException {
     this.write(new Bits(Double.doubleToLongBits(value), 64));
   }
-  
+
   /**
    * Write.
    *
@@ -137,7 +137,7 @@ public class BitOutputStream implements AutoCloseable {
     final long ordinal = value.ordinal();
     this.write(new Bits(ordinal, 8));
   }
-  
+
   /**
    * Write.
    *
@@ -147,7 +147,7 @@ public class BitOutputStream implements AutoCloseable {
   public void write(final short value) throws IOException {
     this.write(new Bits(value, 16));
   }
-  
+
   /**
    * Write.
    *
@@ -157,7 +157,7 @@ public class BitOutputStream implements AutoCloseable {
   public void write(final char value) throws IOException {
     this.write(new Bits(value, 16));
   }
-  
+
   /**
    * Write.
    *
@@ -167,7 +167,7 @@ public class BitOutputStream implements AutoCloseable {
   public void write(final int value) throws IOException {
     this.write(new Bits(value, 32));
   }
-  
+
   /**
    * Write bounded long bits.
    *
@@ -177,19 +177,18 @@ public class BitOutputStream implements AutoCloseable {
    * @throws IOException the io exception
    */
   public Bits writeBoundedLong(final long value, final long max)
-    throws IOException {
+      throws IOException {
     final int bits = 0 >= max ? 0 : (int) (Math
-      .floor(Math.log(max) / Math.log(2)) + 1);
+        .floor(Math.log(max) / Math.log(2)) + 1);
     if (0 < bits) {
       Bits toWrite = new Bits(value, bits);
       this.write(toWrite);
       return toWrite;
-    }
-    else {
+    } else {
       return Bits.NULL;
     }
   }
-  
+
   /**
    * Write var long.
    *
@@ -205,7 +204,7 @@ public class BitOutputStream implements AutoCloseable {
     this.write(new Bits(type, 2));
     this.write(new Bits(value, varLongDepths[type]));
   }
-  
+
   /**
    * Write var short.
    *
@@ -215,7 +214,7 @@ public class BitOutputStream implements AutoCloseable {
   public void writeVarShort(final short value) throws IOException {
     writeVarShort(value, 7);
   }
-  
+
   /**
    * Write var short.
    *
@@ -234,11 +233,11 @@ public class BitOutputStream implements AutoCloseable {
     this.write(new Bits(type, 1));
     this.write(new Bits(value, varShortDepths[type]));
   }
-  
+
   @Override
   public void close() throws IOException {
     flush();
     inner.close();
   }
-  
+
 }

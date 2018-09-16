@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The type Run length bits collection.
  */
 public class RunLengthBitsCollection extends
-  BitsCollection<HashMap<Bits, AtomicInteger>> {
+    BitsCollection<HashMap<Bits, AtomicInteger>> {
   /**
    * Instantiates a new Run length bits collection.
    *
@@ -41,7 +41,7 @@ public class RunLengthBitsCollection extends
   public RunLengthBitsCollection(final int bitDepth) {
     super(bitDepth, new HashMap<Bits, AtomicInteger>());
   }
-  
+
   @Override
   public void read(final BitInputStream in) throws IOException {
     final int size = (int) in.read(32).toLong();
@@ -51,7 +51,7 @@ public class RunLengthBitsCollection extends
       this.map.put(bits, new AtomicInteger(count));
     }
   }
-  
+
   @Override
   public void write(final BitOutputStream out) throws IOException {
     out.write(new Bits(this.getList().size(), 32));
@@ -60,5 +60,5 @@ public class RunLengthBitsCollection extends
       out.write(new Bits(e.getValue().get(), 32));
     }
   }
-  
+
 }

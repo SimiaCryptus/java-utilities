@@ -31,15 +31,13 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.*;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -47,15 +45,8 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
@@ -75,7 +66,7 @@ public class Util {
    */
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
     public final Random r = new Random(System.nanoTime());
-    
+
     @Override
     protected Random initialValue() {
       return new Random(r.nextLong());
@@ -84,12 +75,12 @@ public class Util {
   private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
   private static final String jvmId = UUID.randomUUID().toString();
   public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(true)));
-  
+
   public static void browse(final URI uri) throws IOException {
     if (Util.AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
       Desktop.getDesktop().browse(uri);
   }
-  
+
   /**
    * Add.
    *
@@ -101,7 +92,7 @@ public class Util {
       data[i] += f.getAsDouble();
     }
   }
-  
+
   /**
    * Binary stream stream.
    *
@@ -119,7 +110,7 @@ public class Util {
     in.skip(skip);
     return com.simiacryptus.util.Util.toIterator(new BinaryChunkIterator(in, recordSize));
   }
-  
+
   /**
    * Cache function.
    *
@@ -144,11 +135,9 @@ public class Util {
    * @param file the file
    * @param url
    * @return the input stream
-   * @throws IOException              the io exception
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyManagementException   the key management exception
+   * @throws IOException the io exception
    */
-  public static InputStream cacheLocal(String file, URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+  public static InputStream cacheLocal(String file, URI url) throws IOException {
     return cacheLocal(file, getStreamSupplier(url));
   }
 
@@ -209,12 +198,11 @@ public class Util {
   public static InputStream cacheStream(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     if (new File(file).exists()) {
       return new FileInputStream(file);
-    }
-    else {
+    } else {
       return new TeeInputStream(get(url), new FileOutputStream(file));
     }
   }
-  
+
   /**
    * Cache file file.
    *
@@ -231,7 +219,7 @@ public class Util {
     }
     return new File(file);
   }
-  
+
   /**
    * Get input stream.
    *
@@ -243,23 +231,23 @@ public class Util {
    */
   public static InputStream get(@javax.annotation.Nonnull String url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
     @javax.annotation.Nonnull final TrustManager[] trustManagers = {
-      new X509TrustManager() {
-        @Override
-        public void checkClientTrusted(
-          final X509Certificate[] certs, final String authType) {
+        new X509TrustManager() {
+          @Override
+          public void checkClientTrusted(
+              final X509Certificate[] certs, final String authType) {
+          }
+
+          @Override
+          public void checkServerTrusted(
+              final X509Certificate[] certs, final String authType) {
+          }
+
+          @javax.annotation.Nonnull
+          @Override
+          public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+          }
         }
-        
-        @Override
-        public void checkServerTrusted(
-          final X509Certificate[] certs, final String authType) {
-        }
-        
-        @javax.annotation.Nonnull
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-          return new X509Certificate[0];
-        }
-      }
     };
     @javax.annotation.Nonnull final SSLContext ctx = SSLContext.getInstance("TLS");
     ctx.init(null, trustManagers, null);
@@ -272,7 +260,7 @@ public class Util {
     }
     return urlConnection.getInputStream();
   }
-  
+
   /**
    * Cache input stream.
    *
@@ -285,7 +273,7 @@ public class Util {
   public static InputStream cacheStream(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheStream(url.toString(), new File(url.getPath()).getName());
   }
-  
+
   /**
    * Cache file file.
    *
@@ -298,7 +286,7 @@ public class Util {
   public static File cacheFile(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheFile(url.toString(), new File(url.getPath()).getName());
   }
-  
+
   /**
    * Current stack string [ ].
    *
@@ -307,7 +295,7 @@ public class Util {
   public static CharSequence[] currentStack() {
     return Stream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
   }
-  
+
   /**
    * Cvt temporal unit.
    *
@@ -335,7 +323,7 @@ public class Util {
         throw new IllegalArgumentException(units.toString());
     }
   }
-  
+
   /**
    * Gets last.
    *
@@ -348,7 +336,7 @@ public class Util {
     final T last = collect.get(collect.size() - 1);
     return last;
   }
-  
+
   /**
    * Layout.
    *
@@ -360,7 +348,7 @@ public class Util {
       Arrays.stream(((Container) c).getComponents()).forEach(com.simiacryptus.util.Util::layout);
     }
   }
-  
+
   /**
    * Mk string string.
    *
@@ -371,7 +359,7 @@ public class Util {
   public static String mkString(@javax.annotation.Nonnull final CharSequence separator, final CharSequence... strs) {
     return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
   }
-  
+
   /**
    * Path to string.
    *
@@ -382,7 +370,7 @@ public class Util {
   public static String pathTo(@javax.annotation.Nonnull final File from, @javax.annotation.Nonnull final File to) {
     return from.toPath().relativize(to.toPath()).toString().replaceAll("\\\\", "/");
   }
-  
+
   /**
    * Read byte [ ].
    *
@@ -404,7 +392,7 @@ public class Util {
     }
     return b;
   }
-  
+
   /**
    * Report.
    *
@@ -415,7 +403,7 @@ public class Util {
     @javax.annotation.Nonnull final File outDir = new File("reports");
     outDir.mkdirs();
     final StackTraceElement caller = com.simiacryptus.util.Util.getLast(Arrays.stream(Thread.currentThread().getStackTrace())//
-      .filter(x -> x.getClassName().contains("simiacryptus")));
+        .filter(x -> x.getClassName().contains("simiacryptus")));
     @javax.annotation.Nonnull final File report = new File(outDir, caller.getClassName() + "_" + caller.getLineNumber() + ".html");
     @javax.annotation.Nonnull final PrintStream out = new PrintStream(new FileOutputStream(report));
     out.println("<html><head></head><body>");
@@ -425,7 +413,7 @@ public class Util {
     if (AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
       Desktop.getDesktop().browse(report.toURI());
   }
-  
+
   /**
    * Report.
    *
@@ -435,7 +423,7 @@ public class Util {
   public static void report(final CharSequence... fragments) throws IOException {
     com.simiacryptus.util.Util.report(Stream.of(fragments));
   }
-  
+
   /**
    * Resize buffered png.
    *
@@ -456,7 +444,7 @@ public class Util {
     gfx.drawImage(image, 0, 0, rerender.getWidth(), rerender.getHeight(), null);
     return rerender;
   }
-  
+
   /**
    * To png buffered png.
    *
@@ -477,7 +465,7 @@ public class Util {
       return null;
     }
   }
-  
+
   /**
    * To inline png string.
    *
@@ -488,7 +476,7 @@ public class Util {
   public static CharSequence toInlineImage(final BufferedImage img, final String alt) {
     return com.simiacryptus.util.Util.toInlineImage(new LabeledObject<>(img, alt));
   }
-  
+
   /**
    * To inline png string.
    *
@@ -508,7 +496,7 @@ public class Util {
     final CharSequence encode = Base64.getEncoder().encodeToString(byteArray);
     return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
-  
+
   /**
    * To iterator stream.
    *
@@ -519,7 +507,7 @@ public class Util {
   public static <T> Stream<T> toIterator(@javax.annotation.Nonnull final Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
-  
+
   /**
    * To stream stream.
    *
@@ -530,7 +518,7 @@ public class Util {
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator) {
     return com.simiacryptus.util.Util.toStream(iterator, 0);
   }
-  
+
   /**
    * To stream stream.
    *
@@ -542,7 +530,7 @@ public class Util {
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size) {
     return com.simiacryptus.util.Util.toStream(iterator, size, false);
   }
-  
+
   /**
    * To stream stream.
    *
@@ -555,7 +543,7 @@ public class Util {
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size, final boolean parallel) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
-  
+
   /**
    * Uuid uuid.
    *
@@ -569,7 +557,7 @@ public class Util {
     @javax.annotation.Nonnull final String tempId = com.simiacryptus.util.Util.jvmId.substring(0, com.simiacryptus.util.Util.jvmId.length() - index.length()) + index;
     return UUID.fromString(tempId);
   }
-  
+
   /**
    * Sleep.
    *
@@ -582,7 +570,7 @@ public class Util {
       Thread.currentThread().interrupt();
     }
   }
-  
+
   /**
    * Date str string.
    *
@@ -593,7 +581,7 @@ public class Util {
   public static String dateStr(final String formatStr) {
     return new SimpleDateFormat(formatStr).format(new Date());
   }
-  
+
   @Nonnull
   public static String stripPrefix(String str, final String prefix) {
     while (str.startsWith(prefix)) {
@@ -601,7 +589,7 @@ public class Util {
     }
     return str;
   }
-  
+
   /**
    * Path to run file path.
    *
@@ -618,7 +606,7 @@ public class Util {
       throw new RuntimeException(String.format("Base: %s; File: %s", baseFile, file), e);
     }
   }
-  
+
   @Nonnull
   public static String toString(final Path path) {
     return path.normalize().toString().replaceAll("\\\\", "/");

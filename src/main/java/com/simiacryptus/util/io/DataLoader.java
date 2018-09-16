@@ -20,12 +20,7 @@
 package com.simiacryptus.util.io;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
+import java.util.*;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -39,7 +34,7 @@ public abstract class DataLoader<T> {
   private final List<T> queue = Collections.synchronizedList(new ArrayList<>());
   @Nullable
   private volatile Thread thread;
-  
+
   /**
    * Clear.
    *
@@ -57,14 +52,14 @@ public abstract class DataLoader<T> {
       }
     }
   }
-  
+
   /**
    * Read.
    *
    * @param queue the queue
    */
   protected abstract void read(List<T> queue);
-  
+
   /**
    * Stop.
    */
@@ -78,7 +73,7 @@ public abstract class DataLoader<T> {
       Thread.currentThread().interrupt();
     }
   }
-  
+
   /**
    * Stream stream.
    *

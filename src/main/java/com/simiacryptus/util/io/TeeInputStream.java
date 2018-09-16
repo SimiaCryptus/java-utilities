@@ -28,11 +28,11 @@ import java.io.OutputStream;
  * The type Tee input stream.
  */
 public class TeeInputStream extends InputStream {
-  
+
   private final OutputStream cache;
   private final InputStream inputStream;
-  
-  
+
+
   /**
    * Instantiates a new Tee input stream.
    *
@@ -43,25 +43,25 @@ public class TeeInputStream extends InputStream {
     this.inputStream = inputStream;
     this.cache = cache;
   }
-  
+
   @Override
   public int available() throws IOException {
     return inputStream.available();
   }
-  
+
   @Override
   public void close() throws IOException {
     inputStream.close();
     cache.close();
   }
-  
+
   @Override
   public int read() throws IOException {
     final int read = inputStream.read();
     cache.write(read);
     return read;
   }
-  
+
   @Override
   public int read(final byte[] b) throws IOException {
     final int read = inputStream.read(b);
@@ -70,7 +70,7 @@ public class TeeInputStream extends InputStream {
     }
     return read;
   }
-  
+
   @Override
   public int read(final byte[] b, final int off, final int len) throws IOException {
     final int read = inputStream.read(b, off, len);

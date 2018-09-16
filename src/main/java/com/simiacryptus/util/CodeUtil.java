@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.util;
 
-import com.simiacryptus.util.io.JsonUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.lib.Repository;
@@ -60,13 +59,13 @@ public class CodeUtil {
    */
   @javax.annotation.Nonnull
   public static File projectRoot = new File(System.getProperty("codeRoot", getDefaultProjectRoot()));
+  private static final List<File> codeRoots = CodeUtil.scanLocalCodeRoots();
+  public static HashMap<String, String> classSourceInfo = getDefaultClassInfo();
 
   private static String getDefaultProjectRoot() {
-    if(new File("src").exists()) return "..";
+    if (new File("src").exists()) return "..";
     else return ".";
   }
-
-  private static final List<File> codeRoots = com.simiacryptus.util.lang.CodeUtil.scanLocalCodeRoots();
 
   /**
    * Find file file.
@@ -80,9 +79,8 @@ public class CodeUtil {
     String name = clazz.getName();
     if (null == name) return null;
     final CharSequence path = name.replaceAll("\\.", "/").replaceAll("\\$.*", "");
-    return com.simiacryptus.util.lang.CodeUtil.findFile(path + ".java");
+    return CodeUtil.findFile(path + ".java");
   }
-
 
   /**
    * Find file file.
@@ -96,7 +94,7 @@ public class CodeUtil {
     String pkg = Arrays.stream(packagePath).limit(packagePath.length - 1).collect(Collectors.joining(File.separator));
     if (!pkg.isEmpty()) pkg += File.separator;
     @javax.annotation.Nonnull final String path = pkg + callingFrame.getFileName();
-    return com.simiacryptus.util.lang.CodeUtil.findFile(path);
+    return CodeUtil.findFile(path);
   }
 
   /**
@@ -116,14 +114,14 @@ public class CodeUtil {
         throw new RuntimeException(e);
       }
     }
-    for (final File root : com.simiacryptus.util.lang.CodeUtil.codeRoots) {
+    for (final File root : CodeUtil.codeRoots) {
       @javax.annotation.Nonnull final File file = new File(root, path);
       if (file.exists()) {
         logger.debug(String.format("Resolved %s to %s", path, file));
         return file.toURI();
       }
     }
-    throw new RuntimeException(String.format("Not Found: %s; Project Roots = %s", path, com.simiacryptus.util.lang.CodeUtil.codeRoots));
+    throw new RuntimeException(String.format("Not Found: %s; Project Roots = %s", path, CodeUtil.codeRoots));
   }
 
   /**
@@ -168,12 +166,12 @@ public class CodeUtil {
 
       final int start = callingFrame.getLineNumber() - 1;
       final CharSequence txt = allLines.get(start);
-      @javax.annotation.Nonnull final CharSequence indent = com.simiacryptus.util.lang.CodeUtil.getIndent(txt);
+      @javax.annotation.Nonnull final CharSequence indent = CodeUtil.getIndent(txt);
       @javax.annotation.Nonnull final ArrayList<CharSequence> lines = new ArrayList<>();
       int lineNum = start + 1;
-      for (; lineNum < allLines.size() && (com.simiacryptus.util.lang.CodeUtil.getIndent(allLines.get(lineNum)).length() > indent.length() || String.valueOf(allLines.get(lineNum)).trim().isEmpty()); lineNum++) {
+      for (; lineNum < allLines.size() && (CodeUtil.getIndent(allLines.get(lineNum)).length() > indent.length() || String.valueOf(allLines.get(lineNum)).trim().isEmpty()); lineNum++) {
         final String line = allLines.get(lineNum);
-        lines.add(line.substring(Math.min(indent.length(), line.length())).toString());
+        lines.add(line.substring(Math.min(indent.length(), line.length())));
       }
       logger.debug(String.format("Selected %s lines (%s to %s) for %s", lines.size(), start, lineNum, callingFrame));
       return lines.stream().collect(Collectors.joining("\n"));
@@ -212,8 +210,8 @@ public class CodeUtil {
 
   private static List<File> scanLocalCodeRoots() {
     return Stream.concat(
-        Stream.of(com.simiacryptus.util.lang.CodeUtil.projectRoot),
-        Arrays.stream(com.simiacryptus.util.lang.CodeUtil.projectRoot.listFiles())
+        Stream.of(CodeUtil.projectRoot),
+        Arrays.stream(CodeUtil.projectRoot.listFiles())
             .filter(file -> file.exists() && file.isDirectory())
             .collect(Collectors.toList()).stream()).flatMap(x -> scanProject(x).stream())
         .distinct().collect(Collectors.toList());
@@ -224,8 +222,6 @@ public class CodeUtil {
         .filter(f -> f.exists() && f.isDirectory())
         .collect(Collectors.toList());
   }
-
-  public static HashMap<String, String> classSourceInfo = getDefaultClassInfo();
 
   public static HashMap<String, String> getDefaultClassInfo() {
     InputStream resourceAsStream = ClassLoader.getSystemResourceAsStream("META-INF/CodeUtil/classSourceInfo.json");

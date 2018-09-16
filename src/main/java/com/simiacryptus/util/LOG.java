@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -27,9 +27,9 @@ import java.util.Arrays;
  * The type Log.
  */
 public class LOG {
-  
+
   private static final long startTime = System.nanoTime();
-  
+
   /**
    * D.
    *
@@ -40,7 +40,7 @@ public class LOG {
     LOG.preprocessArgs(args);
     LOG.log(Severity.Debug, msg, args);
   }
-  
+
   /**
    * D.
    *
@@ -51,7 +51,7 @@ public class LOG {
   public static void d(final Throwable e, final CharSequence msg, final Object... args) {
     LOG.d(msg + "\n  " + LOG.toString(e).replace("\n", "\n  "), args);
   }
-  
+
   private static void log(final Severity debug, final String msg, final Object[] args) {
     final String formatted = String.format(msg, args);
     final StackTraceElement caller = Arrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
@@ -68,7 +68,7 @@ public class LOG {
     final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(), formatted.replaceAll("\n", "\n\t"));
     System.out.println(line);
   }
-  
+
   private static void preprocessArgs(final Object... args) {
     for (int i = 0; i < args.length; i++) {
       if (null == args[i]) {
@@ -78,23 +78,19 @@ public class LOG {
       if (c.isArray()) {
         if (args[i] instanceof double[]) {
           args[i] = LOG.toString((double[]) args[i]);
-        }
-        else if (args[i] instanceof int[]) {
+        } else if (args[i] instanceof int[]) {
           args[i] = Arrays.toString((int[]) args[i]);
-        }
-        else if (args[i] instanceof long[]) {
+        } else if (args[i] instanceof long[]) {
           args[i] = Arrays.toString((long[]) args[i]);
-        }
-        else if (args[i] instanceof byte[]) {
+        } else if (args[i] instanceof byte[]) {
           args[i] = Arrays.toString((byte[]) args[i]);
-        }
-        else {
+        } else {
           args[i] = Arrays.toString((Object[]) args[i]);
         }
       }
     }
   }
-  
+
   private static CharSequence toString(final double[] point) {
     final StringBuffer sb = new StringBuffer();
     for (final double v : point) {
@@ -105,7 +101,7 @@ public class LOG {
     }
     return "[" + sb + "]";
   }
-  
+
   /**
    * To string string.
    *
@@ -123,7 +119,7 @@ public class LOG {
     final String exception = out.toString();
     return exception;
   }
-  
+
   /**
    * The enum Severity.
    */
@@ -133,5 +129,5 @@ public class LOG {
      */
     Debug
   }
-  
+
 }

@@ -17,19 +17,22 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- * The interface Unchecked supplier.
- *
- * @param <T> the type parameter
+ * The interface Json formattable.
  */
-public interface UncheckedRunnable<T> {
-  
+public interface JsonFormattable {
+
   /**
-   * Gets a result.
+   * To json json object.
    *
-   * @throws Exception the exception
+   * @return the json object
+   * @throws JSONException the json exception
    */
-  void get() throws Exception;
+  JSONObject toJson() throws JSONException;
+
 }

@@ -38,21 +38,21 @@ import java.util.concurrent.atomic.AtomicInteger;
  * The type Count tree bits collection.
  */
 public class CountTreeBitsCollection extends
-  BitsCollection<TreeMap<Bits, AtomicInteger>> {
-  
+    BitsCollection<TreeMap<Bits, AtomicInteger>> {
+
   /**
    * The constant SERIALIZATION_CHECKS.
    */
   public static boolean SERIALIZATION_CHECKS = false;
   private boolean useBinomials = true;
-  
+
   /**
    * Instantiates a new Count tree bits collection.
    */
   public CountTreeBitsCollection() {
     super(new TreeMap<Bits, AtomicInteger>());
   }
-  
+
   /**
    * Instantiates a new Count tree bits collection.
    *
@@ -60,11 +60,11 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   public CountTreeBitsCollection(final BitInputStream bitStream)
-    throws IOException {
+      throws IOException {
     this();
     this.read(bitStream);
   }
-  
+
   /**
    * Instantiates a new Count tree bits collection.
    *
@@ -73,11 +73,11 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   public CountTreeBitsCollection(final BitInputStream bitStream,
-    final int bitDepth) throws IOException {
+                                 final int bitDepth) throws IOException {
     this(bitDepth);
     this.read(bitStream);
   }
-  
+
   /**
    * Instantiates a new Count tree bits collection.
    *
@@ -87,7 +87,7 @@ public class CountTreeBitsCollection extends
   public CountTreeBitsCollection(final byte[] data) throws IOException {
     this(BitInputStream.toBitStream(data));
   }
-  
+
   /**
    * Instantiates a new Count tree bits collection.
    *
@@ -96,10 +96,10 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   public CountTreeBitsCollection(final byte[] data, final int bitDepth)
-    throws IOException {
+      throws IOException {
     this(BitInputStream.toBitStream(data), bitDepth);
   }
-  
+
   /**
    * Instantiates a new Count tree bits collection.
    *
@@ -108,7 +108,7 @@ public class CountTreeBitsCollection extends
   public CountTreeBitsCollection(final int bitDepth) {
     super(bitDepth, new TreeMap<Bits, AtomicInteger>());
   }
-  
+
   /**
    * Is null t.
    *
@@ -120,7 +120,7 @@ public class CountTreeBitsCollection extends
   public static <T> T isNull(final T value, final T defaultValue) {
     return null == value ? defaultValue : value;
   }
-  
+
   /**
    * Compute sums tree apply.
    *
@@ -134,7 +134,7 @@ public class CountTreeBitsCollection extends
     }
     return sums;
   }
-  
+
   @Override
   public void read(final BitInputStream in) throws IOException {
     this.getMap().clear();
@@ -143,9 +143,9 @@ public class CountTreeBitsCollection extends
       this.read(in, Bits.NULL, size);
     }
   }
-  
+
   private void read(final BitInputStream in, final Bits code, final long size)
-    throws IOException {
+      throws IOException {
     if (SERIALIZATION_CHECKS) {
       in.expect(SerializationChecks.StartTree);
     }
@@ -164,7 +164,7 @@ public class CountTreeBitsCollection extends
       in.expect(SerializationChecks.EndTree);
     }
   }
-  
+
   /**
    * Read.
    *
@@ -178,7 +178,7 @@ public class CountTreeBitsCollection extends
       this.read(in, Bits.NULL, size);
     }
   }
-  
+
   /**
    * Read branch counts branch counts.
    *
@@ -189,23 +189,21 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected BranchCounts readBranchCounts(final BitInputStream in,
-    final Bits code, final long size) throws IOException {
+                                          final Bits code, final long size) throws IOException {
     final BranchCounts branchCounts = new BranchCounts(code, size);
     final CodeType currentCodeType = this.getType(code);
     long maximum = size;
-    
+
     // Get terminals
     if (currentCodeType == CodeType.Unknown) {
       branchCounts.terminals = this.readTerminalCount(in, maximum);
-    }
-    else if (currentCodeType == CodeType.Terminal) {
+    } else if (currentCodeType == CodeType.Terminal) {
       branchCounts.terminals = size;
-    }
-    else {
+    } else {
       branchCounts.terminals = 0;
     }
     maximum -= branchCounts.terminals;
-    
+
     // Get zero-suffixed primary
     if (maximum > 0) {
       assert Thread.currentThread().getStackTrace().length < 100;
@@ -215,7 +213,7 @@ public class CountTreeBitsCollection extends
     branchCounts.oneCount = maximum;
     return branchCounts;
   }
-  
+
   /**
    * Read terminal count long.
    *
@@ -225,7 +223,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected long readTerminalCount(final BitInputStream in, final long size)
-    throws IOException {
+      throws IOException {
     if (SERIALIZATION_CHECKS) {
       in.expect(SerializationChecks.BeforeTerminal);
     }
@@ -235,7 +233,7 @@ public class CountTreeBitsCollection extends
     }
     return readBoundedLong;
   }
-  
+
   /**
    * Read zero branch size long.
    *
@@ -246,7 +244,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected long readZeroBranchSize(final BitInputStream in, final long max,
-    final Bits code) throws IOException {
+                                    final Bits code) throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -256,8 +254,7 @@ public class CountTreeBitsCollection extends
     }
     if (this.useBinomials) {
       value = Gaussian.fromBinomial(0.5, max).decode(in, max);
-    }
-    else {
+    } else {
       value = in.readBoundedLong(1 + max);
     }
     if (SERIALIZATION_CHECKS) {
@@ -265,7 +262,7 @@ public class CountTreeBitsCollection extends
     }
     return value;
   }
-  
+
   /**
    * Sets use binomials.
    *
@@ -276,7 +273,7 @@ public class CountTreeBitsCollection extends
     this.useBinomials = useBinomials;
     return this;
   }
-  
+
   /**
    * Sum long.
    *
@@ -290,7 +287,7 @@ public class CountTreeBitsCollection extends
     }
     return total;
   }
-  
+
   /**
    * To bytes byte [ ].
    *
@@ -304,7 +301,7 @@ public class CountTreeBitsCollection extends
     out.flush();
     return outBuffer.toByteArray();
   }
-  
+
   /**
    * Use binomials boolean.
    *
@@ -313,7 +310,7 @@ public class CountTreeBitsCollection extends
   public boolean useBinomials() {
     return this.useBinomials;
   }
-  
+
   @Override
   public void write(final BitOutputStream out) throws IOException {
     final TreeMap<Bits, Long> sums = this.computeSums();
@@ -323,27 +320,27 @@ public class CountTreeBitsCollection extends
       this.write(out, Bits.NULL, sums);
     }
   }
-  
+
   private void write(final BitOutputStream out, final Bits currentCode,
-    final NavigableMap<Bits, Long> sums) throws IOException {
+                     final NavigableMap<Bits, Long> sums) throws IOException {
     final Entry<Bits, Long> firstEntry = sums.firstEntry();
     final NavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
     final Bits splitCode = currentCode.concatenate(Bits.ONE);
     final NavigableMap<Bits, Long> zeroMap = remainder
-      .headMap(splitCode, false);
+        .headMap(splitCode, false);
     final NavigableMap<Bits, Long> oneMap = remainder.tailMap(splitCode, true);
-    
+
     final int firstEntryCount = this.map.get(firstEntry.getKey()).get();
     final long baseCount = firstEntry.getValue() - firstEntryCount;
     final long endCount = sums.lastEntry().getValue();
     final long size = endCount - baseCount;
-    
+
     final long terminals = firstEntry.getKey().equals(currentCode) ? firstEntryCount
-      : 0;
+        : 0;
     final long zeroCount = 0 == zeroMap.size() ? 0 : zeroMap.lastEntry()
-      .getValue() - baseCount - terminals;
+        .getValue() - baseCount - terminals;
     final long oneCount = size - terminals - zeroCount;
-    
+
     final EntryTransformer<Bits, Long, Long> transformer = new EntryTransformer<Bits, Long, Long>() {
       @Override
       public Long transformEntry(final Bits key, final Long value) {
@@ -352,17 +349,17 @@ public class CountTreeBitsCollection extends
     };
     assert size == this.sum(Maps.transformEntries(sums, transformer).values());
     assert zeroCount == this.sum(Maps.transformEntries(zeroMap, transformer)
-      .values());
+        .values());
     assert oneCount == this.sum(Maps.transformEntries(oneMap, transformer)
-      .values());
-    
+        .values());
+
     final BranchCounts branchCounts = new BranchCounts(
-      currentCode,
-      size,
-      terminals,
-      zeroCount,
-      oneCount);
-    
+        currentCode,
+        size,
+        terminals,
+        zeroCount,
+        oneCount);
+
     if (SERIALIZATION_CHECKS) {
       out.write(SerializationChecks.StartTree);
     }
@@ -377,7 +374,7 @@ public class CountTreeBitsCollection extends
       out.write(SerializationChecks.EndTree);
     }
   }
-  
+
   /**
    * Write.
    *
@@ -386,7 +383,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   public void write(final BitOutputStream out, final int size)
-    throws IOException {
+      throws IOException {
     final TreeMap<Bits, Long> sums = this.computeSums();
     final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
     if (value != size) {
@@ -396,7 +393,7 @@ public class CountTreeBitsCollection extends
       this.write(out, Bits.NULL, sums);
     }
   }
-  
+
   /**
    * Write branch counts.
    *
@@ -405,32 +402,29 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected void writeBranchCounts(final BranchCounts branch,
-    final BitOutputStream out) throws IOException {
+                                   final BitOutputStream out) throws IOException {
     final CodeType currentCodeType = this.getType(branch.path);
     long maximum = branch.size;
     assert maximum >= branch.terminals;
     if (currentCodeType == CodeType.Unknown) {
       this.writeTerminalCount(out, branch.terminals, maximum);
-    }
-    else if (currentCodeType == CodeType.Terminal) {
+    } else if (currentCodeType == CodeType.Terminal) {
       assert branch.size == branch.terminals;
       assert 0 == branch.zeroCount;
       assert 0 == branch.oneCount;
-    }
-    else assert currentCodeType != CodeType.Prefix || 0 == branch.terminals;
+    } else assert currentCodeType != CodeType.Prefix || 0 == branch.terminals;
     maximum -= branch.terminals;
-    
+
     assert maximum >= branch.zeroCount;
     if (0 < maximum) {
       this.writeZeroBranchSize(out, branch.zeroCount, maximum, branch.path);
       maximum -= branch.zeroCount;
-    }
-    else {
+    } else {
       assert 0 == branch.zeroCount;
     }
     assert maximum == branch.oneCount;
   }
-  
+
   /**
    * Write terminal count.
    *
@@ -440,7 +434,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected void writeTerminalCount(final BitOutputStream out,
-    final long value, final long max) throws IOException {
+                                    final long value, final long max) throws IOException {
     assert 0 <= value;
     assert max >= value;
     if (SERIALIZATION_CHECKS) {
@@ -451,7 +445,7 @@ public class CountTreeBitsCollection extends
       out.write(SerializationChecks.AfterTerminal);
     }
   }
-  
+
   /**
    * Write zero branch size.
    *
@@ -462,7 +456,7 @@ public class CountTreeBitsCollection extends
    * @throws IOException the io exception
    */
   protected void writeZeroBranchSize(final BitOutputStream out,
-    final long value, final long max, final Bits bits) throws IOException {
+                                     final long value, final long max, final Bits bits) throws IOException {
     assert 0 <= value;
     assert max >= value;
     if (SERIALIZATION_CHECKS) {
@@ -470,15 +464,14 @@ public class CountTreeBitsCollection extends
     }
     if (this.useBinomials) {
       Gaussian.fromBinomial(0.5, max).encode(out, value, max);
-    }
-    else {
+    } else {
       out.writeBoundedLong(value, 1 + max);
     }
     if (SERIALIZATION_CHECKS) {
       out.write(SerializationChecks.AfterCount);
     }
   }
-  
+
   /**
    * The enum Serialization checks.
    */
@@ -503,7 +496,7 @@ public class CountTreeBitsCollection extends
      */
     AfterTerminal
   }
-  
+
   /**
    * The type Branch counts.
    */
@@ -528,7 +521,7 @@ public class CountTreeBitsCollection extends
      * The One count.
      */
     public long oneCount;
-  
+
     /**
      * Instantiates a new Branch counts.
      *
@@ -539,7 +532,7 @@ public class CountTreeBitsCollection extends
       this.path = path;
       this.size = size;
     }
-  
+
     /**
      * Instantiates a new Branch counts.
      *
@@ -550,7 +543,7 @@ public class CountTreeBitsCollection extends
      * @param oneCount  the one count
      */
     public BranchCounts(final Bits path, final long size, final long terminals,
-      final long zeroCount, final long oneCount) {
+                        final long zeroCount, final long oneCount) {
       this.path = path;
       this.size = size;
       this.terminals = terminals;
@@ -558,5 +551,5 @@ public class CountTreeBitsCollection extends
       this.oneCount = oneCount;
     }
   }
-  
+
 }

@@ -28,10 +28,10 @@ import java.util.Arrays;
  * The type Bit input stream.
  */
 public class BitInputStream {
-  
+
   private final InputStream inner;
   private Bits remainder = new Bits(0);
-  
+
   /**
    * Instantiates a new Bit input stream.
    *
@@ -40,7 +40,7 @@ public class BitInputStream {
   public BitInputStream(final InputStream inner) {
     this.inner = inner;
   }
-  
+
   /**
    * To bit stream bit input stream.
    *
@@ -50,7 +50,7 @@ public class BitInputStream {
   public static BitInputStream toBitStream(final byte[] data) {
     return new BitInputStream(new ByteArrayInputStream(data));
   }
-  
+
   /**
    * Close.
    *
@@ -59,7 +59,7 @@ public class BitInputStream {
   public void close() throws IOException {
     this.inner.close();
   }
-  
+
   /**
    * Availible int.
    *
@@ -69,7 +69,7 @@ public class BitInputStream {
   public int availible() throws IOException {
     return remainder.bitLength + 8 * inner.available();
   }
-  
+
   /**
    * Expect.
    *
@@ -85,7 +85,7 @@ public class BitInputStream {
       throw new IOException(String.format("Check for %s failed: %s != %s", expect, checkBits, expectedBits));
     }
   }
-  
+
   /**
    * Expect.
    *
@@ -99,7 +99,7 @@ public class BitInputStream {
       throw new RuntimeException(String.format("%s is not expected %s", read, bits));
     }
   }
-  
+
   /**
    * Read bits.
    *
@@ -115,7 +115,7 @@ public class BitInputStream {
     this.remainder = this.remainder.range(bits);
     return readBits;
   }
-  
+
   /**
    * Peek bits.
    *
@@ -129,7 +129,7 @@ public class BitInputStream {
     if (additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
     return this.remainder.range(0, Math.min(bits, this.remainder.bitLength));
   }
-  
+
   /**
    * Read ahead bits.
    *
@@ -139,7 +139,7 @@ public class BitInputStream {
   public Bits readAhead() throws IOException {
     return this.readAhead(1);
   }
-  
+
   /**
    * Read ahead bits.
    *
@@ -158,7 +158,7 @@ public class BitInputStream {
     }
     return this.remainder;
   }
-  
+
   /**
    * Read bool boolean.
    *
@@ -168,7 +168,7 @@ public class BitInputStream {
   public boolean readBool() throws IOException {
     return Bits.ONE.equals(this.read(1));
   }
-  
+
   /**
    * Reads a single positive bounded integral value (up to 64-bit, including 0, excluding max)
    *
@@ -180,7 +180,7 @@ public class BitInputStream {
     final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2)) + 1);
     return 0 < bits ? this.read(bits).toLong() : 0;
   }
-  
+
   /**
    * Read var long long.
    *
@@ -191,7 +191,7 @@ public class BitInputStream {
     final int type = (int) this.read(2).toLong();
     return this.read(BitOutputStream.varLongDepths[type]).toLong();
   }
-  
+
   /**
    * Peek long coord long.
    *
@@ -209,7 +209,7 @@ public class BitInputStream {
     assert (max >= value);
     return value;
   }
-  
+
   /**
    * Peek int coord int.
    *
@@ -227,7 +227,7 @@ public class BitInputStream {
     assert (max >= value);
     return value;
   }
-  
+
   /**
    * Read var short short.
    *
@@ -237,7 +237,7 @@ public class BitInputStream {
   public short readVarShort() throws IOException {
     return readVarShort(7);
   }
-  
+
   /**
    * Read var short short.
    *
@@ -250,7 +250,7 @@ public class BitInputStream {
     final int type = (int) this.read(1).toLong();
     return (short) this.read(varShortDepths[type]).toLong();
   }
-  
+
   /**
    * Read char char.
    *
