@@ -44,7 +44,7 @@ public class Bits implements Comparable<Bits> {
    */
   public final int bitLength;
   private final byte[] bytes;
-  
+
   /**
    * Instantiates a new Bits.
    *
@@ -53,7 +53,7 @@ public class Bits implements Comparable<Bits> {
   public Bits(final byte... data) {
     this(data, data.length * 8);
   }
-  
+
   /**
    * Instantiates a new Bits.
    *
@@ -74,7 +74,7 @@ public class Bits implements Comparable<Bits> {
     this.bitLength = length;
     this.bytes = Arrays.copyOf(data, data.length); // Bits.shiftLeft(data, (data.length * 8 - length) % 8);
   }
-  
+
   /**
    * Instantiates a new Bits.
    *
@@ -83,7 +83,7 @@ public class Bits implements Comparable<Bits> {
   public Bits(final long data) {
     this(data, highestOneBit(data));
   }
-  
+
   /**
    * Instantiates a new Bits.
    *
@@ -92,7 +92,7 @@ public class Bits implements Comparable<Bits> {
    */
   public Bits(final long value, final int length) {
     super();
-    
+
     if (0 > length) {
       throw new IllegalArgumentException();
     }
@@ -102,21 +102,20 @@ public class Bits implements Comparable<Bits> {
     }
     this.bitLength = length;
     this.bytes = new byte[(int) Math.ceil(length / 8.)];
-    
+
     byte[] data = toBytes(value);
     data = trim(data);
     final int leftShift = (data.length * 8 - highestOneBit) % 8;
     final int rightShift = length - highestOneBit;
-    
+
     if (leftShift > rightShift) {
       Bits.shiftLeft(data, leftShift - rightShift, this.bytes);
-    }
-    else {
+    } else {
       Bits.shiftRight(data, rightShift - leftShift, this.bytes);
     }
     assert value == this.toLong();
   }
-  
+
   /**
    * Instantiates a new Bits.
    *
@@ -130,7 +129,7 @@ public class Bits implements Comparable<Bits> {
     final int excessBits = this.bytes.length * 8 - this.bitLength;
     this.bytes[this.bytes.length - 1] &= 0xFF << excessBits;
   }
-  
+
   /**
    * Divide bits.
    *
@@ -145,12 +144,11 @@ public class Bits implements Comparable<Bits> {
     if (numerator == denominator) return ONE;
     if (numerator < denominator) {
       return ZERO.concatenate(divide(numerator * 2, denominator, maxBits - 1));
-    }
-    else {
+    } else {
       return ONE.concatenate(divide(2 * (numerator - denominator), denominator, maxBits - 1));
     }
   }
-  
+
   /**
    * Data compare int.
    *
@@ -180,7 +178,7 @@ public class Bits implements Comparable<Bits> {
     }
     return 0;
   }
-  
+
   /**
    * Highest one bit byte.
    *
@@ -199,7 +197,7 @@ public class Bits implements Comparable<Bits> {
     }
     throw new RuntimeException();
   }
-  
+
   /**
    * Pad left bytes byte [ ].
    *
@@ -214,7 +212,7 @@ public class Bits implements Comparable<Bits> {
     }
     return dst;
   }
-  
+
   /**
    * Shift left byte [ ].
    *
@@ -227,7 +225,7 @@ public class Bits implements Comparable<Bits> {
     shiftLeft(src, bits, dst);
     return dst;
   }
-  
+
   /**
    * Shift left.
    *
@@ -236,7 +234,7 @@ public class Bits implements Comparable<Bits> {
    * @param dst  the dst
    */
   public static void shiftLeft(final byte[] src, final int bits,
-    final byte[] dst) {
+                               final byte[] dst) {
     final int bitPart = bits % 8;
     final int bytePart = bits / 8;
     for (int i = 0; i < dst.length; i++) {
@@ -250,7 +248,7 @@ public class Bits implements Comparable<Bits> {
       }
     }
   }
-  
+
   /**
    * Shift right byte [ ].
    *
@@ -263,9 +261,9 @@ public class Bits implements Comparable<Bits> {
     shiftRight(src, bits, dst);
     return dst;
   }
-  
+
   private static void shiftRight(final byte[] src, final int bits,
-    final byte[] dst) {
+                                 final byte[] dst) {
     final int bitPart = bits % 8;
     final int bytePart = bits / 8;
     for (int i = 0; i < dst.length; i++) {
@@ -279,7 +277,7 @@ public class Bits implements Comparable<Bits> {
       }
     }
   }
-  
+
   /**
    * To bytes byte [ ].
    *
@@ -288,16 +286,16 @@ public class Bits implements Comparable<Bits> {
    */
   public static byte[] toBytes(final long data) {
     return new byte[]{
-      (byte) (data >> 56 & 0xFF),
-      (byte) (data >> 48 & 0xFF),
-      (byte) (data >> 40 & 0xFF),
-      (byte) (data >> 32 & 0xFF),
-      (byte) (data >> 24 & 0xFF),
-      (byte) (data >> 16 & 0xFF),
-      (byte) (data >> 8 & 0xFF),
-      (byte) (data & 0xFF)};
+        (byte) (data >> 56 & 0xFF),
+        (byte) (data >> 48 & 0xFF),
+        (byte) (data >> 40 & 0xFF),
+        (byte) (data >> 32 & 0xFF),
+        (byte) (data >> 24 & 0xFF),
+        (byte) (data >> 16 & 0xFF),
+        (byte) (data >> 8 & 0xFF),
+        (byte) (data & 0xFF)};
   }
-  
+
   /**
    * Trim byte [ ].
    *
@@ -312,7 +310,7 @@ public class Bits implements Comparable<Bits> {
     }
     return new byte[]{};
   }
-  
+
   /**
    * Bitwise and bits.
    *
@@ -323,15 +321,15 @@ public class Bits implements Comparable<Bits> {
     final int lengthDifference = this.bitLength - right.bitLength;
     if (lengthDifference < 0) {
       return this.concatenate(
-        new Bits(0l, -lengthDifference)).bitwiseAnd(right);
+          new Bits(0l, -lengthDifference)).bitwiseAnd(right);
     }
     if (lengthDifference > 0) {
       return this.bitwiseAnd(right
-        .concatenate(new Bits(0l, lengthDifference)));
+          .concatenate(new Bits(0l, lengthDifference)));
     }
     final Bits returnValue = new Bits(
-      new byte[this.bytes.length],
-      this.bitLength);
+        new byte[this.bytes.length],
+        this.bitLength);
     for (int i = 0; i < this.bytes.length; i++) {
       returnValue.bytes[i] = this.bytes[i];
     }
@@ -340,7 +338,7 @@ public class Bits implements Comparable<Bits> {
     }
     return returnValue;
   }
-  
+
   /**
    * Bitwise or bits.
    *
@@ -351,15 +349,15 @@ public class Bits implements Comparable<Bits> {
     final int lengthDifference = this.bitLength - right.bitLength;
     if (lengthDifference < 0) {
       return this.concatenate(
-        new Bits(0l, -lengthDifference)).bitwiseOr(right);
+          new Bits(0l, -lengthDifference)).bitwiseOr(right);
     }
     if (lengthDifference > 0) {
       return this.bitwiseOr(right
-        .concatenate(new Bits(0l, lengthDifference)));
+          .concatenate(new Bits(0l, lengthDifference)));
     }
     final Bits returnValue = new Bits(
-      new byte[this.bytes.length],
-      this.bitLength);
+        new byte[this.bytes.length],
+        this.bitLength);
     for (int i = 0; i < this.bytes.length; i++) {
       returnValue.bytes[i] = this.bytes[i];
     }
@@ -368,7 +366,7 @@ public class Bits implements Comparable<Bits> {
     }
     return returnValue;
   }
-  
+
   /**
    * Bitwise xor bits.
    *
@@ -379,15 +377,15 @@ public class Bits implements Comparable<Bits> {
     final int lengthDifference = this.bitLength - right.bitLength;
     if (lengthDifference < 0) {
       return this.concatenate(
-        new Bits(0l, -lengthDifference)).bitwiseXor(right);
+          new Bits(0l, -lengthDifference)).bitwiseXor(right);
     }
     if (lengthDifference > 0) {
       return this.bitwiseXor(right
-        .concatenate(new Bits(0l, lengthDifference)));
+          .concatenate(new Bits(0l, lengthDifference)));
     }
     final Bits returnValue = new Bits(
-      new byte[this.bytes.length],
-      this.bitLength);
+        new byte[this.bytes.length],
+        this.bitLength);
     for (int i = 0; i < this.bytes.length; i++) {
       returnValue.bytes[i] = this.bytes[i];
     }
@@ -396,12 +394,12 @@ public class Bits implements Comparable<Bits> {
     }
     return returnValue;
   }
-  
+
   @Override
   public int compareTo(final Bits arg0) {
     return dataCompare(this, arg0);
   }
-  
+
   /**
    * Concatenate bits.
    *
@@ -416,7 +414,7 @@ public class Bits implements Comparable<Bits> {
     shiftRight(right.bytes, this.bitLength, result.bytes);
     return result;
   }
-  
+
   @Override
   public boolean equals(final Object obj) {
     if (this == obj) {
@@ -434,7 +432,7 @@ public class Bits implements Comparable<Bits> {
     }
     return this.bitLength == other.bitLength;
   }
-  
+
   /**
    * Get bytes byte [ ].
    *
@@ -443,7 +441,7 @@ public class Bits implements Comparable<Bits> {
   public byte[] getBytes() {
     return Arrays.copyOf(this.bytes, this.bytes.length);
   }
-  
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -452,7 +450,7 @@ public class Bits implements Comparable<Bits> {
     result = prime * result + this.bitLength;
     return result;
   }
-  
+
   /**
    * Left shift bits.
    *
@@ -462,7 +460,7 @@ public class Bits implements Comparable<Bits> {
   public Bits leftShift(final int bits) {
     return this.concatenate(new Bits(0l, bits));
   }
-  
+
   /**
    * Returns the next binary string which is of the same length but incremented by one. Returns null on overflow
    *
@@ -474,7 +472,7 @@ public class Bits implements Comparable<Bits> {
     }
     return new Bits(this.toLong() + 1, this.bitLength);
   }
-  
+
   /**
    * Range bits.
    *
@@ -484,7 +482,7 @@ public class Bits implements Comparable<Bits> {
   public Bits range(final int start) {
     return this.range(start, this.bitLength - start);
   }
-  
+
   /**
    * Range bits.
    *
@@ -503,8 +501,8 @@ public class Bits implements Comparable<Bits> {
       throw new IllegalArgumentException();
     }
     final Bits returnValue = new Bits(
-      new byte[(int) Math.ceil(length / 8.)],
-      length);
+        new byte[(int) Math.ceil(length / 8.)],
+        length);
     shiftLeft(this.bytes, start, returnValue.bytes);
     int bitsInLastByte = length % 8;
     if (0 == bitsInLastByte) {
@@ -513,7 +511,7 @@ public class Bits implements Comparable<Bits> {
     returnValue.bytes[returnValue.bytes.length - 1] &= 0xFF << 8 - bitsInLastByte;
     return returnValue;
   }
-  
+
   /**
    * Starts apply boolean.
    *
@@ -525,10 +523,10 @@ public class Bits implements Comparable<Bits> {
       return false;
     }
     final Bits prefix = key.bitLength < this.bitLength ? this.range(0,
-      key.bitLength) : this;
+        key.bitLength) : this;
     return prefix.compareTo(key) == 0;
   }
-  
+
   /**
    * To bit string string.
    *
@@ -547,8 +545,7 @@ public class Bits implements Comparable<Bits> {
     }
     if (sb.length() >= this.bitLength) {
       return sb.substring(sb.length() - this.bitLength, sb.length());
-    }
-    else {
+    } else {
       final CharSequence n = sb.toString();
       sb = new StringBuffer();
       while (sb.length() + n.length() < this.bitLength) {
@@ -557,7 +554,7 @@ public class Bits implements Comparable<Bits> {
       return sb.toString() + n;
     }
   }
-  
+
   /**
    * To hex string string.
    *
@@ -570,7 +567,7 @@ public class Bits implements Comparable<Bits> {
     }
     return sb.substring(0, Math.min(this.bitLength / 4, sb.length()));
   }
-  
+
   /**
    * To base 64 string string.
    *
@@ -579,7 +576,7 @@ public class Bits implements Comparable<Bits> {
   public CharSequence toBase64String() {
     return Base64.getEncoder().encodeToString(this.bytes);
   }
-  
+
   /**
    * To long long.
    *
@@ -588,7 +585,7 @@ public class Bits implements Comparable<Bits> {
   public long toLong() {
     long value = 0;
     for (final byte b : shiftRight(this.bytes, this.bytes.length * 8
-      - this.bitLength)) {
+        - this.bitLength)) {
       final long shifted = value << 8;
       value = shifted;
       final int asInt = b & 0xFF;
@@ -596,13 +593,13 @@ public class Bits implements Comparable<Bits> {
     }
     return value;
   }
-  
+
   @Override
   public String toString() {
     return this.toBitString();
   }
-  
-  
+
+
   /**
    * Pad right bits.
    *
@@ -613,10 +610,10 @@ public class Bits implements Comparable<Bits> {
     if (bitLength >= targetLength) return this;
     return this.concatenate(ZERO).padRight(targetLength);
   }
-  
+
   public Bits padLeft(int targetLength) {
     if (bitLength >= targetLength) return this;
     return ZERO.concatenate(this).padLeft(targetLength);
   }
-  
+
 }

@@ -29,13 +29,13 @@ import java.util.stream.Stream;
  * The type Density tree.
  */
 public class DensityTree {
-  
+
   private final CharSequence[] columnNames;
   private double minSplitFract = 0.05;
   private int splitSizeThreshold = 10;
   private double minFitness = 4.0;
   private int maxDepth = Integer.MAX_VALUE;
-  
+
   /**
    * Instantiates a new Density tree.
    *
@@ -44,7 +44,7 @@ public class DensityTree {
   public DensityTree(CharSequence... columnNames) {
     this.columnNames = columnNames;
   }
-  
+
   /**
    * Gets bounds.
    *
@@ -62,7 +62,7 @@ public class DensityTree {
     }).toArray();
     return new Bounds(max, min);
   }
-  
+
   /**
    * Gets min split fract.
    *
@@ -71,7 +71,7 @@ public class DensityTree {
   public double getMinSplitFract() {
     return minSplitFract;
   }
-  
+
   /**
    * Sets min split fract.
    *
@@ -83,7 +83,7 @@ public class DensityTree {
     this.minSplitFract = minSplitFract;
     return this;
   }
-  
+
   /**
    * Gets split size threshold.
    *
@@ -92,7 +92,7 @@ public class DensityTree {
   public int getSplitSizeThreshold() {
     return splitSizeThreshold;
   }
-  
+
   /**
    * Sets split size threshold.
    *
@@ -104,7 +104,7 @@ public class DensityTree {
     this.splitSizeThreshold = splitSizeThreshold;
     return this;
   }
-  
+
   /**
    * Get column names string [ ].
    *
@@ -113,7 +113,7 @@ public class DensityTree {
   public CharSequence[] getColumnNames() {
     return columnNames;
   }
-  
+
   /**
    * Gets min fitness.
    *
@@ -122,7 +122,7 @@ public class DensityTree {
   public double getMinFitness() {
     return minFitness;
   }
-  
+
   /**
    * Sets min fitness.
    *
@@ -134,7 +134,7 @@ public class DensityTree {
     this.minFitness = minFitness;
     return this;
   }
-  
+
   /**
    * Gets max depth.
    *
@@ -143,7 +143,7 @@ public class DensityTree {
   public int getMaxDepth() {
     return maxDepth;
   }
-  
+
   /**
    * Sets max depth.
    *
@@ -155,7 +155,7 @@ public class DensityTree {
     this.maxDepth = maxDepth;
     return this;
   }
-  
+
   /**
    * The type Bounds.
    */
@@ -170,7 +170,7 @@ public class DensityTree {
      */
     @javax.annotation.Nonnull
     public final double[] min;
-  
+
     /**
      * Instantiates a new Bounds.
      *
@@ -183,7 +183,7 @@ public class DensityTree {
       assert (max.length == min.length);
       assert (IntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
     }
-  
+
     /**
      * Union bounds.
      *
@@ -199,7 +199,7 @@ public class DensityTree {
         return Double.isFinite(pt[d]) ? Math.min(min[d], pt[d]) : min[d];
       }).toArray());
     }
-  
+
     /**
      * Gets volume.
      *
@@ -211,23 +211,23 @@ public class DensityTree {
         return max[d] - min[d];
       }).filter(x -> Double.isFinite(x) && x > 0.0).reduce((a, b) -> a * b).orElse(Double.NaN);
     }
-    
+
     @javax.annotation.Nonnull
     public String toString() {
       return "[" + IntStream.range(0, min.length).mapToObj(d -> {
         return String.format("%s: %s - %s", columnNames[d], min[d], max[d]);
       }).reduce((a, b) -> a + "; " + b).get() + "]";
     }
-    
+
   }
-  
+
   /**
    * The type Ortho rule.
    */
   public class OrthoRule extends Rule {
     private final int dim;
     private final double value;
-  
+
     /**
      * Instantiates a new Ortho rule.
      *
@@ -239,13 +239,13 @@ public class DensityTree {
       this.dim = dim;
       this.value = value;
     }
-    
+
     @Override
     public boolean eval(double[] pt) {
       return pt[dim] < value;
     }
   }
-  
+
   /**
    * The type Rule.
    */
@@ -258,7 +258,7 @@ public class DensityTree {
      * The Fitness.
      */
     public double fitness;
-  
+
     /**
      * Instantiates a new Rule.
      *
@@ -267,7 +267,7 @@ public class DensityTree {
     public Rule(String name) {
       this.name = name;
     }
-  
+
     /**
      * Eval boolean.
      *
@@ -275,13 +275,13 @@ public class DensityTree {
      * @return the boolean
      */
     public abstract boolean eval(double[] pt);
-    
+
     @Override
     public String toString() {
       return name;
     }
   }
-  
+
   /**
    * The type Node.
    */
@@ -303,7 +303,7 @@ public class DensityTree {
     private Node right = null;
     @Nullable
     private Rule rule = null;
-  
+
     /**
      * Instantiates a new Node.
      *
@@ -312,7 +312,7 @@ public class DensityTree {
     public Node(@javax.annotation.Nonnull double[][] points) {
       this(points, 0);
     }
-  
+
     /**
      * Instantiates a new Node.
      *
@@ -325,7 +325,7 @@ public class DensityTree {
       this.depth = depth;
       split();
     }
-  
+
     /**
      * Predict int.
      *
@@ -335,20 +335,18 @@ public class DensityTree {
     public int predict(double[] pt) {
       if (null == rule) {
         return 0;
-      }
-      else if (rule.eval(pt)) {
+      } else if (rule.eval(pt)) {
         return 1 + 2 * left.predict(pt);
-      }
-      else {
+      } else {
         return 0 + 2 * right.predict(pt);
       }
     }
-    
+
     @Override
     public String toString() {
       return code();
     }
-  
+
     /**
      * Code string.
      *
@@ -357,19 +355,18 @@ public class DensityTree {
     public String code() {
       if (null != rule) {
         return String.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}",
-          dataInfo(), rule, rule.fitness,
-          left.code().replaceAll("\n", "\n  "),
-          right.code().replaceAll("\n", "\n  "));
-      }
-      else {
+            dataInfo(), rule, rule.fitness,
+            left.code().replaceAll("\n", "\n  "),
+            right.code().replaceAll("\n", "\n  "));
+      } else {
         return "// " + dataInfo();
       }
     }
-  
+
     private CharSequence dataInfo() {
       return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
-  
+
     /**
      * Split.
      */
@@ -377,7 +374,7 @@ public class DensityTree {
       if (points.length <= splitSizeThreshold) return;
       if (maxDepth <= depth) return;
       this.rule = IntStream.range(0, points[0].length).mapToObj(x -> x).flatMap(dim -> split_ortho(dim)).filter(x -> Double.isFinite(x.fitness))
-        .max(Comparator.comparing(x -> x.fitness)).orElse(null);
+          .max(Comparator.comparing(x -> x.fitness)).orElse(null);
       if (null == this.rule) return;
       double[][] leftPts = Arrays.stream(this.points).filter(pt -> rule.eval(pt)).toArray(i -> new double[i][]);
       double[][] rightPts = Arrays.stream(this.points).filter(pt -> !rule.eval(pt)).toArray(i -> new double[i][]);
@@ -386,7 +383,7 @@ public class DensityTree {
       this.left = new Node(leftPts, depth + 1);
       this.right = new Node(rightPts, depth + 1);
     }
-  
+
     /**
      * Split ortho stream.
      *
@@ -418,7 +415,7 @@ public class DensityTree {
         return (Rule) rule;
       }).filter(i -> null != i && i.fitness > minFitness);
     }
-  
+
     /**
      * Gets rule.
      *
@@ -428,7 +425,7 @@ public class DensityTree {
     public Rule getRule() {
       return rule;
     }
-  
+
     /**
      * Sets rule.
      *
@@ -440,7 +437,7 @@ public class DensityTree {
       this.rule = rule;
       return this;
     }
-  
+
     /**
      * Gets right.
      *
@@ -450,7 +447,7 @@ public class DensityTree {
     public Node getRight() {
       return right;
     }
-  
+
     /**
      * Sets right.
      *
@@ -462,7 +459,7 @@ public class DensityTree {
       this.right = right;
       return this;
     }
-  
+
     /**
      * Gets left.
      *
@@ -472,7 +469,7 @@ public class DensityTree {
     public Node getLeft() {
       return left;
     }
-  
+
     /**
      * Sets left.
      *
@@ -484,7 +481,7 @@ public class DensityTree {
       this.left = left;
       return this;
     }
-  
+
     /**
      * Gets depth.
      *

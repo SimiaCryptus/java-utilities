@@ -35,7 +35,7 @@ public class LabeledObject<T> {
    * The Label.
    */
   public final String label;
-  
+
   /**
    * Instantiates a new Labeled object.
    *
@@ -47,7 +47,7 @@ public class LabeledObject<T> {
     this.data = img;
     this.label = name;
   }
-  
+
   /**
    * Map labeled object.
    *
@@ -59,7 +59,7 @@ public class LabeledObject<T> {
   public <U> com.simiacryptus.util.test.LabeledObject<U> map(@javax.annotation.Nonnull final Function<T, U> f) {
     return new com.simiacryptus.util.test.LabeledObject<>(f.apply(this.data), this.label);
   }
-  
+
   @javax.annotation.Nonnull
   @Override
   public String toString() {

@@ -34,13 +34,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @param <C> the type parameter
  */
 public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
-  extends CountCollection<Bits, C> {
-  
+    extends CountCollection<Bits, C> {
+
   /**
    * The Bit depth.
    */
   public final Integer bitDepth;
-  
+
   /**
    * Instantiates a new Bits collection.
    *
@@ -50,7 +50,7 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
     super(collection);
     this.bitDepth = null;
   }
-  
+
   /**
    * Instantiates a new Bits collection.
    *
@@ -61,7 +61,7 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
     super(collection);
     this.bitDepth = bitDepth;
   }
-  
+
   /**
    * Gets type.
    *
@@ -80,7 +80,7 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
     }
     return CodeType.Unknown;
   }
-  
+
   /**
    * Read.
    *
@@ -88,7 +88,7 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
    * @throws IOException the io exception
    */
   public abstract void read(BitInputStream in) throws IOException;
-  
+
   /**
    * Write.
    *
@@ -96,7 +96,7 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
    * @throws IOException the io exception
    */
   public abstract void write(BitOutputStream out) throws IOException;
-  
+
   /**
    * The enum Code type.
    */
@@ -112,5 +112,5 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
      */
     Unknown
   }
-  
+
 }

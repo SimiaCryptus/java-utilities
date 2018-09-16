@@ -17,20 +17,12 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
+
+import java.io.Serializable;
 
 /**
- * The interface Unchecked supplier.
- *
- * @param <T> the type parameter
+ * The interface Serializable runnable.
  */
-public interface UncheckedSupplier<T> {
-  
-  /**
-   * Gets a result.
-   *
-   * @return a result
-   * @throws Exception the exception
-   */
-  T get() throws Exception;
+public interface SerializableRunnable extends Runnable, Serializable {
 }

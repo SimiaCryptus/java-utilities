@@ -17,15 +17,19 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
-
-import java.io.Serializable;
-import java.util.concurrent.Callable;
+package com.simiacryptus.lang;
 
 /**
- * The interface Serializable callable.
+ * The interface Unchecked supplier.
  *
  * @param <T> the type parameter
  */
-public interface SerializableCallable<T> extends Callable<T>, Serializable {
+public interface UncheckedRunnable<T> {
+
+  /**
+   * Gets a result.
+   *
+   * @throws Exception the exception
+   */
+  void get() throws Exception;
 }

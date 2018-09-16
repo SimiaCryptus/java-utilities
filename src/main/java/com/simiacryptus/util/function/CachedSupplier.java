@@ -27,10 +27,10 @@ import java.util.function.Supplier;
  * @param <T> the type parameter
  */
 public class CachedSupplier<T> implements Supplier<T> {
-  
+
   private final Supplier<T> fn;
   private volatile T cached;
-  
+
   /**
    * Instantiates a new Cached supplier.
    *
@@ -39,7 +39,7 @@ public class CachedSupplier<T> implements Supplier<T> {
   public CachedSupplier(Supplier<T> fn) {
     this.fn = fn;
   }
-  
+
   @Override
   public T get() {
     T obj = cached;

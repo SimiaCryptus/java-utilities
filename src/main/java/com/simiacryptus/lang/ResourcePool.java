@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
 
 import java.util.ArrayList;
 import java.util.function.Predicate;
@@ -28,13 +28,13 @@ import java.util.function.Predicate;
  * @param <T> the type parameter
  */
 public abstract class ResourcePool<T> {
-  
+
   @javax.annotation.Nonnull
   private final java.util.HashSet<T> all;
   private final ThreadLocal<T> currentValue = new ThreadLocal<>();
   private final int maxItems;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
-  
+
   /**
    * Instantiates a new Resource pool.
    *
@@ -45,14 +45,14 @@ public abstract class ResourcePool<T> {
     this.maxItems = maxItems;
     this.all = new java.util.HashSet<>(this.maxItems);
   }
-  
+
   /**
    * Create t.
    *
    * @return the t
    */
   public abstract T create();
-  
+
   /**
    * Get t.
    *
@@ -61,7 +61,7 @@ public abstract class ResourcePool<T> {
   public T get() {
     return get(x -> true);
   }
-  
+
   /**
    * Get t.
    *
@@ -75,8 +75,7 @@ public abstract class ResourcePool<T> {
       while (null != poll) {
         if (filter.test(poll)) {
           return poll;
-        }
-        else {
+        } else {
           sampled.add(poll);
         }
       }
@@ -96,7 +95,7 @@ public abstract class ResourcePool<T> {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * Size int.
    *
@@ -105,7 +104,7 @@ public abstract class ResourcePool<T> {
   public int size() {
     return all.size();
   }
-  
+
   /**
    * With.
    *
@@ -113,15 +112,19 @@ public abstract class ResourcePool<T> {
    * @param f   the f
    * @return the u
    */
-  public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f) { return apply(f, x -> true);}
-  
+  public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f) {
+    return apply(f, x -> true);
+  }
+
   /**
    * With.
    *
    * @param f the f
    */
-  public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {apply(f, x -> true);}
-  
+  public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {
+    apply(f, x -> true);
+  }
+
   /**
    * With.
    *
@@ -134,8 +137,7 @@ public abstract class ResourcePool<T> {
     final T prior = currentValue.get();
     if (null != prior) {
       return f.apply(prior);
-    }
-    else {
+    } else {
       final T poll = get(filter);
       try {
         currentValue.set(poll);
@@ -146,7 +148,7 @@ public abstract class ResourcePool<T> {
       }
     }
   }
-  
+
   /**
    * With.
    *
@@ -157,8 +159,7 @@ public abstract class ResourcePool<T> {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);
-    }
-    else {
+    } else {
       final T poll = get(filter);
       try {
         currentValue.set(poll);

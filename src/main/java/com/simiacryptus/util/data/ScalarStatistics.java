@@ -43,7 +43,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   private volatile double sum2 = 0;
   private volatile double sumLog = 0;
   private volatile int zeros = 0;
-  
+
   /**
    * Stats scalar statistics.
    *
@@ -56,7 +56,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     Arrays.stream(data).forEach(statistics::add);
     return statistics;
   }
-  
+
   /**
    * Add.
    *
@@ -80,12 +80,10 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
       vmax = Math.max(vmax, v);
       if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
         z++;
-      }
-      else {
+      } else {
         if (v < 0) {
           n++;
-        }
-        else {
+        } else {
           p++;
         }
         vlog += Math.log10(Math.abs(v));
@@ -104,7 +102,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     }
     return this;
   }
-  
+
   /**
    * Add.
    *
@@ -118,19 +116,17 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     max = Math.max(max, v);
     if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
       zeros++;
-    }
-    else {
+    } else {
       if (v < 0) {
         negatives++;
-      }
-      else {
+      } else {
         positives++;
       }
       sumLog += Math.log10(Math.abs(v));
     }
   }
-  
-  
+
+
   /**
    * Add scalar statistics.
    *
@@ -148,7 +144,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sum.sum2 += right.sum2;
     return sum;
   }
-  
+
   /**
    * Clear.
    */
@@ -163,7 +159,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sum2 = 0;
     sumLog = 0;
   }
-  
+
   /**
    * Gets count.
    *
@@ -172,7 +168,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   public int getCount() {
     return sum0;
   }
-  
+
   /**
    * Gets json.
    *
@@ -192,7 +188,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     json.addProperty("sumLog", sumLog);
     return json;
   }
-  
+
   /**
    * Gets mean.
    *
@@ -201,7 +197,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   public double getMean() {
     return sum1 / sum0;
   }
-  
+
   /**
    * Gets mean power.
    *
@@ -210,7 +206,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   public double getMeanPower() {
     return sumLog / (sum0 - zeros);
   }
-  
+
   @Override
   public Map<CharSequence, Object> getMetrics() {
     @javax.annotation.Nonnull final HashMap<CharSequence, Object> map = new HashMap<>();
@@ -226,7 +222,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     map.put("zeros", zeros);
     return map;
   }
-  
+
   /**
    * Gets std dev.
    *
@@ -235,7 +231,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   public double getStdDev() {
     return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
   }
-  
+
   /**
    * Read json.
    *
@@ -253,7 +249,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sum2 = json.get("sum2").getAsDouble();
     sumLog = json.get("sumLog").getAsDouble();
   }
-  
+
   /**
    * Subtract scalar statistics.
    *
@@ -271,7 +267,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sum.sum2 -= right.sum2;
     return sum;
   }
-  
+
   @Override
   public String toString() {
     return getMetrics().toString();

@@ -24,15 +24,8 @@ import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.bitset.CountTreeBitsCollection;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * The type Hamming run.
@@ -56,7 +49,7 @@ public class HammingCode<T extends Comparable<T>> {
    * The Total weight.
    */
   protected final long totalWeight;
-  
+
   /**
    * Instantiates a new Hamming run.
    *
@@ -78,14 +71,13 @@ public class HammingCode<T extends Comparable<T>> {
       this.forwardIndex.putAll(root.codes);
       this.reverseIndex.putAll(root.index);
       totalWeight = root.count;
-    }
-    else {
+    } else {
       totalWeight = 0;
     }
     assert this.verifyIndexes();
     assert this.forwardIndex.size() == symbols.size();
   }
-  
+
   /**
    * Is prefix free run boolean.
    *
@@ -97,7 +89,7 @@ public class HammingCode<T extends Comparable<T>> {
     for (final Bits code : keySet) {
       final Bits ceiling = check.ceiling(code);
       if (null != ceiling
-        && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
+          && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
         return false;
       }
       final Bits floor = check.floor(code);
@@ -108,7 +100,7 @@ public class HammingCode<T extends Comparable<T>> {
     }
     return true;
   }
-  
+
   /**
    * Code size int.
    *
@@ -117,7 +109,7 @@ public class HammingCode<T extends Comparable<T>> {
   public int codeSize() {
     return this.forwardIndex.size();
   }
-  
+
   /**
    * Decode t.
    *
@@ -135,7 +127,7 @@ public class HammingCode<T extends Comparable<T>> {
     in.read(entry.getKey().bitLength);
     return entry.getValue();
   }
-  
+
   /**
    * Decode entry.
    *
@@ -154,7 +146,7 @@ public class HammingCode<T extends Comparable<T>> {
     // assert(null != entry || verifyIndexes());
     return entry;
   }
-  
+
   /**
    * Encode bits.
    *
@@ -166,7 +158,7 @@ public class HammingCode<T extends Comparable<T>> {
     assert null != bits || this.verifyIndexes();
     return bits;
   }
-  
+
   /**
    * Gets codes.
    *
@@ -176,10 +168,10 @@ public class HammingCode<T extends Comparable<T>> {
   public SortedMap<Bits, T> getCodes(final Bits fromKey) {
     final Bits next = fromKey.next();
     final SortedMap<Bits, T> subMap = null == next ? this.forwardIndex
-      .tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
+        .tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
     return subMap;
   }
-  
+
   /**
    * Gets set encoder.
    *
@@ -188,7 +180,7 @@ public class HammingCode<T extends Comparable<T>> {
   public CountTreeBitsCollection getSetEncoder() {
     return new HammingCodeCollection();
   }
-  
+
   /**
    * Gets set encoder.
    *
@@ -197,10 +189,10 @@ public class HammingCode<T extends Comparable<T>> {
    * @throws IOException the io exception
    */
   public CountTreeBitsCollection getSetEncoder(final BitInputStream data)
-    throws IOException {
+      throws IOException {
     return new HammingCodeCollection(data);
   }
-  
+
   /**
    * Gets set encoder.
    *
@@ -209,10 +201,10 @@ public class HammingCode<T extends Comparable<T>> {
    * @throws IOException the io exception
    */
   public CountTreeBitsCollection getSetEncoder(final byte[] data)
-    throws IOException {
+      throws IOException {
     return new HammingCodeCollection(data);
   }
-  
+
   /**
    * Gets weights.
    *
@@ -221,7 +213,7 @@ public class HammingCode<T extends Comparable<T>> {
   public Map<T, Integer> getWeights() {
     return Collections.unmodifiableMap(this.weights);
   }
-  
+
   /**
    * Verify indexes boolean.
    *
@@ -249,7 +241,7 @@ public class HammingCode<T extends Comparable<T>> {
     }
     return this.reverseIndex.size() == this.forwardIndex.size();
   }
-  
+
   /**
    * Total weight int.
    *
@@ -259,9 +251,9 @@ public class HammingCode<T extends Comparable<T>> {
     // TODO Auto-generated method stub
     return 0;
   }
-  
+
   private static class SubCode<X extends Comparable<X>> implements
-    Comparable<SubCode<X>> {
+      Comparable<SubCode<X>> {
     /**
      * The Count.
      */
@@ -274,7 +266,7 @@ public class HammingCode<T extends Comparable<T>> {
      * The Index.
      */
     final TreeMap<X, Bits> index;
-  
+
     /**
      * Instantiates a new Sub run.
      *
@@ -289,7 +281,7 @@ public class HammingCode<T extends Comparable<T>> {
       this.codes.put(Bits.NULL, item);
       this.index.put(item, Bits.NULL);
     }
-  
+
     /**
      * Instantiates a new Sub run.
      *
@@ -314,11 +306,11 @@ public class HammingCode<T extends Comparable<T>> {
         this.assertNull(this.index.put(e.getValue(), code));
       }
     }
-    
+
     private void assertNull(final Object obj) {
       assert null == obj;
     }
-    
+
     @Override
     public int compareTo(final SubCode<X> o) {
       if (this.count < o.count) {
@@ -332,7 +324,7 @@ public class HammingCode<T extends Comparable<T>> {
       return compareTo;
     }
   }
-  
+
   /**
    * The type Hamming run collection.
    */
@@ -343,7 +335,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection() {
       super();
     }
-  
+
     /**
      * Instantiates a new Hamming run collection.
      *
@@ -353,7 +345,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection(final BitInputStream data) throws IOException {
       super(data);
     }
-  
+
     /**
      * Instantiates a new Hamming run collection.
      *
@@ -363,7 +355,7 @@ public class HammingCode<T extends Comparable<T>> {
     public HammingCodeCollection(final byte[] data) throws IOException {
       super(data);
     }
-    
+
     @Override
     public CodeType getType(final Bits bits) {
       final Entry<Bits, T> code = HammingCode.this.decode(bits);
@@ -374,5 +366,5 @@ public class HammingCode<T extends Comparable<T>> {
       return CodeType.Terminal;
     }
   }
-  
+
 }

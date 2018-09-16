@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.io;
+package com.simiacryptus.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -33,14 +33,14 @@ import java.util.EnumSet;
  * The type Kryo util.
  */
 public class KryoUtil {
-  
+
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
-    
+
     @javax.annotation.Nonnull
     @Override
     protected Kryo initialValue() {
       @javax.annotation.Nonnull final Kryo kryo = new KryoReflectionFactorySupport() {
-        
+
         @Override
         public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class clazz) {
           if (EnumSet.class.isAssignableFrom(clazz)) {
@@ -55,19 +55,19 @@ public class KryoUtil {
           }
           return serializer;
         }
-        
+
       };
       return kryo;
     }
-    
+
   };
-  
+
   /**
    * Kryo kryo.
    *
    * @return the kryo
    */
   public static Kryo kryo() {
-    return com.simiacryptus.util.io.KryoUtil.threadKryo.get();
+    return KryoUtil.threadKryo.get();
   }
 }

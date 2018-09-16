@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
 
 import java.io.Serializable;
 import java.util.function.Consumer;

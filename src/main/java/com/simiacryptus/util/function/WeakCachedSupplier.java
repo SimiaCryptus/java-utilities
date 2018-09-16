@@ -29,11 +29,11 @@ import java.util.function.Supplier;
  * @param <T> the type parameter
  */
 public class WeakCachedSupplier<T> implements Supplier<T> {
-  
+
   private final Supplier<T> fn;
   @Nullable
   private volatile WeakReference<T> cached;
-  
+
   /**
    * Instantiates a new Weak cached supplier.
    *
@@ -42,7 +42,7 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
   public WeakCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
   }
-  
+
   @Nullable
   @Override
   public T get() {
@@ -60,7 +60,7 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
     }
     return obj;
   }
-  
+
   /**
    * Gets soft ref.
    *

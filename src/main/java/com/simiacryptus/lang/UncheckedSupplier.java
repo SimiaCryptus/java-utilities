@@ -17,50 +17,20 @@
  * under the License.
  */
 
-package com.simiacryptus.util.lang;
+package com.simiacryptus.lang;
 
 /**
- * The type Tuple 2.
+ * The interface Unchecked supplier.
  *
- * @param <A> the type parameter
- * @param <B> the type parameter
+ * @param <T> the type parameter
  */
-public class Tuple2<A, B> {
+public interface UncheckedSupplier<T> {
+
   /**
-   * The 1.
-   */
-  public final A _1;
-  /**
-   * The 2.
-   */
-  public final B _2;
-  
-  /**
-   * Instantiates a new Tuple 2.
+   * Gets a result.
    *
-   * @param a the a
-   * @param b the b
+   * @return a result
+   * @throws Exception the exception
    */
-  public Tuple2(final A a, final B b) {
-    _1 = a;
-    _2 = b;
-  }
-  
-  /**
-   * Gets first.
-   *
-   * @return the first
-   */
-  public A getFirst() {
-    return _1;
-  }
-  
-  /**
-   * Gets second.
-   *
-   * @return the second
-   */
-  public B getSecond() {
-    return _2;
-  }
+  T get() throws Exception;
 }

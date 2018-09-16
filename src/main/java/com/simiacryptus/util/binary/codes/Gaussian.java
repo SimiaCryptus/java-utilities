@@ -28,7 +28,7 @@ import java.io.IOException;
  * The type Gaussian.
  */
 public class Gaussian {
-  
+
   /**
    * The constant LOG2.
    */
@@ -41,7 +41,7 @@ public class Gaussian {
    * The Std dev.
    */
   public final double stdDev;
-  
+
   /**
    * Instantiates a new Gaussian.
    *
@@ -68,7 +68,7 @@ public class Gaussian {
     this.mean = mean;
     this.stdDev = stdDev;
   }
-  
+
   /**
    * From binomial gaussian.
    *
@@ -77,7 +77,7 @@ public class Gaussian {
    * @return the gaussian
    */
   public static Gaussian fromBinomial(final double probability,
-    final long totalPopulation) {
+                                      final long totalPopulation) {
     if (0. >= totalPopulation) {
       throw new IllegalArgumentException();
     }
@@ -94,10 +94,10 @@ public class Gaussian {
       throw new IllegalArgumentException();
     }
     return new Gaussian(
-      probability * totalPopulation,
-      Math.sqrt(totalPopulation * probability * (1 - probability)));
+        probability * totalPopulation,
+        Math.sqrt(totalPopulation * probability * (1 - probability)));
   }
-  
+
   /**
    * Log 2 double.
    *
@@ -107,7 +107,7 @@ public class Gaussian {
   public static double log2(final double d) {
     return Math.log(d) / LOG2;
   }
-  
+
   /**
    * Decode long.
    *
@@ -117,7 +117,7 @@ public class Gaussian {
    * @throws IOException the io exception
    */
   public long decode(final BitInputStream in, final long max)
-    throws IOException {
+      throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -134,8 +134,7 @@ public class Gaussian {
     if (stdDevWindowStart < 0) {
       stdDevWindowEnd += -stdDevWindowStart;
       stdDevWindowStart += -stdDevWindowStart;
-    }
-    else {
+    } else {
       final long delta = stdDevWindowEnd - (max + 1);
       if (delta > 0) {
         stdDevWindowStart -= delta;
@@ -144,27 +143,23 @@ public class Gaussian {
     }
     if (in.readBool()) {
       return in.readBoundedLong(centralWindow) + stdDevWindowStart;
-    }
-    else {
+    } else {
       boolean side;
       if (stdDevWindowStart <= 0) {
         side = true;
-      }
-      else if (stdDevWindowEnd > max) {
+      } else if (stdDevWindowEnd > max) {
         side = false;
-      }
-      else {
+      } else {
         side = in.readBool();
       }
       if (side) {
         return stdDevWindowEnd + in.readBoundedLong(1 + max - stdDevWindowEnd);
-      }
-      else {
+      } else {
         return in.readBoundedLong(stdDevWindowStart);
       }
     }
   }
-  
+
   /**
    * Encode.
    *
@@ -174,7 +169,7 @@ public class Gaussian {
    * @throws IOException the io exception
    */
   public void encode(final BitOutputStream out, final long value, final long max)
-    throws IOException {
+      throws IOException {
     if (0 == max) {
       return;
     }
@@ -192,8 +187,7 @@ public class Gaussian {
     if (stdDevWindowStart < 0) {
       stdDevWindowEnd += -stdDevWindowStart;
       stdDevWindowStart += -stdDevWindowStart;
-    }
-    else {
+    } else {
       final long delta = stdDevWindowEnd - (max + 1);
       if (delta > 0) {
         stdDevWindowStart -= delta;
@@ -206,12 +200,10 @@ public class Gaussian {
         out.write(false);
       }
       out.writeBoundedLong(value, stdDevWindowStart);
-    }
-    else if (value < stdDevWindowEnd) {
+    } else if (value < stdDevWindowEnd) {
       out.write(true);
       out.writeBoundedLong(value - stdDevWindowStart, centralWindow);
-    }
-    else {
+    } else {
       out.write(false);
       if (stdDevWindowStart > 0) {
         out.write(true);
@@ -219,5 +211,5 @@ public class Gaussian {
       out.writeBoundedLong(value - stdDevWindowEnd, 1 + max - stdDevWindowEnd);
     }
   }
-  
+
 }

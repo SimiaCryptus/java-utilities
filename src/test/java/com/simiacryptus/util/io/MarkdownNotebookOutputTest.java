@@ -19,13 +19,15 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.notebook.MarkdownNotebookOutput;
+import com.simiacryptus.notebook.NotebookOutput;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.stream.IntStream;
 
 public class MarkdownNotebookOutputTest {
-  
+
   @Test
   public void test() throws Exception {
     try (NotebookOutput notebookOutput = MarkdownNotebookOutput.get(new File("target/report/test.md"), true)) {
@@ -39,7 +41,7 @@ public class MarkdownNotebookOutputTest {
       });
     }
   }
-  
+
   @Test
   public void testSubreport() throws Exception {
     try (NotebookOutput notebookOutput = MarkdownNotebookOutput.get(new File("target/report/testSubreport.md"), true)) {
@@ -58,5 +60,5 @@ public class MarkdownNotebookOutputTest {
       });
     }
   }
-  
+
 }

@@ -28,9 +28,9 @@ import java.util.Arrays;
  * The type Async output stream.
  */
 public class AsyncOutputStream extends FilterOutputStream {
-  
+
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
-  
+
   /**
    * Instantiates a new Async output stream.
    *
@@ -39,7 +39,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   public AsyncOutputStream(@javax.annotation.Nonnull final OutputStream stream) {
     super(stream);
   }
-  
+
   @Override
   public synchronized void close() {
     queue.submit(() -> {
@@ -50,7 +50,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       }
     });
   }
-  
+
   @Override
   public synchronized void flush() {
     queue.submit(() -> {
@@ -61,7 +61,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       }
     });
   }
-  
+
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) {
     @javax.annotation.Nonnull final byte[] _b = Arrays.copyOfRange(b, off, Math.min(b.length, off + len));
@@ -73,7 +73,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       }
     });
   }
-  
+
   @Override
   public synchronized void write(final int b) {
     queue.submit(() -> {
@@ -84,5 +84,5 @@ public class AsyncOutputStream extends FilterOutputStream {
       }
     });
   }
-  
+
 }

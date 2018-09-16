@@ -31,10 +31,10 @@ import java.util.stream.StreamSupport;
  * The type Binary chunk iterator.
  */
 public final class BinaryChunkIterator implements Iterator<byte[]> {
-  
+
   private final DataInputStream in;
   private final int recordSize;
-  
+
   /**
    * Instantiates a new Binary chunk iterator.
    *
@@ -46,7 +46,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     this.in = in;
     this.recordSize = recordSize;
   }
-  
+
   @javax.annotation.Nonnull
   private static byte[] read(@javax.annotation.Nonnull final DataInputStream i, final int s) throws IOException {
     @javax.annotation.Nonnull final byte[] b = new byte[s];
@@ -60,7 +60,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     }
     return b;
   }
-  
+
   /**
    * To iterator stream.
    *
@@ -71,7 +71,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toIterator(@javax.annotation.Nonnull final Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
-  
+
   /**
    * To stream stream.
    *
@@ -82,7 +82,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator) {
     return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, 0);
   }
-  
+
   /**
    * To stream stream.
    *
@@ -94,7 +94,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size) {
     return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, size, false);
   }
-  
+
   /**
    * To stream stream.
    *
@@ -107,7 +107,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size, final boolean parallel) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
-  
+
   @Override
   public boolean hasNext() {
     try {
@@ -116,7 +116,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
       return false;
     }
   }
-  
+
   @javax.annotation.Nonnull
   @Override
   public byte[] next() {
@@ -127,7 +127,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
       throw new RuntimeException(e);
     }
   }
-  
+
   /**
    * To stream stream.
    *

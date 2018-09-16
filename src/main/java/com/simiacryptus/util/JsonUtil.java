@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.simiacryptus.util.io;
+package com.simiacryptus.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -38,7 +38,7 @@ import java.util.stream.IntStream;
  * The type Json util.
  */
 public class JsonUtil {
-  
+
   /**
    * Get double array double [ ].
    *
@@ -48,7 +48,7 @@ public class JsonUtil {
   public static double[] getDoubleArray(@javax.annotation.Nonnull final JsonArray array) {
     return IntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
-  
+
   /**
    * Get int array int [ ].
    *
@@ -60,7 +60,7 @@ public class JsonUtil {
     if (null == array) return null;
     return IntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
   }
-  
+
   /**
    * Gets json.
    *
@@ -75,7 +75,7 @@ public class JsonUtil {
     }
     return array;
   }
-  
+
   /**
    * Gets json.
    *
@@ -90,7 +90,7 @@ public class JsonUtil {
     }
     return array;
   }
-  
+
   /**
    * Write json.
    *
@@ -100,7 +100,7 @@ public class JsonUtil {
   public static CharSequence toJson(final Object obj) {
     return toJson(obj, getMapper());
   }
-  
+
   @Nonnull
   public static CharSequence toJson(final Object obj, final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -111,7 +111,7 @@ public class JsonUtil {
     }
     return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
   }
-  
+
   /**
    * Cache t.
    *
@@ -125,14 +125,13 @@ public class JsonUtil {
   public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
     if (file.exists()) {
       return getMapper().readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
-    }
-    else {
+    } else {
       T obj = intializer.get();
       FileUtils.write(file, toJson(obj), Charset.defaultCharset());
       return obj;
     }
   }
-  
+
   /**
    * Gets mapper.
    *
@@ -140,8 +139,8 @@ public class JsonUtil {
    */
   public static ObjectMapper getMapper() {
     ObjectMapper enable = new ObjectMapper()
-                            //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-                            .enable(SerializationFeature.INDENT_OUTPUT);
+        //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+        .enable(SerializationFeature.INDENT_OUTPUT);
     return enable;
   }
 }

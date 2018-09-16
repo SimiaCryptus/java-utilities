@@ -19,8 +19,8 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.lang.UncheckedSupplier;
 import com.simiacryptus.util.io.TeeOutputStream;
-import com.simiacryptus.util.lang.UncheckedSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * The type Sys out interceptor.
  */
 public class SysOutInterceptor extends PrintStream {
-  
+
   /**
    * The constant INSTANCE.
    */
@@ -55,9 +55,9 @@ public class SysOutInterceptor extends PrintStream {
       return getInner();
     }
   };
-  
+
   private final AtomicBoolean initialized = new AtomicBoolean(false);
-  
+
   /**
    * Instantiates a new Sys out interceptor.
    *
@@ -66,7 +66,7 @@ public class SysOutInterceptor extends PrintStream {
   private SysOutInterceptor(@javax.annotation.Nonnull final PrintStream out) {
     super(out);
   }
-  
+
   /**
    * With output logged result.
    *
@@ -94,8 +94,8 @@ public class SysOutInterceptor extends PrintStream {
       SysOutInterceptor.INSTANCE.isMonitoring.remove();
     }
   }
-  
-  
+
+
   /**
    * With output logged result.
    *
@@ -124,8 +124,8 @@ public class SysOutInterceptor extends PrintStream {
       SysOutInterceptor.INSTANCE.isMonitoring.remove();
     }
   }
-  
-  
+
+
   /**
    * Init sys out interceptor.
    *
@@ -141,7 +141,7 @@ public class SysOutInterceptor extends PrintStream {
     }
     return this;
   }
-  
+
   /**
    * Current handler printGroups stream.
    *
@@ -150,7 +150,7 @@ public class SysOutInterceptor extends PrintStream {
   public PrintStream currentHandler() {
     return threadHandler.get();
   }
-  
+
   /**
    * Gets heapCopy.
    *
@@ -160,23 +160,23 @@ public class SysOutInterceptor extends PrintStream {
   public PrintStream getInner() {
     return (PrintStream) out;
   }
-  
+
   @Override
   public void print(final String s) {
     currentHandler().print(s);
   }
-  
+
   @Override
   public void write(byte[] b) {
     currentHandler().print(new String(b));
   }
-  
+
   @Override
   public void println(final String x) {
     final PrintStream currentHandler = currentHandler();
     currentHandler.println(x);
   }
-  
+
   /**
    * Sets current handler.
    *
@@ -188,7 +188,7 @@ public class SysOutInterceptor extends PrintStream {
     threadHandler.set(out);
     return previous;
   }
-  
+
   /**
    * The type Logged result.
    *
@@ -203,7 +203,7 @@ public class SysOutInterceptor extends PrintStream {
      * The Obj.
      */
     public final T obj;
-  
+
     /**
      * Instantiates a new Logged result.
      *
