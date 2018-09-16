@@ -55,10 +55,12 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -589,8 +591,8 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
     try {
       ImageIO.write(stdImage, "jpg", file);
-    } catch (IOException e) {
-      throw new RuntimeException(String.format("Error processing image with dims (%d,%d)", stdImage.getWidth(), stdImage.getHeight()), e);
+    } catch (Throwable e) {
+      log.warn(String.format("Error processing image with dims (%d,%d)", stdImage.getWidth(), stdImage.getHeight()), e);
     }
     return file;
   }
@@ -775,7 +777,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
       };
       try {
         try {
-          outer.p("Subreport: %s %s %s %s", URLDecoder.decode(subreportName, "UTF-8"),
+          outer.p("Subreport: %s %s %s %s", stripPrefixes(URLDecoder.decode(subreportName, "UTF-8"), "_", "/", "-", " ", "."),
               outer.link(subreportFile, "markdown"),
               outer.link(new File(root, reportName + ".html"), "html"),
               outer.link(new File(root, reportName + ".pdf"), "pdf")
@@ -820,6 +822,14 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     } catch (FileNotFoundException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static String stripPrefixes(String str, String... prefixes) {
+    AtomicReference<String> reference = new AtomicReference<>(str);
+    while(Stream.of(prefixes).filter(reference.get()::startsWith).findFirst().isPresent()) {
+      reference.set(reference.get().substring(1));
+    }
+    return reference.get();
   }
 
   public boolean isAutobrowse() {

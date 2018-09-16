@@ -59,7 +59,13 @@ public class CodeUtil {
    * The constant projectRoot.
    */
   @javax.annotation.Nonnull
-  public static File projectRoot = new File(System.getProperty("codeRoot", ".."));
+  public static File projectRoot = new File(System.getProperty("codeRoot", getDefaultProjectRoot()));
+
+  private static String getDefaultProjectRoot() {
+    if(new File("src").exists()) return "..";
+    else return ".";
+  }
+
   private static final List<File> codeRoots = com.simiacryptus.util.lang.CodeUtil.scanLocalCodeRoots();
 
   /**
