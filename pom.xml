@@ -54,7 +54,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- This set of dependencies sets up the logging classpath for all consuming project. It can be overridden via excludes. -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -75,7 +74,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
         </dependency>
-        <!-- Standard Libraries -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -124,7 +122,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <artifactId>commons-text</artifactId>
         </dependency>
         <dependency>
             <groupId>com.vladsch.flexmark</groupId>
