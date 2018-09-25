@@ -17,20 +17,57 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The type String query.
+ *
+ * @param <T> the type parameter
+ */
 public abstract class StringQuery<T> {
 
+  /**
+   * The constant logger.
+   */
   protected static final Logger logger = LoggerFactory.getLogger(JsonQuery.class);
+  /**
+   * The Id.
+   */
   protected final String id = "input_" + UUID.randomUUID().toString() + ".html";
+  /**
+   * The Handler get.
+   */
   protected final Closeable handler_get;
+  /**
+   * The Done.
+   */
   protected final Semaphore done = new Semaphore(0);
+  /**
+   * The Handler post.
+   */
   protected final Closeable handler_post;
+  /**
+   * The Log.
+   */
   final MarkdownNotebookOutput log;
+  /**
+   * The Value.
+   */
   protected T value = null;
+  /**
+   * The Width.
+   */
   String width = "100%";
+  /**
+   * The Form var.
+   */
   String formVar = "data";
   private String height1 = "200px";
   private String height2 = "240px";
 
+  /**
+   * Instantiates a new String query.
+   *
+   * @param log the log
+   */
   public StringQuery(MarkdownNotebookOutput log) {
     this.log = log;
     FileHTTPD httpd = this.log.getHttpd();
@@ -66,6 +103,12 @@ public abstract class StringQuery<T> {
     });
   }
 
+  /**
+   * Gets write.
+   *
+   * @return the write
+   * @throws JsonProcessingException the json processing exception
+   */
   protected String getWrite() throws JsonProcessingException {
     return "<html><body style=\"margin: 0;\">" +
         "<form action=\"" + id + "\" method=\"POST\">" +
@@ -80,10 +123,30 @@ public abstract class StringQuery<T> {
         "</body></html>";
   }
 
+  /**
+   * From string t.
+   *
+   * @param text the text
+   * @return the t
+   * @throws IOException the io exception
+   */
   protected abstract T fromString(String text) throws IOException;
 
+  /**
+   * Gets string.
+   *
+   * @param value the value
+   * @return the string
+   * @throws JsonProcessingException the json processing exception
+   */
   protected abstract String getString(T value) throws JsonProcessingException;
 
+  /**
+   * Print string query.
+   *
+   * @param initial the initial
+   * @return the string query
+   */
   public StringQuery<T> print(@Nonnull T initial) {
     value = initial;
     try {
@@ -98,6 +161,11 @@ public abstract class StringQuery<T> {
     return this;
   }
 
+  /**
+   * Get t.
+   *
+   * @return the t
+   */
   public T get() {
     try {
       done.acquire();
@@ -108,6 +176,13 @@ public abstract class StringQuery<T> {
     }
   }
 
+  /**
+   * Get t.
+   *
+   * @param t the t
+   * @param u the u
+   * @return the t
+   */
   public T get(long t, TimeUnit u) {
     try {
       if (done.tryAcquire(t, u)) {
@@ -128,8 +203,16 @@ public abstract class StringQuery<T> {
     super.finalize();
   }
 
+  /**
+   * The type Simple string query.
+   */
   public static class SimpleStringQuery extends StringQuery<String> {
 
+    /**
+     * Instantiates a new Simple string query.
+     *
+     * @param log the log
+     */
     public SimpleStringQuery(MarkdownNotebookOutput log) {
       super(log);
     }

@@ -39,12 +39,18 @@ import java.util.function.Function;
  * The type File nano httpd.
  */
 public class FileNanoHTTPD extends NanoHTTPD implements FileHTTPD {
+  /**
+   * The Log.
+   */
   static final Logger log = LoggerFactory.getLogger(FileNanoHTTPD.class);
 
   /**
    * The Custom getHandlers.
    */
   public final Map<CharSequence, Function<IHTTPSession, Response>> getHandlers = new HashMap<>();
+  /**
+   * The Post handlers.
+   */
   public final Map<CharSequence, Function<IHTTPSession, Response>> postHandlers = new HashMap<>();
   /**
    * The Pool.

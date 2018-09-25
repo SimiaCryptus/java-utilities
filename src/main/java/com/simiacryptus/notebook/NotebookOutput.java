@@ -85,12 +85,33 @@ public interface NotebookOutput extends Closeable {
     return eval(fn, Integer.MAX_VALUE, 3);
   }
 
+  /**
+   * Png file file.
+   *
+   * @param rawImage the raw image
+   * @param file     the file
+   * @return the file
+   */
   @Nonnull
   File pngFile(@Nonnull BufferedImage rawImage, File file);
 
+  /**
+   * Jpg string.
+   *
+   * @param rawImage the raw image
+   * @param caption  the caption
+   * @return the string
+   */
   @Nonnull
   String jpg(@Nullable BufferedImage rawImage, CharSequence caption);
 
+  /**
+   * Jpg file file.
+   *
+   * @param rawImage the raw image
+   * @param file     the file
+   * @return the file
+   */
   @Nonnull
   File jpgFile(@Nonnull BufferedImage rawImage, File file);
 
@@ -105,6 +126,11 @@ public interface NotebookOutput extends Closeable {
    */
   <T> T eval(UncheckedSupplier<T> fn, int maxLog, int framesNo);
 
+  /**
+   * Write.
+   *
+   * @throws IOException the io exception
+   */
   void write() throws IOException;
 
   /**
@@ -209,9 +235,20 @@ public interface NotebookOutput extends Closeable {
    */
   void p(CharSequence fmt, Object... args);
 
+  /**
+   * Gets root.
+   *
+   * @return the root
+   */
   @Nonnull
   File getRoot();
 
+  /**
+   * On complete notebook output.
+   *
+   * @param tasks the tasks
+   * @return the notebook output
+   */
   @Nonnull
   NotebookOutput onComplete(Runnable... tasks);
 
@@ -256,6 +293,12 @@ public interface NotebookOutput extends Closeable {
    */
   CharSequence getName();
 
+  /**
+   * Sets name.
+   *
+   * @param name the name
+   * @return the name
+   */
   NotebookOutput setName(String name);
 
   /**
@@ -280,15 +323,51 @@ public interface NotebookOutput extends Closeable {
    */
   FileHTTPD getHttpd();
 
+  /**
+   * Subreport t.
+   *
+   * @param <T>        the type parameter
+   * @param reportName the report name
+   * @param fn         the fn
+   * @return the t
+   */
   <T> T subreport(String reportName, Function<NotebookOutput, T> fn);
 
+  /**
+   * Gets current home.
+   *
+   * @return the current home
+   */
   URI getCurrentHome();
 
+  /**
+   * Sets current home.
+   *
+   * @param currentHome the current home
+   * @return the current home
+   */
   NotebookOutput setCurrentHome(URI currentHome);
 
+  /**
+   * Gets archive home.
+   *
+   * @return the archive home
+   */
   URI getArchiveHome();
 
+  /**
+   * Sets archive home.
+   *
+   * @param archiveHome the archive home
+   * @return the archive home
+   */
   NotebookOutput setArchiveHome(URI archiveHome);
 
+  /**
+   * Sets autobrowse.
+   *
+   * @param autobrowse the autobrowse
+   * @return the autobrowse
+   */
   NotebookOutput setAutobrowse(boolean autobrowse);
 }

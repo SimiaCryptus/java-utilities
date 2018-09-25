@@ -26,6 +26,7 @@ import java.util.function.Function;
  * The interface Serializable consumer.
  *
  * @param <T> the type parameter
+ * @param <U> the type parameter
  */
 public interface SerializableFunction<T, U> extends Function<T, U>, Serializable {
 }
