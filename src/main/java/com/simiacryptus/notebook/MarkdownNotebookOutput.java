@@ -474,7 +474,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     try (FileOutputStream out = new FileOutputStream(htmlFile)) {
       IOUtils.write(html, out, Charset.forName("UTF-8"));
     }
-    log.info("Wrote " + htmlFile);
+    log.info("Wrote " + htmlFile, new RuntimeException("Stack Trace"));
     return htmlFile;
   }
 
@@ -865,6 +865,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Override
   public NotebookOutput setArchiveHome(URI archiveHome) {
     this.archiveHome = archiveHome;
+    logger.info(String.format("Changed archive home to %s", archiveHome));
     return this;
   }
 
