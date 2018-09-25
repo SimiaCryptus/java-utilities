@@ -150,6 +150,7 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
    * @param mimeType the mime type
    * @param logic    the logic
    * @param async    the async
+   * @return the closeable
    */
   public Closeable addAsyncHandler(final CharSequence path, final String mimeType, @Nonnull final Consumer<OutputStream> logic, final boolean async) {
     return addGET(path, StreamNanoHTTPD.asyncHandler(pool, mimeType, logic, async));
@@ -179,10 +180,21 @@ public class StreamNanoHTTPD extends FileNanoHTTPD {
     return false;
   }
 
+  /**
+   * Is autobrowse boolean.
+   *
+   * @return the boolean
+   */
   public boolean isAutobrowse() {
     return autobrowse;
   }
 
+  /**
+   * Sets autobrowse.
+   *
+   * @param autobrowse the autobrowse
+   * @return the autobrowse
+   */
   public StreamNanoHTTPD setAutobrowse(boolean autobrowse) {
     this.autobrowse = autobrowse;
     return this;

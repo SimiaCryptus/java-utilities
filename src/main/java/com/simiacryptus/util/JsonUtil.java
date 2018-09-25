@@ -101,6 +101,13 @@ public class JsonUtil {
     return toJson(obj, getMapper());
   }
 
+  /**
+   * To json char sequence.
+   *
+   * @param obj          the obj
+   * @param objectMapper the object mapper
+   * @return the char sequence
+   */
   @Nonnull
   public static CharSequence toJson(final Object obj, final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

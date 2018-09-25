@@ -71,6 +71,9 @@ public class MarkdownNotebookOutput implements NotebookOutput {
 
   private static final Logger logger = LoggerFactory.getLogger(MarkdownNotebookOutput.class);
 
+  /**
+   * The constant random.
+   */
   public static final Random random = new Random();
   /**
    * The Logger.
@@ -110,6 +113,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * Instantiates a new Markdown notebook output.
    *
    * @param reportFile the file name
+   * @param autobrowse the autobrowse
    * @throws FileNotFoundException the file not found exception
    */
   public MarkdownNotebookOutput(@Nonnull final File reportFile, boolean autobrowse) throws FileNotFoundException {
@@ -120,6 +124,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     );
   }
 
+  /**
+   * Instantiates a new Markdown notebook output.
+   *
+   * @param reportFile the report file
+   * @throws FileNotFoundException the file not found exception
+   */
   public MarkdownNotebookOutput(@Nonnull final File reportFile) throws FileNotFoundException {
     this(
         reportFile,
@@ -133,7 +143,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    *
    * @param reportFile the file name
    * @param httpPort   the http port
-   * @param autobrowse
+   * @param autobrowse the autobrowse
    * @throws FileNotFoundException the file not found exception
    */
   public MarkdownNotebookOutput(
@@ -240,7 +250,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    * Get markdown notebook output.
    *
    * @param path       the path
-   * @param autobrowse
+   * @param autobrowse the autobrowse
    * @return the markdown notebook output
    */
   public static NotebookOutput get(File path, final boolean autobrowse) {
@@ -269,10 +279,23 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return e.getClass().getSimpleName();
   }
 
+  /**
+   * Get notebook output.
+   *
+   * @param s the s
+   * @return the notebook output
+   */
   public static NotebookOutput get(final String s) {
     return get(new File(s), true);
   }
 
+  /**
+   * Strip prefixes string.
+   *
+   * @param str      the str
+   * @param prefixes the prefixes
+   * @return the string
+   */
   public static String stripPrefixes(String str, String... prefixes) {
     AtomicReference<String> reference = new AtomicReference<>(str);
     while (Stream.of(prefixes).filter(reference.get()::startsWith).findFirst().isPresent()) {
@@ -317,6 +340,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    *
    * @param root     the root
    * @param baseName the base name
+   * @return the file
    * @throws IOException the io exception
    */
   public File writeZip(final File root, final String baseName) throws IOException {
@@ -488,6 +512,12 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
 
+  /**
+   * Resolve resource file.
+   *
+   * @param name the name
+   * @return the file
+   */
   @Nonnull
   public File resolveResource(@Nonnull final CharSequence name) {
     return new File(getResourceDir(), Util.stripPrefix(name.toString(), "etc/"));
@@ -833,14 +863,30 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     }
   }
 
+  /**
+   * Is autobrowse boolean.
+   *
+   * @return the boolean
+   */
   public boolean isAutobrowse() {
     return autobrowse;
   }
 
+  /**
+   * Gets max image size.
+   *
+   * @return the max image size
+   */
   public int getMaxImageSize() {
     return maxImageSize;
   }
 
+  /**
+   * Sets max image size.
+   *
+   * @param maxImageSize the max image size
+   * @return the max image size
+   */
   public NotebookOutput setMaxImageSize(int maxImageSize) {
     this.maxImageSize = maxImageSize;
     return this;
@@ -879,6 +925,11 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     return this;
   }
 
+  /**
+   * Gets report file.
+   *
+   * @return the report file
+   */
   @Nonnull
   public File getReportFile() {
     return new File(getRoot(), getName() + ".md");

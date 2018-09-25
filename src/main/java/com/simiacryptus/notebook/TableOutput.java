@@ -33,6 +33,9 @@ import java.util.stream.Collectors;
  * The type Table output.
  */
 public class TableOutput {
+  /**
+   * The constant logger.
+   */
   public static final Logger logger = LoggerFactory.getLogger(TableOutput.class);
   /**
    * The Rows.

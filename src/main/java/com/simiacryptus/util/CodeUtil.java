@@ -60,6 +60,9 @@ public class CodeUtil {
   @javax.annotation.Nonnull
   public static File projectRoot = new File(System.getProperty("codeRoot", getDefaultProjectRoot()));
   private static final List<File> codeRoots = CodeUtil.scanLocalCodeRoots();
+  /**
+   * The Class source info.
+   */
   public static HashMap<String, String> classSourceInfo = getDefaultClassInfo();
 
   private static String getDefaultProjectRoot() {
@@ -223,6 +226,11 @@ public class CodeUtil {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Gets default class info.
+   *
+   * @return the default class info
+   */
   public static HashMap<String, String> getDefaultClassInfo() {
     InputStream resourceAsStream = ClassLoader.getSystemResourceAsStream("META-INF/CodeUtil/classSourceInfo.json");
     if (null != resourceAsStream) {
@@ -259,6 +267,13 @@ public class CodeUtil {
   }
 
 
+  /**
+   * Gets git base.
+   *
+   * @param absoluteFile the absolute file
+   * @param def          the def
+   * @return the git base
+   */
   protected static String getGitBase(File absoluteFile, String def) {
     try {
       Repository repository = new RepositoryBuilder().setWorkTree(absoluteFile).build();
@@ -276,6 +291,12 @@ public class CodeUtil {
     return def;
   }
 
+  /**
+   * Code url char sequence.
+   *
+   * @param callingFrame the calling frame
+   * @return the char sequence
+   */
   public static CharSequence codeUrl(StackTraceElement callingFrame) {
     String[] split = callingFrame.getClassName().split("\\.");
     String packagePath = Arrays.asList(split).subList(0, split.length - 1).stream().reduce((a, b) -> a + "/" + b).orElse("");

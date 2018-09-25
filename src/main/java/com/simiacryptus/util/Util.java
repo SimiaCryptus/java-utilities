@@ -74,8 +74,17 @@ public class Util {
   };
   private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
   private static final String jvmId = UUID.randomUUID().toString();
+  /**
+   * The constant AUTO_BROWSE.
+   */
   public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(true)));
 
+  /**
+   * Browse.
+   *
+   * @param uri the uri
+   * @throws IOException the io exception
+   */
   public static void browse(final URI uri) throws IOException {
     if (Util.AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
       Desktop.getDesktop().browse(uri);
@@ -133,7 +142,7 @@ public class Util {
    * Cache input stream.
    *
    * @param file the file
-   * @param url
+   * @param url  the url
    * @return the input stream
    * @throws IOException the io exception
    */
@@ -141,6 +150,14 @@ public class Util {
     return cacheLocal(file, getStreamSupplier(url));
   }
 
+  /**
+   * Cache local input stream.
+   *
+   * @param file the file
+   * @param fn   the fn
+   * @return the input stream
+   * @throws FileNotFoundException the file not found exception
+   */
   public static InputStream cacheLocal(String file, Supplier<InputStream> fn) throws FileNotFoundException {
     File f = new File(file);
     if (f.exists()) {
@@ -151,6 +168,12 @@ public class Util {
     }
   }
 
+  /**
+   * Gets stream supplier.
+   *
+   * @param url the url
+   * @return the stream supplier
+   */
   public static Supplier<InputStream> getStreamSupplier(URI url) {
     return () -> {
       TrustManager[] trustManagers = {
@@ -428,7 +451,7 @@ public class Util {
    * Resize buffered png.
    *
    * @param image the png
-   * @param width
+   * @param width the width
    * @return the buffered png
    */
   @Nullable
@@ -582,6 +605,13 @@ public class Util {
     return new SimpleDateFormat(formatStr).format(new Date());
   }
 
+  /**
+   * Strip prefix string.
+   *
+   * @param str    the str
+   * @param prefix the prefix
+   * @return the string
+   */
   @Nonnull
   public static String stripPrefix(String str, final String prefix) {
     while (str.startsWith(prefix)) {
@@ -593,7 +623,7 @@ public class Util {
   /**
    * Path to run file path.
    *
-   * @param baseFile
+   * @param baseFile the base file
    * @param file     the file
    * @return the path
    */
@@ -607,6 +637,12 @@ public class Util {
     }
   }
 
+  /**
+   * To string string.
+   *
+   * @param path the path
+   * @return the string
+   */
   @Nonnull
   public static String toString(final Path path) {
     return path.normalize().toString().replaceAll("\\\\", "/");
