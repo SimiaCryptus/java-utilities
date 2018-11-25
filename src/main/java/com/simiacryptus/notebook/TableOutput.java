@@ -100,12 +100,15 @@ public class TableOutput {
     for (@javax.annotation.Nonnull final Entry<CharSequence, Object> prop : properties.entrySet()) {
       final CharSequence propKey = prop.getKey();
       if (null != propKey) {
-        final Class<?> propClass = prop.getValue().getClass();
-        Class<?> currentClass = schema.getOrDefault(propKey, propClass);
-        if (!propClass.equals(currentClass)) {
-          logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, currentClass, propClass));
+        Object value = prop.getValue();
+        if(null != value) {
+          final Class<?> propClass = value.getClass();
+          Class<?> currentClass = schema.getOrDefault(propKey, propClass);
+          if (!propClass.equals(currentClass)) {
+            logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, currentClass, propClass));
+          }
+          schema.putIfAbsent(propKey, propClass);
         }
-        schema.putIfAbsent(propKey, propClass);
       }
     }
     rows.add(new HashMap<>(properties));
@@ -206,7 +209,10 @@ public class TableOutput {
             .map(e -> {
               switch (e.getValue().getSimpleName()) {
                 case "String":
-                  return "%-" + rows.stream().mapToInt(x -> x.getOrDefault(e.getKey(), "").toString().length()).max().getAsInt() + "s";
+                  return "%-" + rows.stream().mapToInt(x -> {
+                    Object val = x.getOrDefault(e.getKey(), "");
+                    return null==val?0:val.toString().length();
+                  }).max().getAsInt() + "s";
                 case "Integer":
                   return "%6d";
                 case "Double":

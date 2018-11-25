@@ -498,7 +498,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
     try (FileOutputStream out = new FileOutputStream(htmlFile)) {
       IOUtils.write(html, out, Charset.forName("UTF-8"));
     }
-    log.info("Wrote " + htmlFile, new RuntimeException("Stack Trace"));
+    log.info("Wrote " + htmlFile); //     log.info("Wrote " + htmlFile); //
     return htmlFile;
   }
 
@@ -745,7 +745,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   }
 
   @Override
-  public void out(@javax.annotation.Nonnull final String fmt, final Object... args) {
+  public void out(@javax.annotation.Nonnull final CharSequence fmt, final Object... args) {
     @javax.annotation.Nonnull final String msg = format(fmt, args);
     markdownData.add(msg);
     primaryOut.println(msg);
