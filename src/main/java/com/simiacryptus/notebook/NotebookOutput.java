@@ -223,7 +223,7 @@ public interface NotebookOutput extends Closeable {
    * @param fmt  the fmt
    * @param args the args
    */
-  default void out(final String fmt, final Object... args) {
+  default void out(final CharSequence fmt, final Object... args) {
     p(fmt, args);
   }
 
