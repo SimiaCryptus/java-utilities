@@ -102,12 +102,12 @@ public class TableOutput {
       if (null != propKey) {
         Object value = prop.getValue();
         if(null != value) {
-          final Class<?> propClass = value.getClass();
-          Class<?> currentClass = schema.getOrDefault(propKey, propClass);
-          if (!propClass.equals(currentClass)) {
-            logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, currentClass, propClass));
+          final Class<?> cellType = value.getClass();
+          Class<?> colType = schema.getOrDefault(propKey, cellType);
+          if (!colType.isAssignableFrom(cellType)) {
+            logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, colType, cellType));
           }
-          schema.putIfAbsent(propKey, propClass);
+          schema.putIfAbsent(propKey, cellType);
         }
       }
     }
