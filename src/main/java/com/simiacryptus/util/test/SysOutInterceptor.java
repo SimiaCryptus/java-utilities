@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 by Andrew Charneski.
+ * Copyright (c) 2019 by Andrew Charneski.
  *
  * The author licenses this file to you under the
  * Apache License, Version 2.0 (the "License");
@@ -136,7 +136,9 @@ public class SysOutInterceptor extends PrintStream {
     if (!initialized.getAndSet(true)) {
       ch.qos.logback.classic.Logger root = ((ch.qos.logback.classic.Logger) log).getLoggerContext().getLogger("ROOT");
       @javax.annotation.Nonnull ch.qos.logback.core.ConsoleAppender stdout = (ch.qos.logback.core.ConsoleAppender) root.getAppender("STDOUT");
-      stdout.setOutputStream(this);
+      if(null != stdout) {
+        stdout.setOutputStream(this);
+      }
       System.setOut(this);
     }
     return this;
