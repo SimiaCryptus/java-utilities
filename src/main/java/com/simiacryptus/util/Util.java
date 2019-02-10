@@ -79,7 +79,7 @@ public class Util {
   /**
    * The constant AUTO_BROWSE.
    */
-  public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(true)));
+  public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(false)));
 
   /**
    * Browse.
