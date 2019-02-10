@@ -50,9 +50,9 @@ public class KryoUtil {
             return new EnumMapSerializer();
           }
           final Serializer<?> serializer = super.getDefaultSerializer(clazz);
-          if (serializer instanceof FieldSerializer) {
-            ((FieldSerializer<?>) serializer).setCopyTransient(false);
-          }
+//          if (serializer instanceof FieldSerializer) {
+//            ((FieldSerializer<?>) serializer).setCopyTransient(false);
+//          }
           return serializer;
         }
 
