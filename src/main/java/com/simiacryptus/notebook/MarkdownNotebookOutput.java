@@ -345,6 +345,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
    */
   public File writeZip(final File root, final String baseName) throws IOException {
     File zipFile = new File(root, baseName + ".zip");
+    logger.info(String.format("Archiving %s to %s", root.getAbsolutePath(), zipFile.getAbsolutePath()));
     try (@Nonnull ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile))) {
       zipArchive(root, root, out, file -> !file.getName().equals(baseName + ".zip") && !file.getName().endsWith(".pdf"));
     }
@@ -506,7 +507,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
   @Override
   public OutputStream file(@javax.annotation.Nonnull final CharSequence name) {
     try {
-      return new FileOutputStream(resolveResource(name));
+      return new FileOutputStream(resolveResource(name), true);
     } catch (@javax.annotation.Nonnull final FileNotFoundException e) {
       throw new RuntimeException(e);
     }
@@ -798,6 +799,7 @@ public class MarkdownNotebookOutput implements NotebookOutput {
 
   @Override
   public <T> T subreport(String subreportName, Function<NotebookOutput, T> fn) {
+    if (null == subreportName) return subreport("", fn);
     String reportName = getName() + subreportName;
     MarkdownNotebookOutput outer = this;
     try {
