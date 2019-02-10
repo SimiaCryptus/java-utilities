@@ -19,20 +19,14 @@
 
 package com.simiacryptus.util;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.simiacryptus.notebook.NotebookOutput;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.io.TeeInputStream;
 import com.simiacryptus.util.test.LabeledObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,6 +38,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -54,7 +49,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -655,72 +650,91 @@ public class Util {
     return path.normalize().toString().replaceAll("\\\\", "/");
   }
 
-  public static LogInterception intercept(NotebookOutput log, String loggerName) {
-    AtomicLong counter = new AtomicLong(0);
-    return log.subreport("log_" + loggerName, sublog->{
-      Logger logger = (Logger) LoggerFactory.getLogger(loggerName);
-      logger.setLevel(Level.ALL);
-      logger.setAdditive(false);
-      AppenderBase<ILoggingEvent> appender = new AppenderBase<ILoggingEvent>() {
-        PrintWriter out;
-        long remainingOut = 0;
-        long killAt = 0;
-        @Override
-        protected synchronized void append(ILoggingEvent iLoggingEvent) {
-          if (null == out) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd_HH_mm_ss");
-            String date = dateFormat.format(new Date());
-            try {
-              String caption = String.format("Log at %s", date);
-              String filename = String.format("%s_%s.log", loggerName, date);
-              out = new PrintWriter(sublog.file(filename));
-              sublog.out("[%s](etc/%s)", caption, filename);
-              sublog.write();
-            } catch (Throwable e) {
-              throw new RuntimeException(e);
-            }
-            killAt = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(1);
-            remainingOut = 10L * 1024 * 1024;
-          }
-          String formattedMessage = iLoggingEvent.getFormattedMessage();
-          out.println(formattedMessage);
-          out.flush();
-          int length = formattedMessage.length();
-          remainingOut -= length;
-          counter.addAndGet(length);
-          if(remainingOut <0 || killAt < System.currentTimeMillis()) {
-            out.close();
-            out = null;
-          }
-        }
-
-        @Override
-        public void stop() {
-          if(null != out) {
-            out.close();
-            out = null;
-          }
-          super.stop();
-        }
-      };
-      appender.setName(UUID.randomUUID().toString());
-      appender.start();
-      logger.addAppender(appender);
-      return new LogInterception(counter){
-        @Override
-        public void close() throws Exception {
-          logger.detachAppender(appender);
-          appender.stop();
-        }
-      };
-    });
+  /**
+   * Run all.
+   *
+   * @param runnables the runnables
+   */
+  public static void runAllParallel(@Nonnull Runnable... runnables) {
+    Arrays.stream(runnables)
+        .parallel()
+        .forEach(Runnable::run);
   }
 
-  public abstract static class LogInterception implements AutoCloseable {
-    public final AtomicLong counter;
+  /**
+   * Run all serial.
+   *
+   * @param runnables the runnables
+   */
+  public static void runAllSerial(@Nonnull Runnable... runnables) {
+    Arrays.stream(runnables)
+        .forEach(Runnable::run);
+  }
 
-    public LogInterception(AtomicLong counter) {
-      this.counter = counter;
+  /**
+   * To string string.
+   *
+   * @param fn the fn
+   * @return the string
+   */
+  public static String toString(@Nonnull Consumer<PrintStream> fn) {
+    @Nonnull java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+    try (@Nonnull PrintStream out = new PrintStream(buffer)) {
+      fn.accept(out);
     }
+    return new String(buffer.toByteArray(), Charset.forName("UTF-8"));
   }
+
+  /**
+   * To string string.
+   *
+   * @param stack the stack
+   * @return the string
+   */
+  public static String toString(final StackTraceElement[] stack) {
+    return toString(stack, "\n");
+  }
+
+  /**
+   * To string string.
+   *
+   * @param stack     the stack
+   * @param delimiter the delimiter
+   * @return the string
+   */
+  public static String toString(final StackTraceElement[] stack, final CharSequence delimiter) {
+    return Arrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber()).reduce((a, b) -> a + delimiter + b).orElse("");
+  }
+
+  /**
+   * Get stack trace stack trace element [ ].
+   *
+   * @return the stack trace element [ ]
+   */
+  public static StackTraceElement[] getStackTrace() {
+    return getStackTrace(4);
+  }
+
+  /**
+   * Get stack trace stack trace element [ ].
+   *
+   * @param skip the skip
+   * @return the stack trace element [ ]
+   */
+  public static StackTraceElement[] getStackTrace(final int skip) {
+    return Arrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
+        .filter(x -> x.getClassName().startsWith("com.simiacryptus."))
+        .limit(500)
+        .toArray(i -> new StackTraceElement[i]);
+  }
+
+  /**
+   * Gets caller.
+   *
+   * @return the caller
+   */
+  public static CharSequence getCaller() {
+    return toString(getStackTrace(4));
+  }
+
 }
