@@ -29,12 +29,11 @@
     </parent>
 
     <artifactId>java-util</artifactId>
-    <description>Miscellaneous utilities for Java 8</description>
+    <description>Miscellaneous Utilities (Pure Java)</description>
 
     <properties>
-        <github.project>utilities</github.project>
-        <github.path>java-util/</github.path>
-        <aws-java-sdk.version>1.11.24</aws-java-sdk.version>
+        <github.project>java-utilities</github.project>
+        <github.path></github.path>
     </properties>
     <distributionManagement>
         <site>
