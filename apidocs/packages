@@ -1,0 +1,10 @@
+com.simiacryptus.lang
+com.simiacryptus.notebook
+com.simiacryptus.util
+com.simiacryptus.util.binary
+com.simiacryptus.util.binary.bitset
+com.simiacryptus.util.binary.codes
+com.simiacryptus.util.data
+com.simiacryptus.util.function
+com.simiacryptus.util.io
+com.simiacryptus.util.test
