@@ -120,6 +120,17 @@ public class JsonUtil {
   }
 
   /**
+   * Gets mapper.
+   *
+   * @return the mapper
+   */
+  public static ObjectMapper getMapper() {
+    ObjectMapper enable = new ObjectMapper()
+        //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+        .enable(SerializationFeature.INDENT_OUTPUT);
+    return enable;
+  }
+  /**
    * Cache t.
    *
    * @param <T>        the type parameter
@@ -139,15 +150,4 @@ public class JsonUtil {
     }
   }
 
-  /**
-   * Gets mapper.
-   *
-   * @return the mapper
-   */
-  public static ObjectMapper getMapper() {
-    ObjectMapper enable = new ObjectMapper()
-        //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-        .enable(SerializationFeature.INDENT_OUTPUT);
-    return enable;
-  }
 }

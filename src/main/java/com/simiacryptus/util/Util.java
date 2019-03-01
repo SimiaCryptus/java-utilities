@@ -47,7 +47,6 @@ import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
@@ -62,7 +61,6 @@ import java.util.zip.GZIPInputStream;
  * The type Util.
  */
 public class Util {
-
   /**
    * The constant R.
    */
@@ -76,21 +74,6 @@ public class Util {
   };
   private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
   private static final String jvmId = UUID.randomUUID().toString();
-  /**
-   * The constant AUTO_BROWSE.
-   */
-  public static boolean AUTO_BROWSE = Boolean.parseBoolean(System.getProperty("AUTOBROWSE", Boolean.toString(false)));
-
-  /**
-   * Browse.
-   *
-   * @param uri the uri
-   * @throws IOException the io exception
-   */
-  public static void browse(final URI uri) throws IOException {
-    if (Util.AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
-      Desktop.getDesktop().browse(uri);
-  }
 
   /**
    * Add.
@@ -350,19 +333,6 @@ public class Util {
   }
 
   /**
-   * Gets last.
-   *
-   * @param <T>    the type parameter
-   * @param stream the stream
-   * @return the last
-   */
-  public static <T> T getLast(@javax.annotation.Nonnull final Stream<T> stream) {
-    final List<T> collect = stream.collect(Collectors.toList());
-    final T last = collect.get(collect.size() - 1);
-    return last;
-  }
-
-  /**
    * Layout.
    *
    * @param c the c
@@ -416,37 +386,6 @@ public class Util {
       pos += read;
     }
     return b;
-  }
-
-  /**
-   * Report.
-   *
-   * @param fragments the fragments
-   * @throws IOException the io exception
-   */
-  public static void report(@javax.annotation.Nonnull final Stream<CharSequence> fragments) throws IOException {
-    @javax.annotation.Nonnull final File outDir = new File("reports");
-    outDir.mkdirs();
-    final StackTraceElement caller = com.simiacryptus.util.Util.getLast(Arrays.stream(Thread.currentThread().getStackTrace())//
-        .filter(x -> x.getClassName().contains("simiacryptus")));
-    @javax.annotation.Nonnull final File report = new File(outDir, caller.getClassName() + "_" + caller.getLineNumber() + ".html");
-    @javax.annotation.Nonnull final PrintStream out = new PrintStream(new FileOutputStream(report));
-    out.println("<html><head></head><body>");
-    fragments.forEach(out::println);
-    out.println("</body></html>");
-    out.close();
-    if (AUTO_BROWSE && !GraphicsEnvironment.isHeadless() && Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
-      Desktop.getDesktop().browse(report.toURI());
-  }
-
-  /**
-   * Report.
-   *
-   * @param fragments the fragments
-   * @throws IOException the io exception
-   */
-  public static void report(final CharSequence... fragments) throws IOException {
-    com.simiacryptus.util.Util.report(Stream.of(fragments));
   }
 
   /**
