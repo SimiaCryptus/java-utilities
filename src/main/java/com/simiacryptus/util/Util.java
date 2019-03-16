@@ -676,4 +676,19 @@ public class Util {
     return toString(getStackTrace(4));
   }
 
+  public static float[] getFloats(double[] doubles) {
+    float[] floats = new float[doubles.length];
+    for (int i = 0; i < doubles.length; i++) {
+      floats[i] = (float) doubles[i];
+    }
+    return floats;
+  }
+
+  public static double[] getDoubles(float[] floats) {
+    double[] doubles = new double[floats.length];
+    for (int i = 0; i < floats.length; i++) {
+      doubles[i] = floats[i];
+    }
+    return doubles;
+  }
 }
