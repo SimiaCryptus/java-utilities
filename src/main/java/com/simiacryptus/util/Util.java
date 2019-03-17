@@ -691,4 +691,20 @@ public class Util {
     }
     return doubles;
   }
+
+  public static long[] toLong(int[] ints) {
+    long[] longs = new long[ints.length];
+    for (int i = 0; i < ints.length; i++) {
+      longs[i] = ints[i];
+    }
+    return longs;
+  }
+
+  public static int[] toInt(long[] longs) {
+    int[] ints = new int[longs.length];
+    for (int i = 0; i < ints.length; i++) {
+      ints[i] = (int) longs[i];
+    }
+    return ints;
+  }
 }
