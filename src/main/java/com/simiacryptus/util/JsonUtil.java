@@ -31,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -150,4 +151,17 @@ public class JsonUtil {
     }
   }
 
+  public static int[] toIntArray(JsonArray array) {
+    int[] ints = new int[array.size()];
+    for (int i = 0; i < ints.length; i++) {
+      ints[i] = array.get(i).getAsInt();
+    }
+    return ints;
+  }
+
+  public static JsonArray toIntArray(int[] array) {
+    JsonArray jsonElements = new JsonArray();
+    Arrays.stream(array).forEach(jsonElements::add);
+    return jsonElements;
+  }
 }
