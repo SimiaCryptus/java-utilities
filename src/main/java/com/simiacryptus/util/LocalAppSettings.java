@@ -69,10 +69,10 @@ public class LocalAppSettings {
     File parentFile = workingDir.getParentFile();
     File file = new File(workingDir, "app.json");
     if (file.exists()) {
-      HashMap<String,String> settings = null;
+      HashMap<String, String> settings = null;
       try {
         settings = JsonUtil.getMapper().readValue(new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")), HashMap.class);
-        settings.forEach((k,v)->logger.info(String.format("Loaded %s = %s from %s", k, v, file)));
+        settings.forEach((k, v) -> logger.info(String.format("Loaded %s = %s from %s", k, v, file)));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }

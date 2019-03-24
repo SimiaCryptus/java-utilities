@@ -136,7 +136,7 @@ public class SysOutInterceptor extends PrintStream {
     if (!initialized.getAndSet(true)) {
       ch.qos.logback.classic.Logger root = ((ch.qos.logback.classic.Logger) log).getLoggerContext().getLogger("ROOT");
       @javax.annotation.Nonnull ch.qos.logback.core.ConsoleAppender stdout = (ch.qos.logback.core.ConsoleAppender) root.getAppender("STDOUT");
-      if(null != stdout) {
+      if (null != stdout) {
         stdout.setOutputStream(this);
       }
       System.setOut(this);
