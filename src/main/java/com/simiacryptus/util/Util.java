@@ -419,7 +419,7 @@ public class Util {
     if (null == component) return null;
     try {
       com.simiacryptus.util.Util.layout(component);
-      @javax.annotation.Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+      @javax.annotation.Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
       final Graphics2D g = img.createGraphics();
       g.setColor(component.getForeground());
       g.setFont(component.getFont());
