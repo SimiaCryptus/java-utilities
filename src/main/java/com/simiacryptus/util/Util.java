@@ -707,4 +707,16 @@ public class Util {
     }
     return ints;
   }
+
+  public static String toString(Throwable e) {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    try (PrintStream printStream = new PrintStream(out)) {
+      e.printStackTrace(printStream);
+    }
+    try {
+      return out.toString("UTF-8");
+    } catch (UnsupportedEncodingException e1) {
+      throw new RuntimeException(e1);
+    }
+  }
 }
