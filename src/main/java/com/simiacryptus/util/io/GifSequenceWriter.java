@@ -110,6 +110,10 @@ public class GifSequenceWriter {
    */
   public static void write(File gif, int timeBetweenFramesMS, boolean loopContinuously, @Nonnull BufferedImage... images) throws IOException {
     @Nonnull ImageOutputStream output = new FileImageOutputStream(gif);
+    write(output, timeBetweenFramesMS, loopContinuously, images);
+  }
+
+  public static void write(ImageOutputStream output, int timeBetweenFramesMS, boolean loopContinuously, @Nonnull BufferedImage... images) throws IOException {
     try {
       @Nonnull GifSequenceWriter writer = new GifSequenceWriter(output, images[0].getType(), timeBetweenFramesMS, loopContinuously);
       for (@Nonnull BufferedImage image : images) {
