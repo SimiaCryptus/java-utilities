@@ -96,8 +96,8 @@ public class TableOutput {
    *
    * @param properties the properties
    */
-  public void putRow(@javax.annotation.Nonnull final Map<CharSequence, Object> properties) {
-    for (@javax.annotation.Nonnull final Entry<CharSequence, Object> prop : properties.entrySet()) {
+  public void putRow(@javax.annotation.Nonnull final Map<? extends CharSequence, ? extends Object> properties) {
+    for (@javax.annotation.Nonnull final Entry<? extends CharSequence, ? extends Object> prop : properties.entrySet()) {
       final CharSequence propKey = prop.getKey();
       if (null != propKey) {
         Object value = prop.getValue();
