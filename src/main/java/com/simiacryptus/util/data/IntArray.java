@@ -22,21 +22,10 @@ package com.simiacryptus.util.data;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
-/**
- * The type Int array.
- */
 public class IntArray {
 
-  /**
-   * The Data.
-   */
   public final int[] data;
 
-  /**
-   * Instantiates a new Int array.
-   *
-   * @param data the data
-   */
   public IntArray(final int[] data) {
     this.data = data;
   }
@@ -51,12 +40,6 @@ public class IntArray {
     return Arrays.equals(data, intArray.data);
   }
 
-  /**
-   * Get int.
-   *
-   * @param i the
-   * @return the int
-   */
   public int get(final int i) {
     return data[i];
   }
@@ -66,11 +49,6 @@ public class IntArray {
     return Arrays.hashCode(data);
   }
 
-  /**
-   * Size int.
-   *
-   * @return the int
-   */
   public int size() {
     return data.length;
   }

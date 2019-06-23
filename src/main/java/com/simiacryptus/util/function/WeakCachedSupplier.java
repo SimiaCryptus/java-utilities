@@ -23,22 +23,12 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
-/**
- * The type Weak cached supplier.
- *
- * @param <T> the type parameter
- */
 public class WeakCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   @Nullable
   private volatile WeakReference<T> cached;
 
-  /**
-   * Instantiates a new Weak cached supplier.
-   *
-   * @param fn the fn
-   */
   public WeakCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
   }
@@ -61,11 +51,6 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
     return obj;
   }
 
-  /**
-   * Gets soft ref.
-   *
-   * @return the soft ref
-   */
   @javax.annotation.Nonnull
   public SoftCachedSupplier<T> getSoftRef() {
     return new SoftCachedSupplier<>(this::get);

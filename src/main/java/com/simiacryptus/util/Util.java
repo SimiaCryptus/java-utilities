@@ -57,13 +57,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 
-/**
- * The type Util.
- */
 public class Util {
-  /**
-   * The constant R.
-   */
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
     public final Random r = new Random(System.nanoTime());
 
@@ -75,28 +69,12 @@ public class Util {
   private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
   private static final String jvmId = UUID.randomUUID().toString();
 
-  /**
-   * Add.
-   *
-   * @param f    the f
-   * @param data the data
-   */
   public static void add(@javax.annotation.Nonnull final DoubleSupplier f, @javax.annotation.Nonnull final double[] data) {
     for (int i = 0; i < data.length; i++) {
       data[i] += f.getAsDouble();
     }
   }
 
-  /**
-   * Binary stream stream.
-   *
-   * @param path       the path
-   * @param name       the name
-   * @param skip       the skip
-   * @param recordSize the record size
-   * @return the stream
-   * @throws IOException the io exception
-   */
   public static Stream<byte[]> binaryStream(final String path, @javax.annotation.Nonnull final String name, final int skip, final int recordSize) throws IOException {
     @javax.annotation.Nonnull final File file = new File(path, name);
     final byte[] fileData = IOUtils.toByteArray(new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)))));
@@ -105,14 +83,6 @@ public class Util {
     return com.simiacryptus.util.Util.toIterator(new BinaryChunkIterator(in, recordSize));
   }
 
-  /**
-   * Cache function.
-   *
-   * @param <F>   the type parameter
-   * @param <T>   the type parameter
-   * @param inner the heapCopy
-   * @return the function
-   */
   public static <F, T> Function<F, T> cache(@javax.annotation.Nonnull final Function<F, T> inner) {
     @javax.annotation.Nonnull final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
       @Override
@@ -123,26 +93,10 @@ public class Util {
     return cache::getUnchecked;
   }
 
-  /**
-   * Cache input stream.
-   *
-   * @param file the file
-   * @param url  the url
-   * @return the input stream
-   * @throws IOException the io exception
-   */
   public static InputStream cacheLocal(String file, URI url) throws IOException {
     return cacheLocal(file, getStreamSupplier(url));
   }
 
-  /**
-   * Cache local input stream.
-   *
-   * @param file the file
-   * @param fn   the fn
-   * @return the input stream
-   * @throws FileNotFoundException the file not found exception
-   */
   public static InputStream cacheLocal(String file, Supplier<InputStream> fn) throws FileNotFoundException {
     File f = new File(file);
     if (f.exists()) {
@@ -153,12 +107,6 @@ public class Util {
     }
   }
 
-  /**
-   * Gets stream supplier.
-   *
-   * @param url the url
-   * @return the stream supplier
-   */
   public static Supplier<InputStream> getStreamSupplier(URI url) {
     return () -> {
       TrustManager[] trustManagers = {
@@ -193,16 +141,6 @@ public class Util {
     };
   }
 
-  /**
-   * Cache input stream.
-   *
-   * @param url  the url
-   * @param file the file
-   * @return the input stream
-   * @throws IOException              the io exception
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyManagementException   the key management exception
-   */
   public static InputStream cacheStream(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     if (new File(file).exists()) {
       return new FileInputStream(file);
@@ -211,16 +149,6 @@ public class Util {
     }
   }
 
-  /**
-   * Cache file file.
-   *
-   * @param url  the url
-   * @param file the file
-   * @return the file
-   * @throws IOException              the io exception
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyManagementException   the key management exception
-   */
   public static File cacheFile(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     if (!new File(file).exists()) {
       IOUtils.copy(get(url), new FileOutputStream(file));
@@ -228,15 +156,6 @@ public class Util {
     return new File(file);
   }
 
-  /**
-   * Get input stream.
-   *
-   * @param url the url
-   * @return the input stream
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyManagementException   the key management exception
-   * @throws IOException              the io exception
-   */
   public static InputStream get(@javax.annotation.Nonnull String url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
     @javax.annotation.Nonnull final TrustManager[] trustManagers = {
         new X509TrustManager() {
@@ -269,47 +188,18 @@ public class Util {
     return urlConnection.getInputStream();
   }
 
-  /**
-   * Cache input stream.
-   *
-   * @param url the url
-   * @return the input stream
-   * @throws IOException              the io exception
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyManagementException   the key management exception
-   */
   public static InputStream cacheStream(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheStream(url.toString(), new File(url.getPath()).getName());
   }
 
-  /**
-   * Cache file file.
-   *
-   * @param url the url
-   * @return the file
-   * @throws IOException              the io exception
-   * @throws NoSuchAlgorithmException the no such algorithm exception
-   * @throws KeyManagementException   the key management exception
-   */
   public static File cacheFile(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheFile(url.toString(), new File(url.getPath()).getName());
   }
 
-  /**
-   * Current stack string [ ].
-   *
-   * @return the string [ ]
-   */
   public static CharSequence[] currentStack() {
     return Stream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
   }
 
-  /**
-   * Cvt temporal unit.
-   *
-   * @param units the units
-   * @return the temporal unit
-   */
   @javax.annotation.Nonnull
   public static TemporalUnit cvt(@javax.annotation.Nonnull final TimeUnit units) {
     switch (units) {
@@ -332,11 +222,6 @@ public class Util {
     }
   }
 
-  /**
-   * Layout.
-   *
-   * @param c the c
-   */
   public static void layout(@javax.annotation.Nonnull final Component c) {
     c.doLayout();
     if (c instanceof Container) {
@@ -344,36 +229,14 @@ public class Util {
     }
   }
 
-  /**
-   * Mk string string.
-   *
-   * @param separator the separator
-   * @param strs      the strs
-   * @return the string
-   */
   public static String mkString(@javax.annotation.Nonnull final CharSequence separator, final CharSequence... strs) {
     return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
   }
 
-  /**
-   * Path to string.
-   *
-   * @param from the from
-   * @param to   the to
-   * @return the string
-   */
   public static String pathTo(@javax.annotation.Nonnull final File from, @javax.annotation.Nonnull final File to) {
     return from.toPath().relativize(to.toPath()).toString().replaceAll("\\\\", "/");
   }
 
-  /**
-   * Read byte [ ].
-   *
-   * @param i the
-   * @param s the s
-   * @return the byte [ ]
-   * @throws IOException the io exception
-   */
   @javax.annotation.Nonnull
   public static byte[] read(@javax.annotation.Nonnull final DataInputStream i, final int s) throws IOException {
     @javax.annotation.Nonnull final byte[] b = new byte[s];
@@ -388,13 +251,6 @@ public class Util {
     return b;
   }
 
-  /**
-   * Resize buffered png.
-   *
-   * @param image the png
-   * @param width the width
-   * @return the buffered png
-   */
   @Nullable
   public static BufferedImage maximumSize(@Nullable final BufferedImage image, int width) {
     if (null == image) return image;
@@ -409,12 +265,6 @@ public class Util {
     return rerender;
   }
 
-  /**
-   * To png buffered png.
-   *
-   * @param component the component
-   * @return the buffered png
-   */
   public static BufferedImage toImage(final Component component) {
     if (null == component) return null;
     try {
@@ -430,23 +280,10 @@ public class Util {
     }
   }
 
-  /**
-   * To inline png string.
-   *
-   * @param img the img
-   * @param alt the alt
-   * @return the string
-   */
   public static CharSequence toInlineImage(final BufferedImage img, final String alt) {
     return com.simiacryptus.util.Util.toInlineImage(new LabeledObject<>(img, alt));
   }
 
-  /**
-   * To inline png string.
-   *
-   * @param img the img
-   * @return the string
-   */
   public static CharSequence toInlineImage(@javax.annotation.Nonnull final LabeledObject<BufferedImage> img) {
     @javax.annotation.Nonnull final ByteArrayOutputStream b = new ByteArrayOutputStream();
     try {
@@ -461,58 +298,22 @@ public class Util {
     return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
 
-  /**
-   * To iterator stream.
-   *
-   * @param <T>      the type parameter
-   * @param iterator the iterator
-   * @return the stream
-   */
   public static <T> Stream<T> toIterator(@javax.annotation.Nonnull final Iterator<T> iterator) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
 
-  /**
-   * To stream stream.
-   *
-   * @param <T>      the type parameter
-   * @param iterator the iterator
-   * @return the stream
-   */
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator) {
     return com.simiacryptus.util.Util.toStream(iterator, 0);
   }
 
-  /**
-   * To stream stream.
-   *
-   * @param <T>      the type parameter
-   * @param iterator the iterator
-   * @param size     the size
-   * @return the stream
-   */
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size) {
     return com.simiacryptus.util.Util.toStream(iterator, size, false);
   }
 
-  /**
-   * To stream stream.
-   *
-   * @param <T>      the type parameter
-   * @param iterator the iterator
-   * @param size     the size
-   * @param parallel the parallel
-   * @return the stream
-   */
   public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size, final boolean parallel) {
     return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
 
-  /**
-   * Uuid uuid.
-   *
-   * @return the uuid
-   */
   public static UUID uuid() {
     @javax.annotation.Nonnull String index = Integer.toHexString(com.simiacryptus.util.Util.idcounter.incrementAndGet());
     while (index.length() < 8) {
@@ -522,11 +323,6 @@ public class Util {
     return UUID.fromString(tempId);
   }
 
-  /**
-   * Sleep.
-   *
-   * @param i the
-   */
   public static void sleep(int i) {
     try {
       Thread.sleep(i);
@@ -535,24 +331,11 @@ public class Util {
     }
   }
 
-  /**
-   * Date str string.
-   *
-   * @param formatStr the format str
-   * @return the string
-   */
   @Nonnull
   public static String dateStr(final String formatStr) {
     return new SimpleDateFormat(formatStr).format(new Date());
   }
 
-  /**
-   * Strip prefix string.
-   *
-   * @param str    the str
-   * @param prefix the prefix
-   * @return the string
-   */
   @Nonnull
   public static String stripPrefix(String str, final String prefix) {
     while (str.startsWith(prefix)) {
@@ -561,13 +344,6 @@ public class Util {
     return str;
   }
 
-  /**
-   * Path to run file path.
-   *
-   * @param baseFile the base file
-   * @param file     the file
-   * @return the path
-   */
   public static Path pathToFile(final File baseFile, @Nonnull File file) {
     try {
       Path basePath = baseFile.getCanonicalFile().toPath().getParent();
@@ -578,44 +354,22 @@ public class Util {
     }
   }
 
-  /**
-   * To string string.
-   *
-   * @param path the path
-   * @return the string
-   */
   @Nonnull
   public static String toString(final Path path) {
     return path.normalize().toString().replaceAll("\\\\", "/");
   }
 
-  /**
-   * Run all.
-   *
-   * @param runnables the runnables
-   */
   public static void runAllParallel(@Nonnull Runnable... runnables) {
     Arrays.stream(runnables)
         .parallel()
         .forEach(Runnable::run);
   }
 
-  /**
-   * Run all serial.
-   *
-   * @param runnables the runnables
-   */
   public static void runAllSerial(@Nonnull Runnable... runnables) {
     Arrays.stream(runnables)
         .forEach(Runnable::run);
   }
 
-  /**
-   * To string string.
-   *
-   * @param fn the fn
-   * @return the string
-   */
   public static String toString(@Nonnull Consumer<PrintStream> fn) {
     @Nonnull java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
     try (@Nonnull PrintStream out = new PrintStream(buffer)) {
@@ -624,42 +378,18 @@ public class Util {
     return new String(buffer.toByteArray(), Charset.forName("UTF-8"));
   }
 
-  /**
-   * To string string.
-   *
-   * @param stack the stack
-   * @return the string
-   */
   public static String toString(final StackTraceElement[] stack) {
     return toString(stack, "\n");
   }
 
-  /**
-   * To string string.
-   *
-   * @param stack     the stack
-   * @param delimiter the delimiter
-   * @return the string
-   */
   public static String toString(final StackTraceElement[] stack, final CharSequence delimiter) {
     return Arrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber()).reduce((a, b) -> a + delimiter + b).orElse("");
   }
 
-  /**
-   * Get stack trace stack trace element [ ].
-   *
-   * @return the stack trace element [ ]
-   */
   public static StackTraceElement[] getStackTrace() {
     return getStackTrace(4);
   }
 
-  /**
-   * Get stack trace stack trace element [ ].
-   *
-   * @param skip the skip
-   * @return the stack trace element [ ]
-   */
   public static StackTraceElement[] getStackTrace(final int skip) {
     return Arrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
         .filter(x -> x.getClassName().startsWith("com.simiacryptus."))
@@ -667,11 +397,6 @@ public class Util {
         .toArray(i -> new StackTraceElement[i]);
   }
 
-  /**
-   * Gets caller.
-   *
-   * @return the caller
-   */
   public static CharSequence getCaller() {
     return toString(getStackTrace(4));
   }

@@ -26,28 +26,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * The type Tee output stream.
- */
 public class TeeOutputStream extends OutputStream {
-  /**
-   * The Branches.
-   */
   public final List<OutputStream> branches = new ArrayList<>();
-  /**
-   * The Primary.
-   */
   public final OutputStream primary;
   @Nullable
   private final ByteArrayOutputStream heapBuffer;
   private boolean chainCloses;
 
-  /**
-   * Instantiates a new Tee output stream.
-   *
-   * @param primary the primary
-   * @param buffer  the buffer
-   */
   public TeeOutputStream(final OutputStream primary, final boolean buffer) {
     setChainCloses(false);
     this.primary = primary;
@@ -59,12 +44,6 @@ public class TeeOutputStream extends OutputStream {
     }
   }
 
-  /**
-   * Instantiates a new Tee output stream.
-   *
-   * @param primary     the primary
-   * @param secondaries the secondaries
-   */
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
     branches.addAll(Arrays.asList(secondaries));
@@ -86,12 +65,6 @@ public class TeeOutputStream extends OutputStream {
     }
   }
 
-  /**
-   * New input stream piped input stream.
-   *
-   * @return the piped input stream
-   * @throws IOException the io exception
-   */
   @javax.annotation.Nonnull
   public PipedInputStream newInputStream() throws IOException {
     @javax.annotation.Nonnull final com.simiacryptus.util.io.TeeOutputStream outTee = this;
@@ -148,21 +121,10 @@ public class TeeOutputStream extends OutputStream {
     }
   }
 
-  /**
-   * Is chain closes boolean.
-   *
-   * @return the boolean
-   */
   public boolean isChainCloses() {
     return chainCloses;
   }
 
-  /**
-   * Sets chain closes.
-   *
-   * @param chainCloses the chain closes
-   * @return the chain closes
-   */
   public TeeOutputStream setChainCloses(boolean chainCloses) {
     this.chainCloses = chainCloses;
     return this;

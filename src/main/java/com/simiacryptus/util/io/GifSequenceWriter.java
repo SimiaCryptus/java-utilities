@@ -38,34 +38,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-/**
- * The type Gif sequence writer.
- */
 public class GifSequenceWriter {
 
-  /**
-   * The Gif writer.
-   */
   protected ImageWriter gifWriter;
-  /**
-   * The Image getCudaPtr param.
-   */
   protected ImageWriteParam imageWriteParam;
-  /**
-   * The Image meta data.
-   */
   protected IIOMetadata imageMetaData;
 
-  /**
-   * Creates a new GifSequenceWriter
-   *
-   * @param outputStream        the ImageOutputStream to be written to
-   * @param imageType           one of the imageTypes specified in BufferedImage
-   * @param timeBetweenFramesMS the time between frames in miliseconds
-   * @param loopContinuously    wether the gif should loop repeatedly
-   * @throws IOException the io exception
-   * @author Elliot Kroo (elliot[at]kroo[dot]net)
-   */
   public GifSequenceWriter(
       ImageOutputStream outputStream,
       int imageType,
@@ -99,15 +77,6 @@ public class GifSequenceWriter {
     gifWriter.prepareWriteSequence(null);
   }
 
-  /**
-   * Write.
-   *
-   * @param gif                 the gif
-   * @param timeBetweenFramesMS the time between frames ms
-   * @param loopContinuously    the loop continuously
-   * @param images              the images
-   * @throws IOException the io exception
-   */
   public static void write(File gif, int timeBetweenFramesMS, boolean loopContinuously, @Nonnull BufferedImage... images) throws IOException {
     @Nonnull ImageOutputStream output = new FileImageOutputStream(gif);
     write(output, timeBetweenFramesMS, loopContinuously, images);
@@ -125,13 +94,6 @@ public class GifSequenceWriter {
     }
   }
 
-  /**
-   * Returns the first available GIF ImageWriter using ImageIO.getImageWritersBySuffix("gif").
-   *
-   * @param format
-   * @return a GIF ImageWriter object
-   * @throws IIOException if no GIF png writers are returned
-   */
   private static ImageWriter getWriter(@Nonnull String format) throws IIOException {
     Iterator<ImageWriter> iter = ImageIO.getImageWritersBySuffix(format);
     if (!iter.hasNext()) {
@@ -141,13 +103,6 @@ public class GifSequenceWriter {
     }
   }
 
-  /**
-   * Returns an existing child node, or creates and returns a new child node (if the requested node does not exist).
-   *
-   * @param rootNode the <tt>IIOMetadataNode</tt> to search for the child node.
-   * @param nodeName the name of the child node.
-   * @return the child node, if found or a new node created apply the given name.
-   */
   @Nonnull
   private static IIOMetadataNode getNode(
       @Nonnull IIOMetadataNode rootNode,
@@ -166,12 +121,6 @@ public class GifSequenceWriter {
     return (node);
   }
 
-  /**
-   * Write to sequence.
-   *
-   * @param img the img
-   * @throws IOException the io exception
-   */
   public void writeToSequence(@Nonnull RenderedImage img) throws IOException {
     gifWriter.writeToSequence(
         new IIOImage(
@@ -181,11 +130,6 @@ public class GifSequenceWriter {
         imageWriteParam);
   }
 
-  /**
-   * Close this GifSequenceWriter object. This does not close the underlying stream, just finishes off the GIF.
-   *
-   * @throws IOException the io exception
-   */
   public void close() throws IOException {
     gifWriter.endWriteSequence();
   }

@@ -28,46 +28,21 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Bits collection.
- *
- * @param <C> the type parameter
- */
 public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
     extends CountCollection<Bits, C> {
 
-  /**
-   * The Bit depth.
-   */
   public final Integer bitDepth;
 
-  /**
-   * Instantiates a new Bits collection.
-   *
-   * @param collection the collection
-   */
   public BitsCollection(final C collection) {
     super(collection);
     this.bitDepth = null;
   }
 
-  /**
-   * Instantiates a new Bits collection.
-   *
-   * @param bitDepth   the bit depth
-   * @param collection the collection
-   */
   public BitsCollection(final int bitDepth, final C collection) {
     super(collection);
     this.bitDepth = bitDepth;
   }
 
-  /**
-   * Gets type.
-   *
-   * @param bits the bits
-   * @return the type
-   */
   public CodeType getType(final Bits bits) {
     if (null != this.bitDepth) {
       if (bits.bitLength == this.bitDepth) {
@@ -81,35 +56,13 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
     return CodeType.Unknown;
   }
 
-  /**
-   * Read.
-   *
-   * @param in the in
-   * @throws IOException the io exception
-   */
   public abstract void read(BitInputStream in) throws IOException;
 
-  /**
-   * Write.
-   *
-   * @param out the out
-   * @throws IOException the io exception
-   */
   public abstract void write(BitOutputStream out) throws IOException;
 
-  /**
-   * The enum Code type.
-   */
   public enum CodeType {
-    /**
-     * Terminal run type.
-     */
-    Terminal, /**
-     * Prefix run type.
-     */
-    Prefix, /**
-     * Unknown run type.
-     */
+    Terminal,
+    Prefix,
     Unknown
   }
 

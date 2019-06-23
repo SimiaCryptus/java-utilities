@@ -34,98 +34,45 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Count tree bits collection.
- */
 public class CountTreeBitsCollection extends
     BitsCollection<TreeMap<Bits, AtomicInteger>> {
 
-  /**
-   * The constant SERIALIZATION_CHECKS.
-   */
   public static boolean SERIALIZATION_CHECKS = false;
   private boolean useBinomials = true;
 
-  /**
-   * Instantiates a new Count tree bits collection.
-   */
   public CountTreeBitsCollection() {
     super(new TreeMap<Bits, AtomicInteger>());
   }
 
-  /**
-   * Instantiates a new Count tree bits collection.
-   *
-   * @param bitStream the bit stream
-   * @throws IOException the io exception
-   */
   public CountTreeBitsCollection(final BitInputStream bitStream)
       throws IOException {
     this();
     this.read(bitStream);
   }
 
-  /**
-   * Instantiates a new Count tree bits collection.
-   *
-   * @param bitStream the bit stream
-   * @param bitDepth  the bit depth
-   * @throws IOException the io exception
-   */
   public CountTreeBitsCollection(final BitInputStream bitStream,
                                  final int bitDepth) throws IOException {
     this(bitDepth);
     this.read(bitStream);
   }
 
-  /**
-   * Instantiates a new Count tree bits collection.
-   *
-   * @param data the data
-   * @throws IOException the io exception
-   */
   public CountTreeBitsCollection(final byte[] data) throws IOException {
     this(BitInputStream.toBitStream(data));
   }
 
-  /**
-   * Instantiates a new Count tree bits collection.
-   *
-   * @param data     the data
-   * @param bitDepth the bit depth
-   * @throws IOException the io exception
-   */
   public CountTreeBitsCollection(final byte[] data, final int bitDepth)
       throws IOException {
     this(BitInputStream.toBitStream(data), bitDepth);
   }
 
-  /**
-   * Instantiates a new Count tree bits collection.
-   *
-   * @param bitDepth the bit depth
-   */
   public CountTreeBitsCollection(final int bitDepth) {
     super(bitDepth, new TreeMap<Bits, AtomicInteger>());
   }
 
-  /**
-   * Is null t.
-   *
-   * @param <T>          the type parameter
-   * @param value        the value
-   * @param defaultValue the default value
-   * @return the t
-   */
   public static <T> T isNull(final T value, final T defaultValue) {
     return null == value ? defaultValue : value;
   }
 
-  /**
-   * Compute sums tree apply.
-   *
-   * @return the tree apply
-   */
   public TreeMap<Bits, Long> computeSums() {
     final TreeMap<Bits, Long> sums = new TreeMap<Bits, Long>();
     long total = 0;
@@ -165,13 +112,6 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  /**
-   * Read.
-   *
-   * @param in   the in
-   * @param size the size
-   * @throws IOException the io exception
-   */
   public void read(final BitInputStream in, final int size) throws IOException {
     this.getMap().clear();
     if (0 < size) {
@@ -179,15 +119,6 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  /**
-   * Read branch counts branch counts.
-   *
-   * @param in   the in
-   * @param code the run
-   * @param size the size
-   * @return the branch counts
-   * @throws IOException the io exception
-   */
   protected BranchCounts readBranchCounts(final BitInputStream in,
                                           final Bits code, final long size) throws IOException {
     final BranchCounts branchCounts = new BranchCounts(code, size);
@@ -214,14 +145,6 @@ public class CountTreeBitsCollection extends
     return branchCounts;
   }
 
-  /**
-   * Read terminal count long.
-   *
-   * @param in   the in
-   * @param size the size
-   * @return the long
-   * @throws IOException the io exception
-   */
   protected long readTerminalCount(final BitInputStream in, final long size)
       throws IOException {
     if (SERIALIZATION_CHECKS) {
@@ -234,15 +157,6 @@ public class CountTreeBitsCollection extends
     return readBoundedLong;
   }
 
-  /**
-   * Read zero branch size long.
-   *
-   * @param in   the in
-   * @param max  the max
-   * @param code the run
-   * @return the long
-   * @throws IOException the io exception
-   */
   protected long readZeroBranchSize(final BitInputStream in, final long max,
                                     final Bits code) throws IOException {
     if (0 == max) {
@@ -263,23 +177,11 @@ public class CountTreeBitsCollection extends
     return value;
   }
 
-  /**
-   * Sets use binomials.
-   *
-   * @param useBinomials the use binomials
-   * @return the use binomials
-   */
   public CountTreeBitsCollection setUseBinomials(final boolean useBinomials) {
     this.useBinomials = useBinomials;
     return this;
   }
 
-  /**
-   * Sum long.
-   *
-   * @param values the values
-   * @return the long
-   */
   public long sum(final Collection<Long> values) {
     long total = 0;
     for (final Long v : values) {
@@ -288,12 +190,6 @@ public class CountTreeBitsCollection extends
     return total;
   }
 
-  /**
-   * To bytes byte [ ].
-   *
-   * @return the byte [ ]
-   * @throws IOException the io exception
-   */
   public byte[] toBytes() throws IOException {
     final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
     final BitOutputStream out = new BitOutputStream(outBuffer);
@@ -302,11 +198,6 @@ public class CountTreeBitsCollection extends
     return outBuffer.toByteArray();
   }
 
-  /**
-   * Use binomials boolean.
-   *
-   * @return the boolean
-   */
   public boolean useBinomials() {
     return this.useBinomials;
   }
@@ -375,13 +266,6 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  /**
-   * Write.
-   *
-   * @param out  the out
-   * @param size the size
-   * @throws IOException the io exception
-   */
   public void write(final BitOutputStream out, final int size)
       throws IOException {
     final TreeMap<Bits, Long> sums = this.computeSums();
@@ -394,13 +278,6 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  /**
-   * Write branch counts.
-   *
-   * @param branch the branch
-   * @param out    the out
-   * @throws IOException the io exception
-   */
   protected void writeBranchCounts(final BranchCounts branch,
                                    final BitOutputStream out) throws IOException {
     final CodeType currentCodeType = this.getType(branch.path);
@@ -425,14 +302,6 @@ public class CountTreeBitsCollection extends
     assert maximum == branch.oneCount;
   }
 
-  /**
-   * Write terminal count.
-   *
-   * @param out   the out
-   * @param value the value
-   * @param max   the max
-   * @throws IOException the io exception
-   */
   protected void writeTerminalCount(final BitOutputStream out,
                                     final long value, final long max) throws IOException {
     assert 0 <= value;
@@ -446,15 +315,6 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  /**
-   * Write zero branch size.
-   *
-   * @param out   the out
-   * @param value the value
-   * @param max   the max
-   * @param bits  the bits
-   * @throws IOException the io exception
-   */
   protected void writeZeroBranchSize(final BitOutputStream out,
                                      final long value, final long max, final Bits bits) throws IOException {
     assert 0 <= value;
@@ -472,76 +332,27 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  /**
-   * The enum Serialization checks.
-   */
   public enum SerializationChecks {
-    /**
-     * Start tree serialization checks.
-     */
-    StartTree, /**
-     * End tree serialization checks.
-     */
-    EndTree, /**
-     * Before count serialization checks.
-     */
-    BeforeCount, /**
-     * After count serialization checks.
-     */
-    AfterCount, /**
-     * Before terminal serialization checks.
-     */
-    BeforeTerminal, /**
-     * After terminal serialization checks.
-     */
+    StartTree,
+    EndTree,
+    BeforeCount,
+    AfterCount,
+    BeforeTerminal,
     AfterTerminal
   }
 
-  /**
-   * The type Branch counts.
-   */
   public static class BranchCounts {
-    /**
-     * The Path.
-     */
     public Bits path;
-    /**
-     * The Size.
-     */
     public long size;
-    /**
-     * The Terminals.
-     */
     public long terminals;
-    /**
-     * The Zero count.
-     */
     public long zeroCount;
-    /**
-     * The One count.
-     */
     public long oneCount;
 
-    /**
-     * Instantiates a new Branch counts.
-     *
-     * @param path the path
-     * @param size the size
-     */
     public BranchCounts(final Bits path, final long size) {
       this.path = path;
       this.size = size;
     }
 
-    /**
-     * Instantiates a new Branch counts.
-     *
-     * @param path      the path
-     * @param size      the size
-     * @param terminals the terminals
-     * @param zeroCount the zero count
-     * @param oneCount  the one count
-     */
     public BranchCounts(final Bits path, final long size, final long terminals,
                         final long zeroCount, final long oneCount) {
       this.path = path;

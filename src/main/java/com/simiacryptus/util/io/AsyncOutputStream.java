@@ -24,18 +24,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-/**
- * The type Async output stream.
- */
 public class AsyncOutputStream extends FilterOutputStream {
 
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
 
-  /**
-   * Instantiates a new Async output stream.
-   *
-   * @param stream the stream
-   */
   public AsyncOutputStream(@javax.annotation.Nonnull final OutputStream stream) {
     super(stream);
   }

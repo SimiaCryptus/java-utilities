@@ -25,9 +25,6 @@ import java.util.Comparator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-/**
- * The type Density tree.
- */
 public class DensityTree {
 
   private final CharSequence[] columnNames;
@@ -36,21 +33,10 @@ public class DensityTree {
   private double minFitness = 4.0;
   private int maxDepth = Integer.MAX_VALUE;
 
-  /**
-   * Instantiates a new Density tree.
-   *
-   * @param columnNames the column names
-   */
   public DensityTree(CharSequence... columnNames) {
     this.columnNames = columnNames;
   }
 
-  /**
-   * Gets bounds.
-   *
-   * @param points the points
-   * @return the bounds
-   */
   @javax.annotation.Nonnull
   public Bounds getBounds(@javax.annotation.Nonnull double[][] points) {
     int dim = points[0].length;
@@ -63,120 +49,56 @@ public class DensityTree {
     return new Bounds(max, min);
   }
 
-  /**
-   * Gets min split fract.
-   *
-   * @return the min split fract
-   */
   public double getMinSplitFract() {
     return minSplitFract;
   }
 
-  /**
-   * Sets min split fract.
-   *
-   * @param minSplitFract the min split fract
-   * @return the min split fract
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.data.DensityTree setMinSplitFract(double minSplitFract) {
     this.minSplitFract = minSplitFract;
     return this;
   }
 
-  /**
-   * Gets split size threshold.
-   *
-   * @return the split size threshold
-   */
   public int getSplitSizeThreshold() {
     return splitSizeThreshold;
   }
 
-  /**
-   * Sets split size threshold.
-   *
-   * @param splitSizeThreshold the split size threshold
-   * @return the split size threshold
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.data.DensityTree setSplitSizeThreshold(int splitSizeThreshold) {
     this.splitSizeThreshold = splitSizeThreshold;
     return this;
   }
 
-  /**
-   * Get column names string [ ].
-   *
-   * @return the string [ ]
-   */
   public CharSequence[] getColumnNames() {
     return columnNames;
   }
 
-  /**
-   * Gets min fitness.
-   *
-   * @return the min fitness
-   */
   public double getMinFitness() {
     return minFitness;
   }
 
-  /**
-   * Sets min fitness.
-   *
-   * @param minFitness the min fitness
-   * @return the min fitness
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.data.DensityTree setMinFitness(double minFitness) {
     this.minFitness = minFitness;
     return this;
   }
 
-  /**
-   * Gets max depth.
-   *
-   * @return the max depth
-   */
   public int getMaxDepth() {
     return maxDepth;
   }
 
-  /**
-   * Sets max depth.
-   *
-   * @param maxDepth the max depth
-   * @return the max depth
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.data.DensityTree setMaxDepth(int maxDepth) {
     this.maxDepth = maxDepth;
     return this;
   }
 
-  /**
-   * The type Bounds.
-   */
   public class Bounds {
-    /**
-     * The Max.
-     */
     @javax.annotation.Nonnull
     public final double[] max;
-    /**
-     * The Min.
-     */
     @javax.annotation.Nonnull
     public final double[] min;
 
-    /**
-     * Instantiates a new Bounds.
-     *
-     * @param max the max
-     * @param min the min
-     */
     public Bounds(@javax.annotation.Nonnull double[] max, @javax.annotation.Nonnull double[] min) {
       this.max = max;
       this.min = min;
@@ -184,12 +106,6 @@ public class DensityTree {
       assert (IntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
     }
 
-    /**
-     * Union bounds.
-     *
-     * @param pt the pt
-     * @return the bounds
-     */
     @javax.annotation.Nonnull
     public Bounds union(@javax.annotation.Nonnull double[] pt) {
       int dim = pt.length;
@@ -200,11 +116,6 @@ public class DensityTree {
       }).toArray());
     }
 
-    /**
-     * Gets volume.
-     *
-     * @return the volume
-     */
     public double getVolume() {
       int dim = min.length;
       return IntStream.range(0, dim).mapToDouble(d -> {
@@ -221,19 +132,10 @@ public class DensityTree {
 
   }
 
-  /**
-   * The type Ortho rule.
-   */
   public class OrthoRule extends Rule {
     private final int dim;
     private final double value;
 
-    /**
-     * Instantiates a new Ortho rule.
-     *
-     * @param dim   the dim
-     * @param value the value
-     */
     public OrthoRule(int dim, double value) {
       super(String.format("%s < %s", columnNames[dim], value));
       this.dim = dim;
@@ -246,34 +148,14 @@ public class DensityTree {
     }
   }
 
-  /**
-   * The type Rule.
-   */
   public abstract class Rule {
-    /**
-     * The Name.
-     */
     public final String name;
-    /**
-     * The Fitness.
-     */
     public double fitness;
 
-    /**
-     * Instantiates a new Rule.
-     *
-     * @param name the name
-     */
     public Rule(String name) {
       this.name = name;
     }
 
-    /**
-     * Eval boolean.
-     *
-     * @param pt the pt
-     * @return the boolean
-     */
     public abstract boolean eval(double[] pt);
 
     @Override
@@ -282,18 +164,9 @@ public class DensityTree {
     }
   }
 
-  /**
-   * The type Node.
-   */
   public class Node {
-    /**
-     * The Points.
-     */
     @javax.annotation.Nonnull
     public final double[][] points;
-    /**
-     * The Bounds.
-     */
     @javax.annotation.Nonnull
     public final Bounds bounds;
     private final int depth;
@@ -304,21 +177,10 @@ public class DensityTree {
     @Nullable
     private Rule rule = null;
 
-    /**
-     * Instantiates a new Node.
-     *
-     * @param points the points
-     */
     public Node(@javax.annotation.Nonnull double[][] points) {
       this(points, 0);
     }
 
-    /**
-     * Instantiates a new Node.
-     *
-     * @param points the points
-     * @param depth  the depth
-     */
     public Node(@javax.annotation.Nonnull double[][] points, int depth) {
       this.points = points;
       this.bounds = getBounds(points);
@@ -326,12 +188,6 @@ public class DensityTree {
       split();
     }
 
-    /**
-     * Predict int.
-     *
-     * @param pt the pt
-     * @return the int
-     */
     public int predict(double[] pt) {
       if (null == rule) {
         return 0;
@@ -347,11 +203,6 @@ public class DensityTree {
       return code();
     }
 
-    /**
-     * Code string.
-     *
-     * @return the string
-     */
     public String code() {
       if (null != rule) {
         return String.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}",
@@ -367,9 +218,6 @@ public class DensityTree {
       return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
 
-    /**
-     * Split.
-     */
     public void split() {
       if (points.length <= splitSizeThreshold) return;
       if (maxDepth <= depth) return;
@@ -384,12 +232,6 @@ public class DensityTree {
       this.right = new Node(rightPts, depth + 1);
     }
 
-    /**
-     * Split ortho stream.
-     *
-     * @param dim the dim
-     * @return the stream
-     */
     public Stream<Rule> split_ortho(int dim) {
       double[][] sortedPoints = Arrays.stream(points).filter(pt -> Double.isFinite(pt[dim])).sorted(Comparator.comparing(pt -> pt[dim])).toArray(i -> new double[i][]);
       if (0 == sortedPoints.length) return Stream.empty();
@@ -416,77 +258,39 @@ public class DensityTree {
       }).filter(i -> null != i && i.fitness > minFitness);
     }
 
-    /**
-     * Gets rule.
-     *
-     * @return the rule
-     */
     @Nullable
     public Rule getRule() {
       return rule;
     }
 
-    /**
-     * Sets rule.
-     *
-     * @param rule the rule
-     * @return the rule
-     */
     @javax.annotation.Nonnull
     protected Node setRule(Rule rule) {
       this.rule = rule;
       return this;
     }
 
-    /**
-     * Gets right.
-     *
-     * @return the right
-     */
     @Nullable
     public Node getRight() {
       return right;
     }
 
-    /**
-     * Sets right.
-     *
-     * @param right the right
-     * @return the right
-     */
     @javax.annotation.Nonnull
     protected Node setRight(Node right) {
       this.right = right;
       return this;
     }
 
-    /**
-     * Gets left.
-     *
-     * @return the left
-     */
     @Nullable
     public Node getLeft() {
       return left;
     }
 
-    /**
-     * Sets left.
-     *
-     * @param left the left
-     * @return the left
-     */
     @javax.annotation.Nonnull
     protected Node setLeft(Node left) {
       this.left = left;
       return this;
     }
 
-    /**
-     * Gets depth.
-     *
-     * @return the depth
-     */
     public int getDepth() {
       return depth;
     }

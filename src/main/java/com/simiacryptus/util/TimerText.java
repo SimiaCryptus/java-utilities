@@ -23,19 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
- * Created by Andrew Charneski on 5/28/2017.
- */
 public class TimerText {
-  /**
-   * The Start.
-   */
   final long start = System.currentTimeMillis();
   private final SimpleDateFormat formatter;
 
-  /**
-   * Instantiates a new Timer text.
-   */
   public TimerText() {
     formatter = new SimpleDateFormat("[HH:mm:ss]");
     formatter.setTimeZone(TimeZone.getTimeZone("GMT"));

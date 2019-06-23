@@ -24,30 +24,12 @@ import com.simiacryptus.util.binary.BitOutputStream;
 
 import java.io.IOException;
 
-/**
- * The type Gaussian.
- */
 public class Gaussian {
 
-  /**
-   * The constant LOG2.
-   */
   public static final double LOG2 = Math.log(2);
-  /**
-   * The Mean.
-   */
   public final double mean;
-  /**
-   * The Std dev.
-   */
   public final double stdDev;
 
-  /**
-   * Instantiates a new Gaussian.
-   *
-   * @param mean   the mean
-   * @param stdDev the std dev
-   */
   public Gaussian(final double mean, final double stdDev) {
     super();
     if (Double.isNaN(mean)) {
@@ -69,13 +51,6 @@ public class Gaussian {
     this.stdDev = stdDev;
   }
 
-  /**
-   * From binomial gaussian.
-   *
-   * @param probability     the probability
-   * @param totalPopulation the total population
-   * @return the gaussian
-   */
   public static Gaussian fromBinomial(final double probability,
                                       final long totalPopulation) {
     if (0. >= totalPopulation) {
@@ -98,24 +73,10 @@ public class Gaussian {
         Math.sqrt(totalPopulation * probability * (1 - probability)));
   }
 
-  /**
-   * Log 2 double.
-   *
-   * @param d the d
-   * @return the double
-   */
   public static double log2(final double d) {
     return Math.log(d) / LOG2;
   }
 
-  /**
-   * Decode long.
-   *
-   * @param in  the in
-   * @param max the max
-   * @return the long
-   * @throws IOException the io exception
-   */
   public long decode(final BitInputStream in, final long max)
       throws IOException {
     if (0 == max) {
@@ -160,14 +121,6 @@ public class Gaussian {
     }
   }
 
-  /**
-   * Encode.
-   *
-   * @param out   the out
-   * @param value the value
-   * @param max   the max
-   * @throws IOException the io exception
-   */
   public void encode(final BitOutputStream out, final long value, final long max)
       throws IOException {
     if (0 == max) {

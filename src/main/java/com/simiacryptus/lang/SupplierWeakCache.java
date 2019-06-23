@@ -23,21 +23,11 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
-/**
- * The type Supplier weak cacheLocal.
- *
- * @param <T> the type parameter
- */
 public class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   @Nullable
   private WeakReference<T> ptr;
 
-  /**
-   * Instantiates a new Supplier weak cacheLocal.
-   *
-   * @param fn the fn
-   */
   public SupplierWeakCache(final Supplier<T> fn) {
     this.fn = fn;
     this.ptr = null;

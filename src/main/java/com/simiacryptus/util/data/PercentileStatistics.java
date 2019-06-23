@@ -25,9 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * The type Percentile statistics.
- */
 @SuppressWarnings("serial")
 public class PercentileStatistics extends ScalarStatistics {
 
@@ -58,12 +55,6 @@ public class PercentileStatistics extends ScalarStatistics {
     return map;
   }
 
-  /**
-   * Gets percentile.
-   *
-   * @param percentile the percentile
-   * @return the percentile
-   */
   public synchronized Double getPercentile(final double percentile) {
     if (null == values) return Double.NaN;
     return values.parallelStream().flatMapToDouble(x -> Arrays.stream(x)).sorted().skip((int) (percentile * values.size())).findFirst().orElse(Double.NaN);

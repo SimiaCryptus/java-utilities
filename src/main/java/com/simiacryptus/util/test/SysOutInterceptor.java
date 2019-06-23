@@ -28,18 +28,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * The type Sys out interceptor.
- */
 public class SysOutInterceptor extends PrintStream {
 
-  /**
-   * The constant INSTANCE.
-   */
   public static final PrintStream ORIGINAL_OUT = System.out;
-  /**
-   * The constant INSTANCE.
-   */
   public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
   private static final Logger log = LoggerFactory.getLogger(SysOutInterceptor.class);
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
@@ -58,21 +49,10 @@ public class SysOutInterceptor extends PrintStream {
 
   private final AtomicBoolean initialized = new AtomicBoolean(false);
 
-  /**
-   * Instantiates a new Sys out interceptor.
-   *
-   * @param out the out
-   */
   private SysOutInterceptor(@javax.annotation.Nonnull final PrintStream out) {
     super(out);
   }
 
-  /**
-   * With output logged result.
-   *
-   * @param fn the fn
-   * @return the logged result
-   */
   public static LoggedResult<Void> withOutput(@javax.annotation.Nonnull final Runnable fn) {
     try {
       if (SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
@@ -96,13 +76,6 @@ public class SysOutInterceptor extends PrintStream {
   }
 
 
-  /**
-   * With output logged result.
-   *
-   * @param <T> the type parameter
-   * @param fn  the fn
-   * @return the logged result
-   */
   public static <T> LoggedResult<T> withOutput(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
     try {
       if (SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
@@ -126,11 +99,6 @@ public class SysOutInterceptor extends PrintStream {
   }
 
 
-  /**
-   * Init sys out interceptor.
-   *
-   * @return the sys out interceptor
-   */
   @javax.annotation.Nonnull
   public SysOutInterceptor init() {
     if (!initialized.getAndSet(true)) {
@@ -144,20 +112,10 @@ public class SysOutInterceptor extends PrintStream {
     return this;
   }
 
-  /**
-   * Current handler printGroups stream.
-   *
-   * @return the printGroups stream
-   */
   public PrintStream currentHandler() {
     return threadHandler.get();
   }
 
-  /**
-   * Gets heapCopy.
-   *
-   * @return the heapCopy
-   */
   @javax.annotation.Nonnull
   public PrintStream getInner() {
     return (PrintStream) out;
@@ -179,39 +137,16 @@ public class SysOutInterceptor extends PrintStream {
     currentHandler.println(x);
   }
 
-  /**
-   * Sets current handler.
-   *
-   * @param out the out
-   * @return the current handler
-   */
   public PrintStream setCurrentHandler(final PrintStream out) {
     PrintStream previous = threadHandler.get();
     threadHandler.set(out);
     return previous;
   }
 
-  /**
-   * The type Logged result.
-   *
-   * @param <T> the type parameter
-   */
   public static class LoggedResult<T> {
-    /**
-     * The Log.
-     */
     public final String log;
-    /**
-     * The Obj.
-     */
     public final T obj;
 
-    /**
-     * Instantiates a new Logged result.
-     *
-     * @param obj the obj
-     * @param log the log
-     */
     public LoggedResult(final T obj, final String log) {
       this.obj = obj;
       this.log = log;

@@ -28,9 +28,6 @@ import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-/**
- * The type Kryo util.
- */
 public class KryoUtil {
 
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
@@ -61,11 +58,6 @@ public class KryoUtil {
 
   };
 
-  /**
-   * Kryo kryo.
-   *
-   * @return the kryo
-   */
   public static Kryo kryo() {
     return KryoUtil.threadKryo.get();
   }

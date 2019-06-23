@@ -24,57 +24,28 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * The type Monitored object.
- */
 public class MonitoredObject implements MonitoredItem {
 
   private final Map<CharSequence, Object> items = new HashMap<>();
 
-  /**
-   * Add const monitored object.
-   *
-   * @param key  the key
-   * @param item the item
-   * @return the monitored object
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject addConst(final CharSequence key, final Object item) {
     items.put(key, item);
     return this;
   }
 
-  /**
-   * Add field monitored object.
-   *
-   * @param key  the key
-   * @param item the item
-   * @return the monitored object
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject addField(final CharSequence key, final Supplier<Object> item) {
     items.put(key, item);
     return this;
   }
 
-  /**
-   * Add obj monitored object.
-   *
-   * @param key  the key
-   * @param item the item
-   * @return the monitored object
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject addObj(final CharSequence key, final MonitoredItem item) {
     items.put(key, item);
     return this;
   }
 
-  /**
-   * Clear constants monitored object.
-   *
-   * @return the monitored object
-   */
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject clearConstants() {
     @javax.annotation.Nonnull final HashSet<CharSequence> keys = new HashSet<>(items.keySet());

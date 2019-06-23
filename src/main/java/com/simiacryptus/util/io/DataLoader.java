@@ -25,21 +25,11 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 
-/**
- * The type Data loader.
- *
- * @param <T> the type parameter
- */
 public abstract class DataLoader<T> {
   private final List<T> queue = Collections.synchronizedList(new ArrayList<>());
   @Nullable
   private volatile Thread thread;
 
-  /**
-   * Clear.
-   *
-   * @throws InterruptedException the interrupted exception
-   */
   public void clear() throws InterruptedException {
     if (thread != null) {
       synchronized (this) {
@@ -53,16 +43,8 @@ public abstract class DataLoader<T> {
     }
   }
 
-  /**
-   * Read.
-   *
-   * @param queue the queue
-   */
   protected abstract void read(List<T> queue);
 
-  /**
-   * Stop.
-   */
   public void stop() {
     if (thread != null) {
       thread.interrupt();
@@ -74,11 +56,6 @@ public abstract class DataLoader<T> {
     }
   }
 
-  /**
-   * Stream stream.
-   *
-   * @return the stream
-   */
   public Stream<T> stream() {
     if (thread == null) {
       synchronized (this) {

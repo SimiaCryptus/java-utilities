@@ -23,25 +23,11 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by Andrew Charneski on 3/11/2017.
- *
- * @param <T> the type parameter
- */
 public class AsyncListIterator<T> implements Iterator<T> {
   private final List<T> queue;
   private final Thread thread;
-  /**
-   * The Index.
-   */
   int index = -1;
 
-  /**
-   * Instantiates a new Async list iterator.
-   *
-   * @param queue  the queue
-   * @param thread the thread
-   */
   public AsyncListIterator(final List<T> queue, final Thread thread) {
     this.thread = thread;
     this.queue = queue;

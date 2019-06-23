@@ -28,44 +28,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-/**
- * The type Static resource pool.
- *
- * @param <T> the type parameter
- */
 public class StaticResourcePool<T> {
 
   @javax.annotation.Nonnull
   private final List<T> all;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
 
-  /**
-   * Instantiates a new Static resource pool.
-   *
-   * @param items the items
-   */
   public StaticResourcePool(@javax.annotation.Nonnull final List<T> items) {
     super();
     this.all = Collections.unmodifiableList(new ArrayList<>(items));
     pool.addAll(getAll());
   }
 
-  /**
-   * With u.
-   *
-   * @param f the f
-   */
   public void apply(@Nonnull final Consumer<T> f) {
     apply(f, x -> true, false);
   }
 
-  /**
-   * With u.
-   *
-   * @param f         the f
-   * @param filter    the filter
-   * @param exclusive the exclusive
-   */
   public void apply(@javax.annotation.Nonnull final Consumer<T> f, final Predicate<T> filter, final boolean exclusive) {
     T poll = get(filter, exclusive);
     try {
@@ -108,36 +86,15 @@ public class StaticResourcePool<T> {
     }
   }
 
-  /**
-   * Gets all.
-   *
-   * @return the all
-   */
   @javax.annotation.Nonnull
   public List<T> getAll() {
     return all;
   }
 
-  /**
-   * With u.
-   *
-   * @param <U> the type parameter
-   * @param f   the f
-   * @return the u
-   */
   public <U> U run(@Nonnull final Function<T, U> f) {
     return run(f, x -> true, false);
   }
 
-  /**
-   * With u.
-   *
-   * @param <U>       the type parameter
-   * @param f         the f
-   * @param filter    the filter
-   * @param exclusive the exclusive
-   * @return the u
-   */
   public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter, final boolean exclusive) {
     if (all.isEmpty()) throw new IllegalStateException();
     T poll = get(filter, exclusive);
@@ -148,11 +105,6 @@ public class StaticResourcePool<T> {
     }
   }
 
-  /**
-   * Size int.
-   *
-   * @return the int
-   */
   public int size() {
     return getAll().size();
   }

@@ -25,26 +25,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Function;
 
-/**
- * The type Serial array list.
- *
- * @param <U> the type parameter
- */
 public class SerialArrayList<U> {
-  /**
-   * The Unit size.
-   */
   public final int unitSize;
   private final SerialType<U> factory;
   private byte[] buffer;
   private int maxByte = 0;
 
-  /**
-   * Instantiates a new Serial array list.
-   *
-   * @param factory the factory
-   * @param items   the items
-   */
   public SerialArrayList(SerialType<U> factory, SerialArrayList<U>... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
@@ -58,12 +44,6 @@ public class SerialArrayList<U> {
     }
   }
 
-  /**
-   * Instantiates a new Serial array list.
-   *
-   * @param factory the factory
-   * @param items   the items
-   */
   public SerialArrayList(SerialType<U> factory, Collection<U> items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
@@ -72,12 +52,6 @@ public class SerialArrayList<U> {
     for (U x : items) set(i++, x);
   }
 
-  /**
-   * Instantiates a new Serial array list.
-   *
-   * @param factory the factory
-   * @param items   the items
-   */
   public SerialArrayList(SerialType<U> factory, U... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
@@ -85,62 +59,31 @@ public class SerialArrayList<U> {
     for (int i = 0; i < items.length; i++) set(i, items[i]);
   }
 
-  /**
-   * Instantiates a new Serial array list.
-   *
-   * @param factory the factory
-   */
   public SerialArrayList(SerialType<U> factory) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[1024];
   }
 
-  /**
-   * Instantiates a new Serial array list.
-   *
-   * @param factory the factory
-   * @param size    the size
-   */
   public SerialArrayList(SerialType<U> factory, int size) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[this.unitSize * size];
   }
 
-  /**
-   * Add serial array list.
-   *
-   * @param right the right
-   * @return the serial array list
-   */
   public SerialArrayList<U> add(SerialArrayList<U> right) {
     return new SerialArrayList<U>(factory, this, right);
   }
 
-  /**
-   * Clear.
-   */
   public synchronized void clear() {
     buffer = new byte[]{};
     maxByte = 0;
   }
 
-  /**
-   * Length int.
-   *
-   * @return the int
-   */
   public int length() {
     return maxByte / unitSize;
   }
 
-  /**
-   * Get u.
-   *
-   * @param i the
-   * @return the u
-   */
   public U get(int i) {
     ByteBuffer view = getView(i);
     try {
@@ -150,37 +93,18 @@ public class SerialArrayList<U> {
     }
   }
 
-  /**
-   * Add int.
-   *
-   * @param value the value
-   * @return the int
-   */
   public synchronized int add(U value) {
     int length = length();
     set(length, value);
     return length;
   }
 
-  /**
-   * Update u.
-   *
-   * @param i       the
-   * @param updater the updater
-   * @return the u
-   */
   public synchronized U update(int i, Function<U, U> updater) {
     U updated = updater.apply(this.get(i));
     set(i, updated);
     return updated;
   }
 
-  /**
-   * Set.
-   *
-   * @param i     the
-   * @param value the value
-   */
   public void set(int i, U value) {
     ensureCapacity((i + 1) * unitSize);
     ByteBuffer view = getView(i);
@@ -208,53 +132,25 @@ public class SerialArrayList<U> {
     }
   }
 
-  /**
-   * Add all int.
-   *
-   * @param data the data
-   * @return the int
-   */
   public synchronized int addAll(Collection<U> data) {
     int startIndex = length();
     putAll(data, startIndex);
     return startIndex;
   }
 
-  /**
-   * Put all.
-   *
-   * @param data       the data
-   * @param startIndex the start index
-   */
   public synchronized void putAll(Collection<U> data, int startIndex) {
     putAll(new SerialArrayList<U>(factory, data), startIndex);
   }
 
-  /**
-   * Put all.
-   *
-   * @param data       the data
-   * @param startIndex the start index
-   */
   public synchronized void putAll(SerialArrayList<U> data, int startIndex) {
     ensureCapacity((startIndex * unitSize) + data.maxByte);
     System.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
   }
 
-  /**
-   * Gets memory size.
-   *
-   * @return the memory size
-   */
   public int getMemorySize() {
     return buffer.length;
   }
 
-  /**
-   * Copy serial array list.
-   *
-   * @return the serial array list
-   */
   public SerialArrayList<U> copy() {
     return new SerialArrayList<U>(factory, this);
   }
