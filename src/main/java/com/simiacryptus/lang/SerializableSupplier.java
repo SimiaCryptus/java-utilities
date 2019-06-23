@@ -22,10 +22,5 @@ package com.simiacryptus.lang;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
-/**
- * The interface Serializable callable.
- *
- * @param <T> the type parameter
- */
 public interface SerializableSupplier<T> extends Supplier<T>, Serializable {
 }

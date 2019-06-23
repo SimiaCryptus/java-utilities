@@ -19,30 +19,11 @@
 
 package com.simiacryptus.util.binary;
 
-/**
- * The type Interval.
- */
 public class Interval {
-  /**
-   * The Start.
-   */
   public final long start;
-  /**
-   * The Max.
-   */
   public final long max;
-  /**
-   * The Length.
-   */
   public final long length;
 
-  /**
-   * Instantiates a new Interval.
-   *
-   * @param start  the start
-   * @param length the length
-   * @param max    the max
-   */
   public Interval(long start, long length, long max) {
     super();
     if (0 >= max) throw new IllegalArgumentException();
@@ -54,20 +35,10 @@ public class Interval {
     this.length = length;
   }
 
-  /**
-   * End long.
-   *
-   * @return the long
-   */
   public long end() {
     return start + length;
   }
 
-  /**
-   * To bits bits.
-   *
-   * @return the bits
-   */
   public Bits toBits() {
     int peekBits = (int) Math.ceil(Math.log(max) / Math.log(2)) + 4;
     Bits startBits = Bits.divide(start, max, peekBits).padRight(peekBits);

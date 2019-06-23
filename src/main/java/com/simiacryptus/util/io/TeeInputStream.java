@@ -24,21 +24,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
-/**
- * The type Tee input stream.
- */
 public class TeeInputStream extends InputStream {
 
   private final OutputStream cache;
   private final InputStream inputStream;
 
 
-  /**
-   * Instantiates a new Tee input stream.
-   *
-   * @param inputStream the input stream
-   * @param cache       the cacheLocal
-   */
   public TeeInputStream(final InputStream inputStream, final OutputStream cache) {
     this.inputStream = inputStream;
     this.cache = cache;

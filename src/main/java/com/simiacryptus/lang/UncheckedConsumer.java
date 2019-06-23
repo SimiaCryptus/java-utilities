@@ -19,11 +19,6 @@
 
 package com.simiacryptus.lang;
 
-/**
- * The interface Unchecked supplier.
- *
- * @param <T> the type parameter
- */
 public interface UncheckedConsumer<T> {
 
   void accept(T obj) throws Exception;

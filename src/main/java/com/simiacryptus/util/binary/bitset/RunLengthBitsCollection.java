@@ -28,16 +28,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * The type Run length bits collection.
- */
 public class RunLengthBitsCollection extends
     BitsCollection<HashMap<Bits, AtomicInteger>> {
-  /**
-   * Instantiates a new Run length bits collection.
-   *
-   * @param bitDepth the bit depth
-   */
   public RunLengthBitsCollection(final int bitDepth) {
     super(bitDepth, new HashMap<Bits, AtomicInteger>());
   }

@@ -28,9 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The type Scalar statistics.
- */
 @SuppressWarnings("serial")
 public class ScalarStatistics implements MonitoredItem, Serializable {
   private static final double zeroTol = 1e-20;
@@ -44,12 +41,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   private volatile double sumLog = 0;
   private volatile int zeros = 0;
 
-  /**
-   * Stats scalar statistics.
-   *
-   * @param data the data
-   * @return the scalar statistics
-   */
   @javax.annotation.Nonnull
   public static com.simiacryptus.util.data.ScalarStatistics stats(@javax.annotation.Nonnull final double[] data) {
     @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics statistics = new PercentileStatistics();
@@ -57,12 +48,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return statistics;
   }
 
-  /**
-   * Add.
-   *
-   * @param values the values
-   * @return the scalar statistics
-   */
   @Nullable
   public com.simiacryptus.util.data.ScalarStatistics add(@javax.annotation.Nonnull final double... values) {
     double v1 = 0;
@@ -103,11 +88,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return this;
   }
 
-  /**
-   * Add.
-   *
-   * @param v the v
-   */
   public final synchronized void add(final double v) {
     sum0 += 1;
     sum1 += v;
@@ -127,12 +107,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
 
 
-  /**
-   * Add scalar statistics.
-   *
-   * @param right the right
-   * @return the scalar statistics
-   */
   @javax.annotation.Nonnull
   public final synchronized com.simiacryptus.util.data.ScalarStatistics add(@javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
     @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
@@ -145,9 +119,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return sum;
   }
 
-  /**
-   * Clear.
-   */
   public void clear() {
     min = Double.POSITIVE_INFINITY;
     max = -Double.POSITIVE_INFINITY;
@@ -160,20 +131,10 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sumLog = 0;
   }
 
-  /**
-   * Gets count.
-   *
-   * @return the count
-   */
   public int getCount() {
     return sum0;
   }
 
-  /**
-   * Gets json.
-   *
-   * @return the json
-   */
   @javax.annotation.Nonnull
   public JsonObject getJson() {
     @javax.annotation.Nonnull final JsonObject json = new JsonObject();
@@ -189,20 +150,10 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return json;
   }
 
-  /**
-   * Gets mean.
-   *
-   * @return the mean
-   */
   public double getMean() {
     return sum1 / sum0;
   }
 
-  /**
-   * Gets mean power.
-   *
-   * @return the mean power
-   */
   public double getMeanPower() {
     return sumLog / (sum0 - zeros);
   }
@@ -223,20 +174,10 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     return map;
   }
 
-  /**
-   * Gets std dev.
-   *
-   * @return the std dev
-   */
   public double getStdDev() {
     return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
   }
 
-  /**
-   * Read json.
-   *
-   * @param json the json
-   */
   public void readJson(@Nullable final JsonObject json) {
     if (null == json) return;
     min = json.get("min").getAsDouble();
@@ -250,12 +191,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sumLog = json.get("sumLog").getAsDouble();
   }
 
-  /**
-   * Subtract scalar statistics.
-   *
-   * @param right the right
-   * @return the scalar statistics
-   */
   @javax.annotation.Nonnull
   public final synchronized com.simiacryptus.util.data.ScalarStatistics subtract(@javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
     @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();

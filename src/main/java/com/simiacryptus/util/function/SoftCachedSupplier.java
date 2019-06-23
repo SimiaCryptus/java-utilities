@@ -23,22 +23,12 @@ import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
-/**
- * The type Soft cached supplier.
- *
- * @param <T> the type parameter
- */
 public class SoftCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   @Nullable
   private volatile SoftReference<T> cached;
 
-  /**
-   * Instantiates a new Soft cached supplier.
-   *
-   * @param fn the fn
-   */
   public SoftCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
   }

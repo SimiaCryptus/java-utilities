@@ -27,142 +27,56 @@ import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-/**
- * The type Array util.
- */
 public class ArrayUtil {
 
-  /**
-   * Add double [ ].
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] add(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b) {
     return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x + y);
   }
 
-  /**
-   * Add list.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the list
-   */
   public static List<double[]> add(@javax.annotation.Nonnull final List<double[]> a, @javax.annotation.Nonnull final List<double[]> b) {
     return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x + y);
   }
 
-  /**
-   * Dot double.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double
-   */
   public static double dot(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b) {
     return com.simiacryptus.util.ArrayUtil.sum(com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x * y));
   }
 
-  /**
-   * Dot double.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double
-   */
   public static double dot(@javax.annotation.Nonnull final List<double[]> a, @javax.annotation.Nonnull final List<double[]> b) {
     return com.simiacryptus.util.ArrayUtil.sum(com.simiacryptus.util.ArrayUtil.multiply(a, b));
   }
 
-  /**
-   * Magnitude double.
-   *
-   * @param a the a
-   * @return the double
-   */
   public static double magnitude(@javax.annotation.Nonnull final double[] a) {
     return Math.sqrt(com.simiacryptus.util.ArrayUtil.dot(a, a));
   }
 
-  /**
-   * Mean double.
-   *
-   * @param op the op
-   * @return the double
-   */
   public static double mean(@javax.annotation.Nonnull final double[] op) {
     return com.simiacryptus.util.ArrayUtil.sum(op) / op.length;
   }
 
-  /**
-   * Minus list.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the list
-   */
   public static List<double[]> minus(@javax.annotation.Nonnull final List<double[]> a, @javax.annotation.Nonnull final List<double[]> b) {
     return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x - y);
   }
 
-  /**
-   * Multiply double [ ].
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] multiply(@javax.annotation.Nonnull final double[] a, final double b) {
     return com.simiacryptus.util.ArrayUtil.op(a, (x) -> x * b);
   }
 
-  /**
-   * Multiply double [ ].
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] multiply(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b) {
     return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x * y);
   }
 
-  /**
-   * Multiply list.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the list
-   */
   @javax.annotation.Nonnull
   public static List<double[]> multiply(@javax.annotation.Nonnull final List<double[]> a, final double b) {
     return com.simiacryptus.util.ArrayUtil.op(a, x -> x * b);
   }
 
-  /**
-   * Multiply list.
-   *
-   * @param a the a
-   * @param b the b
-   * @return the list
-   */
   public static List<double[]> multiply(@javax.annotation.Nonnull final List<double[]> a, @javax.annotation.Nonnull final List<double[]> b) {
     return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x * y);
   }
 
-  /**
-   * Op double [ ].
-   *
-   * @param a  the a
-   * @param b  the b
-   * @param fn the fn
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] op(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b, @javax.annotation.Nonnull final DoubleBinaryOperator fn) {
     assert a.length == b.length;
@@ -173,13 +87,6 @@ public class ArrayUtil {
     return c;
   }
 
-  /**
-   * Op double [ ].
-   *
-   * @param a  the a
-   * @param fn the fn
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] op(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final DoubleUnaryOperator fn) {
     @javax.annotation.Nonnull final double[] c = new double[a.length];
@@ -189,13 +96,6 @@ public class ArrayUtil {
     return c;
   }
 
-  /**
-   * Op list.
-   *
-   * @param a  the a
-   * @param fn the fn
-   * @return the list
-   */
   @javax.annotation.Nonnull
   public static List<double[]> op(@javax.annotation.Nonnull final List<double[]> a, @javax.annotation.Nonnull final DoubleUnaryOperator fn) {
     @javax.annotation.Nonnull final ArrayList<double[]> list = new ArrayList<>();
@@ -209,14 +109,6 @@ public class ArrayUtil {
     return list;
   }
 
-  /**
-   * Op list.
-   *
-   * @param a  the a
-   * @param b  the b
-   * @param fn the fn
-   * @return the list
-   */
   public static List<double[]> op(@javax.annotation.Nonnull final List<double[]> a, @javax.annotation.Nonnull final List<double[]> b, @javax.annotation.Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
     return IntStream.range(0, a.size()).parallel().mapToObj(i -> {
@@ -229,46 +121,20 @@ public class ArrayUtil {
     }).collect(Collectors.toList());
   }
 
-  /**
-   * Subtract double [ ].
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] subtract(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b) {
     return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x - y);
   }
 
-  /**
-   * Sum double.
-   *
-   * @param op the op
-   * @return the double
-   */
   public static double sum(@javax.annotation.Nonnull final double[] op) {
     return Arrays.stream(op).sum();
   }
 
-  /**
-   * Sum double [ ].
-   *
-   * @param a the a
-   * @param b the b
-   * @return the double [ ]
-   */
   @javax.annotation.Nonnull
   public static double[] sum(@javax.annotation.Nonnull final double[] a, final double b) {
     return com.simiacryptus.util.ArrayUtil.op(a, (x) -> x + b);
   }
 
-  /**
-   * Sum double.
-   *
-   * @param a the a
-   * @return the double
-   */
   public static double sum(@javax.annotation.Nonnull final List<double[]> a) {
     return a.stream().parallel().mapToDouble(x -> Arrays.stream(x).sum()).sum();
   }

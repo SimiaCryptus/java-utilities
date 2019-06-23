@@ -21,21 +21,11 @@ package com.simiacryptus.util.function;
 
 import java.util.function.Supplier;
 
-/**
- * The type Cached supplier.
- *
- * @param <T> the type parameter
- */
 public class CachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   private volatile T cached;
 
-  /**
-   * Instantiates a new Cached supplier.
-   *
-   * @param fn the fn
-   */
   public CachedSupplier(Supplier<T> fn) {
     this.fn = fn;
   }

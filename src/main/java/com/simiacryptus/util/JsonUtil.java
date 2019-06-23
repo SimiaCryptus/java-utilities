@@ -35,39 +35,18 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
-/**
- * The type Json util.
- */
 public class JsonUtil {
 
-  /**
-   * Get double array double [ ].
-   *
-   * @param array the array
-   * @return the double [ ]
-   */
   public static double[] getDoubleArray(@javax.annotation.Nonnull final JsonArray array) {
     return IntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
 
-  /**
-   * Get int array int [ ].
-   *
-   * @param array the array
-   * @return the int [ ]
-   */
   @Nullable
   public static int[] getIntArray(@Nullable final JsonArray array) {
     if (null == array) return null;
     return IntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
   }
 
-  /**
-   * Gets json.
-   *
-   * @param kernelDims the kernel dims
-   * @return the json
-   */
   @javax.annotation.Nonnull
   public static JsonArray getJson(@javax.annotation.Nonnull final double[] kernelDims) {
     @javax.annotation.Nonnull final JsonArray array = new JsonArray();
@@ -77,12 +56,6 @@ public class JsonUtil {
     return array;
   }
 
-  /**
-   * Gets json.
-   *
-   * @param kernelDims the kernel dims
-   * @return the json
-   */
   @javax.annotation.Nonnull
   public static JsonArray getJson(@javax.annotation.Nonnull final int[] kernelDims) {
     @javax.annotation.Nonnull final JsonArray array = new JsonArray();
@@ -92,23 +65,10 @@ public class JsonUtil {
     return array;
   }
 
-  /**
-   * Write json.
-   *
-   * @param obj the obj
-   * @return the char sequence
-   */
   public static CharSequence toJson(final Object obj) {
     return toJson(obj, getMapper());
   }
 
-  /**
-   * To json char sequence.
-   *
-   * @param obj          the obj
-   * @param objectMapper the object mapper
-   * @return the char sequence
-   */
   @Nonnull
   public static CharSequence toJson(final Object obj, final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -120,11 +80,6 @@ public class JsonUtil {
     return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
   }
 
-  /**
-   * Gets mapper.
-   *
-   * @return the mapper
-   */
   public static ObjectMapper getMapper() {
     ObjectMapper enable = new ObjectMapper()
         //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
@@ -132,16 +87,6 @@ public class JsonUtil {
     return enable;
   }
 
-  /**
-   * Cache t.
-   *
-   * @param <T>        the type parameter
-   * @param file       the file
-   * @param clazz      the clazz
-   * @param intializer the intializer
-   * @return the t
-   * @throws IOException the io exception
-   */
   public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
     if (file.exists()) {
       return getMapper().readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);

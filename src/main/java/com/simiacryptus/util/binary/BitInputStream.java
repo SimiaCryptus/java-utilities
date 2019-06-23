@@ -24,59 +24,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-/**
- * The type Bit input stream.
- */
 public class BitInputStream {
 
   private final InputStream inner;
   private Bits remainder = new Bits(0);
 
-  /**
-   * Instantiates a new Bit input stream.
-   *
-   * @param inner the inner
-   */
   public BitInputStream(final InputStream inner) {
     this.inner = inner;
   }
 
-  /**
-   * To bit stream bit input stream.
-   *
-   * @param data the data
-   * @return the bit input stream
-   */
   public static BitInputStream toBitStream(final byte[] data) {
     return new BitInputStream(new ByteArrayInputStream(data));
   }
 
-  /**
-   * Close.
-   *
-   * @throws IOException the io exception
-   */
   public void close() throws IOException {
     this.inner.close();
   }
 
-  /**
-   * Availible int.
-   *
-   * @return the int
-   * @throws IOException the io exception
-   */
   public int availible() throws IOException {
     return remainder.bitLength + 8 * inner.available();
   }
 
-  /**
-   * Expect.
-   *
-   * @param <T>    the type parameter
-   * @param expect the expect
-   * @throws IOException the io exception
-   */
   public <T extends Enum<T>> void expect(final Enum<T> expect) throws IOException {
     final Bits checkBits = this.read(8);
     final long expectedLong = expect.ordinal();
@@ -86,12 +54,6 @@ public class BitInputStream {
     }
   }
 
-  /**
-   * Expect.
-   *
-   * @param bits the bits
-   * @throws IOException the io exception
-   */
   public void expect(final Bits bits) throws IOException {
     int size = Math.min(availible(), bits.bitLength);
     Bits read = read(size);
@@ -100,13 +62,6 @@ public class BitInputStream {
     }
   }
 
-  /**
-   * Read bits.
-   *
-   * @param bits the bits
-   * @return the bits
-   * @throws IOException the io exception
-   */
   public Bits read(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
@@ -116,13 +71,6 @@ public class BitInputStream {
     return readBits;
   }
 
-  /**
-   * Peek bits.
-   *
-   * @param bits the bits
-   * @return the bits
-   * @throws IOException the io exception
-   */
   public Bits peek(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
@@ -130,23 +78,10 @@ public class BitInputStream {
     return this.remainder.range(0, Math.min(bits, this.remainder.bitLength));
   }
 
-  /**
-   * Read ahead bits.
-   *
-   * @return the bits
-   * @throws IOException the io exception
-   */
   public Bits readAhead() throws IOException {
     return this.readAhead(1);
   }
 
-  /**
-   * Read ahead bits.
-   *
-   * @param bytes the bytes
-   * @return the bits
-   * @throws IOException the io exception
-   */
   public Bits readAhead(final int bytes) throws IOException {
     assert (0 < bytes);
     if (0 < bytes) {
@@ -159,46 +94,20 @@ public class BitInputStream {
     return this.remainder;
   }
 
-  /**
-   * Read bool boolean.
-   *
-   * @return the boolean
-   * @throws IOException the io exception
-   */
   public boolean readBool() throws IOException {
     return Bits.ONE.equals(this.read(1));
   }
 
-  /**
-   * Reads a single positive bounded integral value (up to 64-bit, including 0, excluding max)
-   *
-   * @param max Maximum value (exclusive)
-   * @return A long within the range [0, max)
-   * @throws IOException the io exception
-   */
   public long readBoundedLong(final long max) throws IOException {
     final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2)) + 1);
     return 0 < bits ? this.read(bits).toLong() : 0;
   }
 
-  /**
-   * Read var long long.
-   *
-   * @return the long
-   * @throws IOException the io exception
-   */
   public long readVarLong() throws IOException {
     final int type = (int) this.read(2).toLong();
     return this.read(BitOutputStream.varLongDepths[type]).toLong();
   }
 
-  /**
-   * Peek long coord long.
-   *
-   * @param max the max
-   * @return the long
-   * @throws IOException the io exception
-   */
   public long peekLongCoord(long max) throws IOException {
     if (1 >= max) return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
@@ -210,13 +119,6 @@ public class BitInputStream {
     return value;
   }
 
-  /**
-   * Peek int coord int.
-   *
-   * @param max the max
-   * @return the int
-   * @throws IOException the io exception
-   */
   public int peekIntCoord(int max) throws IOException {
     if (1 >= max) return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
@@ -228,35 +130,16 @@ public class BitInputStream {
     return value;
   }
 
-  /**
-   * Read var short short.
-   *
-   * @return the short
-   * @throws IOException the io exception
-   */
   public short readVarShort() throws IOException {
     return readVarShort(7);
   }
 
-  /**
-   * Read var short short.
-   *
-   * @param optimal the optimal
-   * @return the short
-   * @throws IOException the io exception
-   */
   public short readVarShort(int optimal) throws IOException {
     int[] varShortDepths = {optimal, 16};
     final int type = (int) this.read(1).toLong();
     return (short) this.read(varShortDepths[type]).toLong();
   }
 
-  /**
-   * Read char char.
-   *
-   * @return the char
-   * @throws IOException the io exception
-   */
   public char readChar() throws IOException {
     return (char) read(16).toLong();
   }

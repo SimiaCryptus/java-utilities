@@ -19,31 +19,17 @@
 
 package com.simiacryptus.util;
 
-/**
- * The type Fast randomize.
- */
 public class FastRandom {
-  /**
-   * The constant INSTANCE.
-   */
   public static final FastRandom INSTANCE = new FastRandom();
   private final long t;
   private long x;
   private long y;
   private long z;
 
-  /**
-   * Instantiates a new Fast random.
-   */
   public FastRandom() {
     this(System.nanoTime());
   }
 
-  /**
-   * Instantiates a new Fast random.
-   *
-   * @param seed the seed
-   */
   public FastRandom(final long seed) {
     t = seed >>> 24;
     x = seed;
@@ -51,12 +37,6 @@ public class FastRandom {
     z = seed >>> 16;
   }
 
-  /**
-   * Xorshift long.
-   *
-   * @param x the x
-   * @return the long
-   */
   public static long xorshift(long x) {
     x ^= x << 16;
     x ^= x >> 5;
@@ -64,11 +44,6 @@ public class FastRandom {
     return x;
   }
 
-  /**
-   * Random double.
-   *
-   * @return the double
-   */
   public double random() {
     long z = next();
     int exponentMag = 4;
@@ -86,11 +61,6 @@ public class FastRandom {
     return x;
   }
 
-  /**
-   * Next long.
-   *
-   * @return the long
-   */
   public long next() {
     long x = xorshift(this.x);
     this.x = y;

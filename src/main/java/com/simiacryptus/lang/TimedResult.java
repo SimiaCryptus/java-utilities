@@ -22,45 +22,17 @@ package com.simiacryptus.lang;
 import javax.annotation.Nullable;
 import java.lang.management.ManagementFactory;
 
-/**
- * The type Timed result.
- *
- * @param <T> the type parameter
- */
 public class TimedResult<T> {
-  /**
-   * The Obj.
-   */
   public final T result;
-  /**
-   * The Time nanos.
-   */
   public final long timeNanos;
-  /**
-   * The Gc ms.
-   */
   public final long gcMs;
 
-  /**
-   * Instantiates a new Timed result.
-   *
-   * @param result    the obj
-   * @param timeNanos the time nanos
-   * @param gcMs      the gc ms
-   */
   public TimedResult(final T result, final long timeNanos, long gcMs) {
     this.result = result;
     this.timeNanos = timeNanos;
     this.gcMs = gcMs;
   }
 
-  /**
-   * Time timed result.
-   *
-   * @param <T> the type parameter
-   * @param fn  the fn
-   * @return the timed result
-   */
   public static <T> com.simiacryptus.lang.TimedResult<T> time(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum();
     final long start = System.nanoTime();
@@ -77,13 +49,6 @@ public class TimedResult<T> {
     return new com.simiacryptus.lang.TimedResult<T>(result, wallClockTime, gcTime);
   }
 
-  /**
-   * Time timed result.
-   *
-   * @param <T> the type parameter
-   * @param fn  the fn
-   * @return the timed result
-   */
   public static <T> com.simiacryptus.lang.TimedResult<Void> time(@javax.annotation.Nonnull final UncheckedRunnable<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum();
     final long start = System.nanoTime();
@@ -99,20 +64,10 @@ public class TimedResult<T> {
     return new com.simiacryptus.lang.TimedResult<Void>(null, wallClockTime, gcTime);
   }
 
-  /**
-   * Seconds double.
-   *
-   * @return the double
-   */
   public double seconds() {
     return timeNanos / 1e9;
   }
 
-  /**
-   * Gc seconds double.
-   *
-   * @return the double
-   */
   public double gc_seconds() {
     return gcMs / 1e3;
   }

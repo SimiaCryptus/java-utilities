@@ -22,10 +22,5 @@ package com.simiacryptus.lang;
 import java.io.Serializable;
 import java.util.function.Consumer;
 
-/**
- * The interface Serializable consumer.
- *
- * @param <T> the type parameter
- */
 public interface SerializableConsumer<T> extends Consumer<T>, Serializable {
 }

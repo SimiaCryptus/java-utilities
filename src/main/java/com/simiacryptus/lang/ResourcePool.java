@@ -22,11 +22,6 @@ package com.simiacryptus.lang;
 import java.util.ArrayList;
 import java.util.function.Predicate;
 
-/**
- * The type Resource pool.
- *
- * @param <T> the type parameter
- */
 public abstract class ResourcePool<T> {
 
   @javax.annotation.Nonnull
@@ -35,39 +30,18 @@ public abstract class ResourcePool<T> {
   private final int maxItems;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
 
-  /**
-   * Instantiates a new Resource pool.
-   *
-   * @param maxItems the max items
-   */
   public ResourcePool(final int maxItems) {
     super();
     this.maxItems = maxItems;
     this.all = new java.util.HashSet<>(this.maxItems);
   }
 
-  /**
-   * Create t.
-   *
-   * @return the t
-   */
   public abstract T create();
 
-  /**
-   * Get t.
-   *
-   * @return the t
-   */
   public T get() {
     return get(x -> true);
   }
 
-  /**
-   * Get t.
-   *
-   * @param filter the filter
-   * @return the t
-   */
   public T get(Predicate<T> filter) {
     ArrayList<T> sampled = new ArrayList<>();
     try {
@@ -96,43 +70,18 @@ public abstract class ResourcePool<T> {
     }
   }
 
-  /**
-   * Size int.
-   *
-   * @return the int
-   */
   public int size() {
     return all.size();
   }
 
-  /**
-   * With.
-   *
-   * @param <U> the type parameter
-   * @param f   the f
-   * @return the u
-   */
   public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f) {
     return apply(f, x -> true);
   }
 
-  /**
-   * With.
-   *
-   * @param f the f
-   */
   public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {
     apply(f, x -> true);
   }
 
-  /**
-   * With.
-   *
-   * @param <U>    the type parameter
-   * @param f      the f
-   * @param filter the filter
-   * @return the u
-   */
   public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
@@ -149,12 +98,6 @@ public abstract class ResourcePool<T> {
     }
   }
 
-  /**
-   * With.
-   *
-   * @param f      the f
-   * @param filter the filter
-   */
   public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {

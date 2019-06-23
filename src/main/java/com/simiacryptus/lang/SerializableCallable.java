@@ -22,10 +22,5 @@ package com.simiacryptus.lang;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
-/**
- * The interface Serializable callable.
- *
- * @param <T> the type parameter
- */
 public interface SerializableCallable<T> extends Callable<T>, Serializable {
 }

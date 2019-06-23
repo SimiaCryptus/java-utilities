@@ -19,17 +19,7 @@
 
 package com.simiacryptus.lang;
 
-/**
- * The interface Unchecked supplier.
- *
- * @param <T> the type parameter
- */
 public interface UncheckedRunnable<T> {
 
-  /**
-   * Gets a result.
-   *
-   * @throws Exception the exception
-   */
   void get() throws Exception;
 }

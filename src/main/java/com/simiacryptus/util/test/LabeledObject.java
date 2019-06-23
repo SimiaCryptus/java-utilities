@@ -21,40 +21,16 @@ package com.simiacryptus.util.test;
 
 import java.util.function.Function;
 
-/**
- * The type Labeled object.
- *
- * @param <T> the type parameter
- */
 public class LabeledObject<T> {
-  /**
-   * The Data.
-   */
   public final T data;
-  /**
-   * The Label.
-   */
   public final String label;
 
-  /**
-   * Instantiates a new Labeled object.
-   *
-   * @param img  the img
-   * @param name the name
-   */
   public LabeledObject(final T img, final String name) {
     super();
     this.data = img;
     this.label = name;
   }
 
-  /**
-   * Map labeled object.
-   *
-   * @param <U> the type parameter
-   * @param f   the f
-   * @return the labeled object
-   */
   @javax.annotation.Nonnull
   public <U> com.simiacryptus.util.test.LabeledObject<U> map(@javax.annotation.Nonnull final Function<T, U> f) {
     return new com.simiacryptus.util.test.LabeledObject<>(f.apply(this.data), this.label);

@@ -28,43 +28,21 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
-/**
- * The type Local app settings.
- */
 public class LocalAppSettings {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalAppSettings.class);
 
-  /**
-   * The Properties.
-   */
   public final HashMap<String, String> properties = new HashMap<>();
 
-  /**
-   * Instantiates a new Local app settings.
-   *
-   * @param properties the properties
-   */
   public LocalAppSettings(HashMap<String, String> properties) {
     this.properties.putAll(properties);
   }
 
-  /**
-   * Read hash map.
-   *
-   * @return the hash map
-   */
   public static HashMap<String, String> read() {
     return read(new File("."));
 
   }
 
-  /**
-   * Read hash map.
-   *
-   * @param workingDir the working dir
-   * @return the hash map
-   */
   public static HashMap<String, String> read(File workingDir) {
     File parentFile = workingDir.getParentFile();
     File file = new File(workingDir, "app.json");

@@ -23,31 +23,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 
-/**
- * The type Log.
- */
 public class LOG {
 
   private static final long startTime = System.nanoTime();
 
-  /**
-   * D.
-   *
-   * @param msg  the msg
-   * @param args the args
-   */
   public static void d(final String msg, final Object... args) {
     LOG.preprocessArgs(args);
     LOG.log(Severity.Debug, msg, args);
   }
 
-  /**
-   * D.
-   *
-   * @param e    the e
-   * @param msg  the msg
-   * @param args the args
-   */
   public static void d(final Throwable e, final CharSequence msg, final Object... args) {
     LOG.d(msg + "\n  " + LOG.toString(e).replace("\n", "\n  "), args);
   }
@@ -102,12 +86,6 @@ public class LOG {
     return "[" + sb + "]";
   }
 
-  /**
-   * To string string.
-   *
-   * @param e the e
-   * @return the string
-   */
   public static String toString(final Throwable e) {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     final PrintStream s = new PrintStream(out);
@@ -120,13 +98,7 @@ public class LOG {
     return exception;
   }
 
-  /**
-   * The enum Severity.
-   */
   public enum Severity {
-    /**
-     * Debug severity.
-     */
     Debug
   }
 

@@ -25,35 +25,18 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-/**
- * The type Bit output stream.
- */
 public class BitOutputStream implements AutoCloseable {
 
-  /**
-   * The Var long depths.
-   */
   static final int varLongDepths[] = {6, 14, 30, 62};
   private final OutputStream inner;
 
   private Bits remainder = Bits.NULL;
   private int totalBitsWritten = 0;
 
-  /**
-   * Instantiates a new Bit output stream.
-   *
-   * @param inner the inner
-   */
   public BitOutputStream(final OutputStream inner) {
     this.inner = inner;
   }
 
-  /**
-   * To bits bits.
-   *
-   * @param fn the fn
-   * @return the bits
-   */
   public static Bits toBits(Consumer<BitOutputStream> fn) {
     try {
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -66,32 +49,16 @@ public class BitOutputStream implements AutoCloseable {
     }
   }
 
-  /**
-   * Gets total bits written.
-   *
-   * @return the total bits written
-   */
   public int getTotalBitsWritten() {
     return totalBitsWritten;
   }
 
-  /**
-   * Flush.
-   *
-   * @throws IOException the io exception
-   */
   public synchronized void flush() throws IOException {
     this.inner.write(this.remainder.getBytes());
     this.inner.flush();
     this.remainder = Bits.NULL;
   }
 
-  /**
-   * Write.
-   *
-   * @param bits the bits
-   * @throws IOException the io exception
-   */
   public synchronized void write(final Bits bits) throws IOException {
     Bits newRemainder = this.remainder.concatenate(bits);
     final int newRemainingBits = newRemainder.bitLength % 8;
@@ -106,76 +73,31 @@ public class BitOutputStream implements AutoCloseable {
     this.totalBitsWritten += bits.bitLength;
   }
 
-  /**
-   * Write.
-   *
-   * @param b the b
-   * @throws IOException the io exception
-   */
   public void write(final boolean b) throws IOException {
     this.write(new Bits(b ? 1l : 0l, 1));
   }
 
-  /**
-   * Write.
-   *
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public void write(final double value) throws IOException {
     this.write(new Bits(Double.doubleToLongBits(value), 64));
   }
 
-  /**
-   * Write.
-   *
-   * @param <T>   the type parameter
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public <T extends Enum<T>> void write(final Enum<T> value) throws IOException {
     final long ordinal = value.ordinal();
     this.write(new Bits(ordinal, 8));
   }
 
-  /**
-   * Write.
-   *
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public void write(final short value) throws IOException {
     this.write(new Bits(value, 16));
   }
 
-  /**
-   * Write.
-   *
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public void write(final char value) throws IOException {
     this.write(new Bits(value, 16));
   }
 
-  /**
-   * Write.
-   *
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public void write(final int value) throws IOException {
     this.write(new Bits(value, 32));
   }
 
-  /**
-   * Write bounded long bits.
-   *
-   * @param value the value
-   * @param max   the max
-   * @return the bits
-   * @throws IOException the io exception
-   */
   public Bits writeBoundedLong(final long value, final long max)
       throws IOException {
     final int bits = 0 >= max ? 0 : (int) (Math
@@ -189,12 +111,6 @@ public class BitOutputStream implements AutoCloseable {
     }
   }
 
-  /**
-   * Write var long.
-   *
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public void writeVarLong(final long value) throws IOException {
     final int bitLength = new Bits(value).bitLength;
     int type = Arrays.binarySearch(varLongDepths, bitLength);
@@ -205,23 +121,10 @@ public class BitOutputStream implements AutoCloseable {
     this.write(new Bits(value, varLongDepths[type]));
   }
 
-  /**
-   * Write var short.
-   *
-   * @param value the value
-   * @throws IOException the io exception
-   */
   public void writeVarShort(final short value) throws IOException {
     writeVarShort(value, 7);
   }
 
-  /**
-   * Write var short.
-   *
-   * @param value   the value
-   * @param optimal the optimal
-   * @throws IOException the io exception
-   */
   public void writeVarShort(final short value, int optimal) throws IOException {
     if (value < 0) throw new IllegalArgumentException();
     int[] varShortDepths = {optimal, 16};
