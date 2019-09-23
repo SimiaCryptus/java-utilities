@@ -21,15 +21,15 @@ package com.simiacryptus.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.function.Supplier;
@@ -109,5 +109,12 @@ public class JsonUtil {
     JsonArray jsonElements = new JsonArray();
     Arrays.stream(array).forEach(jsonElements::add);
     return jsonElements;
+  }
+
+  public static JsonObject toJson(byte[] buf) {
+    return new GsonBuilder().create().fromJson(
+        new InputStreamReader(new ByteArrayInputStream(
+            buf
+        )), JsonObject.class);
   }
 }
