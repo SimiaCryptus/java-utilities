@@ -25,8 +25,11 @@ import com.google.common.cache.LoadingCache;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.io.TeeInputStream;
 import com.simiacryptus.util.test.LabeledObject;
+import com.simiacryptus.util.test.SysOutInterceptor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,6 +61,8 @@ import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 
 public class Util {
+
+  private static final Logger log = LoggerFactory.getLogger(Util.class);
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
     public final Random r = new Random(System.nanoTime());
 
@@ -150,10 +155,13 @@ public class Util {
   }
 
   public static File cacheFile(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
-    if (!new File(file).exists()) {
-      IOUtils.copy(get(url), new FileOutputStream(file));
+    final File fileLoc = new File(file).getCanonicalFile().getAbsoluteFile();
+    if (!fileLoc.exists()) {
+      log.info(String.format("Downloading %s to %s", url, fileLoc));
+      IOUtils.copy(get(url), new FileOutputStream(fileLoc));
+      log.info(String.format("Finished Download of %s to %s", url, fileLoc));
     }
-    return new File(file);
+    return fileLoc;
   }
 
   public static InputStream get(@javax.annotation.Nonnull String url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
