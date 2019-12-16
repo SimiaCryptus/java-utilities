@@ -10,6 +10,7 @@ hs_err_pid*
 .idea/
 *.iml
 *.jar
+java-util.iml
 *.log
 # Log file
 # Mobile Tools for Java (J2ME)
