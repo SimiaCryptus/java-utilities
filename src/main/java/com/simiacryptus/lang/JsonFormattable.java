@@ -22,7 +22,8 @@ package com.simiacryptus.lang;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public interface JsonFormattable {
+public @com.simiacryptus.ref.lang.RefAware
+interface JsonFormattable {
 
   JSONObject toJson() throws JSONException;
 

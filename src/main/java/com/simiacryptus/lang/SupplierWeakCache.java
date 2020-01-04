@@ -20,13 +20,13 @@
 package com.simiacryptus.lang;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
 import java.util.function.Supplier;
 
-public class SupplierWeakCache<T> implements Supplier<T> {
+public @com.simiacryptus.ref.lang.RefAware
+class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   @Nullable
-  private WeakReference<T> ptr;
+  private com.simiacryptus.ref.wrappers.RefWeakReference<T> ptr;
 
   public SupplierWeakCache(final Supplier<T> fn) {
     this.fn = fn;
@@ -36,10 +36,11 @@ public class SupplierWeakCache<T> implements Supplier<T> {
   @Nullable
   @Override
   public T get() {
-    @Nullable T x = null == ptr ? null : ptr.get();
+    @Nullable
+    T x = null == ptr ? null : ptr.get();
     if (null == x) {
       x = fn.get();
-      ptr = new WeakReference<>(x);
+      ptr = new com.simiacryptus.ref.wrappers.RefWeakReference<>(x);
     }
     return x;
   }

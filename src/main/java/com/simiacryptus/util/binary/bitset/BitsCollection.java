@@ -25,10 +25,10 @@ import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
+public abstract @com.simiacryptus.ref.lang.RefAware
+class BitsCollection<C extends com.simiacryptus.ref.wrappers.RefMap<Bits, AtomicInteger>>
     extends CountCollection<Bits, C> {
 
   public final Integer bitDepth;
@@ -61,9 +61,7 @@ public abstract class BitsCollection<C extends Map<Bits, AtomicInteger>>
   public abstract void write(BitOutputStream out) throws IOException;
 
   public enum CodeType {
-    Terminal,
-    Prefix,
-    Unknown
+    Terminal, Prefix, Unknown
   }
 
 }

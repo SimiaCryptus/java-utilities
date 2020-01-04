@@ -20,12 +20,9 @@
 package com.simiacryptus.util.data;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-public class DensityTree {
+public @com.simiacryptus.ref.lang.RefAware
+class DensityTree {
 
   private final CharSequence[] columnNames;
   private double minSplitFract = 0.05;
@@ -37,16 +34,28 @@ public class DensityTree {
     this.columnNames = columnNames;
   }
 
+  public CharSequence[] getColumnNames() {
+    return columnNames;
+  }
+
+  public int getMaxDepth() {
+    return maxDepth;
+  }
+
   @javax.annotation.Nonnull
-  public Bounds getBounds(@javax.annotation.Nonnull double[][] points) {
-    int dim = points[0].length;
-    double[] max = IntStream.range(0, dim).mapToDouble(d -> {
-      return Arrays.stream(points).mapToDouble(pt -> pt[d]).filter(x -> Double.isFinite(x)).max().orElse(Double.NaN);
-    }).toArray();
-    double[] min = IntStream.range(0, dim).mapToDouble(d -> {
-      return Arrays.stream(points).mapToDouble(pt -> pt[d]).filter(x -> Double.isFinite(x)).min().orElse(Double.NaN);
-    }).toArray();
-    return new Bounds(max, min);
+  public com.simiacryptus.util.data.DensityTree setMaxDepth(int maxDepth) {
+    this.maxDepth = maxDepth;
+    return this;
+  }
+
+  public double getMinFitness() {
+    return minFitness;
+  }
+
+  @javax.annotation.Nonnull
+  public com.simiacryptus.util.data.DensityTree setMinFitness(double minFitness) {
+    this.minFitness = minFitness;
+    return this;
   }
 
   public double getMinSplitFract() {
@@ -69,31 +78,22 @@ public class DensityTree {
     return this;
   }
 
-  public CharSequence[] getColumnNames() {
-    return columnNames;
-  }
-
-  public double getMinFitness() {
-    return minFitness;
-  }
-
   @javax.annotation.Nonnull
-  public com.simiacryptus.util.data.DensityTree setMinFitness(double minFitness) {
-    this.minFitness = minFitness;
-    return this;
+  public Bounds getBounds(@javax.annotation.Nonnull double[][] points) {
+    int dim = points[0].length;
+    double[] max = com.simiacryptus.ref.wrappers.RefIntStream.range(0, dim).mapToDouble(d -> {
+      return com.simiacryptus.ref.wrappers.RefArrays.stream(points).mapToDouble(pt -> pt[d])
+          .filter(x -> Double.isFinite(x)).max().orElse(Double.NaN);
+    }).toArray();
+    double[] min = com.simiacryptus.ref.wrappers.RefIntStream.range(0, dim).mapToDouble(d -> {
+      return com.simiacryptus.ref.wrappers.RefArrays.stream(points).mapToDouble(pt -> pt[d])
+          .filter(x -> Double.isFinite(x)).min().orElse(Double.NaN);
+    }).toArray();
+    return new Bounds(max, min);
   }
 
-  public int getMaxDepth() {
-    return maxDepth;
-  }
-
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.data.DensityTree setMaxDepth(int maxDepth) {
-    this.maxDepth = maxDepth;
-    return this;
-  }
-
-  public class Bounds {
+  public @com.simiacryptus.ref.lang.RefAware
+  class Bounds {
     @javax.annotation.Nonnull
     public final double[] max;
     @javax.annotation.Nonnull
@@ -103,36 +103,38 @@ public class DensityTree {
       this.max = max;
       this.min = min;
       assert (max.length == min.length);
-      assert (IntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
-    }
-
-    @javax.annotation.Nonnull
-    public Bounds union(@javax.annotation.Nonnull double[] pt) {
-      int dim = pt.length;
-      return new Bounds(IntStream.range(0, dim).mapToDouble(d -> {
-        return Double.isFinite(pt[d]) ? Math.max(max[d], pt[d]) : max[d];
-      }).toArray(), IntStream.range(0, dim).mapToDouble(d -> {
-        return Double.isFinite(pt[d]) ? Math.min(min[d], pt[d]) : min[d];
-      }).toArray());
+      assert (com.simiacryptus.ref.wrappers.RefIntStream.range(0, max.length).filter(i -> Double.isFinite(max[i]))
+          .allMatch(i -> max[i] >= min[i]));
     }
 
     public double getVolume() {
       int dim = min.length;
-      return IntStream.range(0, dim).mapToDouble(d -> {
+      return com.simiacryptus.ref.wrappers.RefIntStream.range(0, dim).mapToDouble(d -> {
         return max[d] - min[d];
       }).filter(x -> Double.isFinite(x) && x > 0.0).reduce((a, b) -> a * b).orElse(Double.NaN);
     }
 
     @javax.annotation.Nonnull
+    public Bounds union(@javax.annotation.Nonnull double[] pt) {
+      int dim = pt.length;
+      return new Bounds(com.simiacryptus.ref.wrappers.RefIntStream.range(0, dim).mapToDouble(d -> {
+        return Double.isFinite(pt[d]) ? Math.max(max[d], pt[d]) : max[d];
+      }).toArray(), com.simiacryptus.ref.wrappers.RefIntStream.range(0, dim).mapToDouble(d -> {
+        return Double.isFinite(pt[d]) ? Math.min(min[d], pt[d]) : min[d];
+      }).toArray());
+    }
+
+    @javax.annotation.Nonnull
     public String toString() {
-      return "[" + IntStream.range(0, min.length).mapToObj(d -> {
+      return "[" + com.simiacryptus.ref.wrappers.RefIntStream.range(0, min.length).mapToObj(d -> {
         return String.format("%s: %s - %s", columnNames[d], min[d], max[d]);
       }).reduce((a, b) -> a + "; " + b).get() + "]";
     }
 
   }
 
-  public class OrthoRule extends Rule {
+  public @com.simiacryptus.ref.lang.RefAware
+  class OrthoRule extends Rule {
     private final int dim;
     private final double value;
 
@@ -148,7 +150,8 @@ public class DensityTree {
     }
   }
 
-  public abstract class Rule {
+  public abstract @com.simiacryptus.ref.lang.RefAware
+  class Rule {
     public final String name;
     public double fitness;
 
@@ -164,7 +167,8 @@ public class DensityTree {
     }
   }
 
-  public class Node {
+  public @com.simiacryptus.ref.lang.RefAware
+  class Node {
     @javax.annotation.Nonnull
     public final double[][] points;
     @javax.annotation.Nonnull
@@ -188,6 +192,43 @@ public class DensityTree {
       split();
     }
 
+    public int getDepth() {
+      return depth;
+    }
+
+    @Nullable
+    public Node getLeft() {
+      return left;
+    }
+
+    @javax.annotation.Nonnull
+    protected Node setLeft(Node left) {
+      this.left = left;
+      return this;
+    }
+
+    @Nullable
+    public Node getRight() {
+      return right;
+    }
+
+    @javax.annotation.Nonnull
+    protected Node setRight(Node right) {
+      this.right = right;
+      return this;
+    }
+
+    @Nullable
+    public Rule getRule() {
+      return rule;
+    }
+
+    @javax.annotation.Nonnull
+    protected Node setRule(Rule rule) {
+      this.rule = rule;
+      return this;
+    }
+
     public int predict(double[] pt) {
       if (null == rule) {
         return 0;
@@ -205,94 +246,72 @@ public class DensityTree {
 
     public String code() {
       if (null != rule) {
-        return String.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}",
-            dataInfo(), rule, rule.fitness,
-            left.code().replaceAll("\n", "\n  "),
-            right.code().replaceAll("\n", "\n  "));
+        return String.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}", dataInfo(), rule, rule.fitness,
+            left.code().replaceAll("\n", "\n  "), right.code().replaceAll("\n", "\n  "));
       } else {
         return "// " + dataInfo();
       }
     }
 
-    private CharSequence dataInfo() {
-      return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
-    }
-
     public void split() {
-      if (points.length <= splitSizeThreshold) return;
-      if (maxDepth <= depth) return;
-      this.rule = IntStream.range(0, points[0].length).mapToObj(x -> x).flatMap(dim -> split_ortho(dim)).filter(x -> Double.isFinite(x.fitness))
-          .max(Comparator.comparing(x -> x.fitness)).orElse(null);
-      if (null == this.rule) return;
-      double[][] leftPts = Arrays.stream(this.points).filter(pt -> rule.eval(pt)).toArray(i -> new double[i][]);
-      double[][] rightPts = Arrays.stream(this.points).filter(pt -> !rule.eval(pt)).toArray(i -> new double[i][]);
+      if (points.length <= splitSizeThreshold)
+        return;
+      if (maxDepth <= depth)
+        return;
+      this.rule = com.simiacryptus.ref.wrappers.RefIntStream.range(0, points[0].length).mapToObj(x -> x)
+          .flatMap(dim -> split_ortho(dim)).filter(x -> Double.isFinite(x.fitness))
+          .max(com.simiacryptus.ref.wrappers.RefComparator.comparing(x -> x.fitness)).orElse(null);
+      if (null == this.rule)
+        return;
+      double[][] leftPts = com.simiacryptus.ref.wrappers.RefArrays.stream(this.points).filter(pt -> rule.eval(pt))
+          .toArray(i -> new double[i][]);
+      double[][] rightPts = com.simiacryptus.ref.wrappers.RefArrays.stream(this.points).filter(pt -> !rule.eval(pt))
+          .toArray(i -> new double[i][]);
       assert (leftPts.length + rightPts.length == this.points.length);
-      if (rightPts.length == 0 || leftPts.length == 0) return;
+      if (rightPts.length == 0 || leftPts.length == 0)
+        return;
       this.left = new Node(leftPts, depth + 1);
       this.right = new Node(rightPts, depth + 1);
     }
 
-    public Stream<Rule> split_ortho(int dim) {
-      double[][] sortedPoints = Arrays.stream(points).filter(pt -> Double.isFinite(pt[dim])).sorted(Comparator.comparing(pt -> pt[dim])).toArray(i -> new double[i][]);
-      if (0 == sortedPoints.length) return Stream.empty();
+    public com.simiacryptus.ref.wrappers.RefStream<Rule> split_ortho(int dim) {
+      double[][] sortedPoints = com.simiacryptus.ref.wrappers.RefArrays.stream(points)
+          .filter(pt -> Double.isFinite(pt[dim]))
+          .sorted(com.simiacryptus.ref.wrappers.RefComparator.comparing(pt -> pt[dim])).toArray(i -> new double[i][]);
+      if (0 == sortedPoints.length)
+        return com.simiacryptus.ref.wrappers.RefStream.empty();
       final int minSize = (int) Math.max(sortedPoints.length * minSplitFract, 1);
-      @javax.annotation.Nonnull Bounds[] left = new Bounds[sortedPoints.length];
-      @javax.annotation.Nonnull Bounds[] right = new Bounds[sortedPoints.length];
+      @javax.annotation.Nonnull
+      Bounds[] left = new Bounds[sortedPoints.length];
+      @javax.annotation.Nonnull
+      Bounds[] right = new Bounds[sortedPoints.length];
       left[0] = getBounds(new double[][]{sortedPoints[0]});
       right[sortedPoints.length - 1] = getBounds(new double[][]{sortedPoints[sortedPoints.length - 1]});
       for (int i = 1; i < sortedPoints.length; i++) {
         left[i] = left[i - 1].union(sortedPoints[i]);
-        right[(sortedPoints.length - 1) - i] = right[((sortedPoints.length - 1) - (i - 1))].union(sortedPoints[(sortedPoints.length - 1) - i]);
+        right[(sortedPoints.length - 1) - i] = right[((sortedPoints.length - 1) - (i - 1))]
+            .union(sortedPoints[(sortedPoints.length - 1) - i]);
       }
-      return IntStream.range(1, sortedPoints.length - 1).filter(i -> {
+      return com.simiacryptus.ref.wrappers.RefIntStream.range(1, sortedPoints.length - 1).filter(i -> {
         return sortedPoints[i - 1][dim] < sortedPoints[i][dim];
       }).mapToObj(i -> {
         int leftCount = i;
         int rightCount = sortedPoints.length - leftCount;
-        if (minSize >= leftCount || minSize >= rightCount) return null;
-        @javax.annotation.Nonnull OrthoRule rule = new OrthoRule(dim, sortedPoints[i][dim]);
+        if (minSize >= leftCount || minSize >= rightCount)
+          return null;
+        @javax.annotation.Nonnull
+        OrthoRule rule = new OrthoRule(dim, sortedPoints[i][dim]);
         Bounds l = left[i - 1];
         Bounds r = right[i];
-        rule.fitness = -(leftCount * Math.log(l.getVolume() / Node.this.bounds.getVolume()) + rightCount * Math.log(r.getVolume() / Node.this.bounds.getVolume())) / (sortedPoints.length * Math.log(2));
+        rule.fitness = -(leftCount * Math.log(l.getVolume() / Node.this.bounds.getVolume())
+            + rightCount * Math.log(r.getVolume() / Node.this.bounds.getVolume()))
+            / (sortedPoints.length * Math.log(2));
         return (Rule) rule;
       }).filter(i -> null != i && i.fitness > minFitness);
     }
 
-    @Nullable
-    public Rule getRule() {
-      return rule;
-    }
-
-    @javax.annotation.Nonnull
-    protected Node setRule(Rule rule) {
-      this.rule = rule;
-      return this;
-    }
-
-    @Nullable
-    public Node getRight() {
-      return right;
-    }
-
-    @javax.annotation.Nonnull
-    protected Node setRight(Node right) {
-      this.right = right;
-      return this;
-    }
-
-    @Nullable
-    public Node getLeft() {
-      return left;
-    }
-
-    @javax.annotation.Nonnull
-    protected Node setLeft(Node left) {
-      this.left = left;
-      return this;
-    }
-
-    public int getDepth() {
-      return depth;
+    private CharSequence dataInfo() {
+      return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
   }
 }

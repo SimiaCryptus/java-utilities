@@ -21,11 +21,10 @@ package com.simiacryptus.util.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.function.Function;
 
-public class SerialArrayList<U> {
+public @com.simiacryptus.ref.lang.RefAware
+class SerialArrayList<U> {
   public final int unitSize;
   private final SerialType<U> factory;
   private byte[] buffer;
@@ -34,7 +33,7 @@ public class SerialArrayList<U> {
   public SerialArrayList(SerialType<U> factory, SerialArrayList<U>... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
-    this.maxByte = Arrays.stream(items).mapToInt(item -> item.maxByte).sum();
+    this.maxByte = com.simiacryptus.ref.wrappers.RefArrays.stream(items).mapToInt(item -> item.maxByte).sum();
     this.buffer = new byte[this.maxByte];
     int cursor = 0;
     for (int i = 0; i < items.length; i++) {
@@ -44,19 +43,21 @@ public class SerialArrayList<U> {
     }
   }
 
-  public SerialArrayList(SerialType<U> factory, Collection<U> items) {
+  public SerialArrayList(SerialType<U> factory, com.simiacryptus.ref.wrappers.RefCollection<U> items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.size() * unitSize];
     int i = 0;
-    for (U x : items) set(i++, x);
+    for (U x : items)
+      set(i++, x);
   }
 
   public SerialArrayList(SerialType<U> factory, U... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.length * unitSize];
-    for (int i = 0; i < items.length; i++) set(i, items[i]);
+    for (int i = 0; i < items.length; i++)
+      set(i, items[i]);
   }
 
   public SerialArrayList(SerialType<U> factory) {
@@ -69,6 +70,10 @@ public class SerialArrayList<U> {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[this.unitSize * size];
+  }
+
+  public int getMemorySize() {
+    return buffer.length;
   }
 
   public SerialArrayList<U> add(SerialArrayList<U> right) {
@@ -115,6 +120,52 @@ public class SerialArrayList<U> {
     }
   }
 
+  public synchronized int addAll(com.simiacryptus.ref.wrappers.RefCollection<U> data) {
+    int startIndex = length();
+    putAll(data, startIndex);
+    return startIndex;
+  }
+
+  public synchronized void putAll(com.simiacryptus.ref.wrappers.RefCollection<U> data, int startIndex) {
+    putAll(new SerialArrayList<U>(factory, data), startIndex);
+  }
+
+  public synchronized void putAll(SerialArrayList<U> data, int startIndex) {
+    ensureCapacity((startIndex * unitSize) + data.maxByte);
+    System.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
+  }
+
+  public SerialArrayList<U> copy() {
+    return new SerialArrayList<U>(factory, this);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+
+    SerialArrayList<?> that = (SerialArrayList<?>) o;
+
+    if (unitSize != that.unitSize)
+      return false;
+    if (maxByte != that.maxByte)
+      return false;
+    if (!factory.equals(that.factory))
+      return false;
+    return com.simiacryptus.ref.wrappers.RefArrays.equals(buffer, that.buffer);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = factory.hashCode();
+    result = 31 * result + unitSize;
+    result = 31 * result + com.simiacryptus.ref.wrappers.RefArrays.hashCode(buffer);
+    result = 31 * result + maxByte;
+    return result;
+  }
+
   private ByteBuffer getView(int i) {
     ByteBuffer duplicate = ByteBuffer.wrap(buffer);
     duplicate.position(unitSize * i);
@@ -126,54 +177,10 @@ public class SerialArrayList<U> {
       maxByte = bytes;
     }
     int targetBytes = buffer.length;
-    while (targetBytes < bytes) targetBytes = Math.max(targetBytes * 2, 1);
+    while (targetBytes < bytes)
+      targetBytes = Math.max(targetBytes * 2, 1);
     if (targetBytes > buffer.length) {
-      buffer = Arrays.copyOf(buffer, targetBytes);
+      buffer = com.simiacryptus.ref.wrappers.RefArrays.copyOf(buffer, targetBytes);
     }
-  }
-
-  public synchronized int addAll(Collection<U> data) {
-    int startIndex = length();
-    putAll(data, startIndex);
-    return startIndex;
-  }
-
-  public synchronized void putAll(Collection<U> data, int startIndex) {
-    putAll(new SerialArrayList<U>(factory, data), startIndex);
-  }
-
-  public synchronized void putAll(SerialArrayList<U> data, int startIndex) {
-    ensureCapacity((startIndex * unitSize) + data.maxByte);
-    System.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
-  }
-
-  public int getMemorySize() {
-    return buffer.length;
-  }
-
-  public SerialArrayList<U> copy() {
-    return new SerialArrayList<U>(factory, this);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    SerialArrayList<?> that = (SerialArrayList<?>) o;
-
-    if (unitSize != that.unitSize) return false;
-    if (maxByte != that.maxByte) return false;
-    if (!factory.equals(that.factory)) return false;
-    return Arrays.equals(buffer, that.buffer);
-  }
-
-  @Override
-  public int hashCode() {
-    int result = factory.hashCode();
-    result = 31 * result + unitSize;
-    result = 31 * result + Arrays.hashCode(buffer);
-    result = 31 * result + maxByte;
-    return result;
   }
 }

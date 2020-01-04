@@ -22,9 +22,9 @@ package com.simiacryptus.util.binary;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
-public class BitInputStream {
+public @com.simiacryptus.ref.lang.RefAware
+class BitInputStream {
 
   private final InputStream inner;
   private Bits remainder = new Bits(0);
@@ -65,7 +65,8 @@ public class BitInputStream {
   public Bits read(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
-    if (additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
+    if (additionalBytesNeeded > 0)
+      this.readAhead(additionalBytesNeeded);
     final Bits readBits = this.remainder.range(0, bits);
     this.remainder = this.remainder.range(bits);
     return readBits;
@@ -74,7 +75,8 @@ public class BitInputStream {
   public Bits peek(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
-    if (additionalBytesNeeded > 0) this.readAhead(additionalBytesNeeded);
+    if (additionalBytesNeeded > 0)
+      this.readAhead(additionalBytesNeeded);
     return this.remainder.range(0, Math.min(bits, this.remainder.bitLength));
   }
 
@@ -88,7 +90,8 @@ public class BitInputStream {
       final byte[] buffer = new byte[bytes];
       int bytesRead = this.inner.read(buffer);
       if (bytesRead > 0) {
-        this.remainder = this.remainder.concatenate(new Bits(Arrays.copyOf(buffer, bytesRead)));
+        this.remainder = this.remainder
+            .concatenate(new Bits(com.simiacryptus.ref.wrappers.RefArrays.copyOf(buffer, bytesRead)));
       }
     }
     return this.remainder;
@@ -109,7 +112,8 @@ public class BitInputStream {
   }
 
   public long peekLongCoord(long max) throws IOException {
-    if (1 >= max) return 0;
+    if (1 >= max)
+      return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
     Bits peek = this.peek(bits);
     double divisor = 1 << peek.bitLength;
@@ -120,7 +124,8 @@ public class BitInputStream {
   }
 
   public int peekIntCoord(int max) throws IOException {
-    if (1 >= max) return 0;
+    if (1 >= max)
+      return 0;
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
     Bits peek = this.peek(bits);
     double divisor = 1 << peek.bitLength;

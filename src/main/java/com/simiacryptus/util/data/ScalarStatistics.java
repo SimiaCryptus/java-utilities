@@ -24,12 +24,10 @@ import com.simiacryptus.util.MonitoredItem;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("serial")
-public class ScalarStatistics implements MonitoredItem, Serializable {
+public @com.simiacryptus.ref.lang.RefAware
+class ScalarStatistics implements MonitoredItem, Serializable {
   private static final double zeroTol = 1e-20;
   private volatile double max = -Double.POSITIVE_INFINITY;
   private volatile double min = Double.POSITIVE_INFINITY;
@@ -41,10 +39,57 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   private volatile double sumLog = 0;
   private volatile int zeros = 0;
 
+  public int getCount() {
+    return sum0;
+  }
+
+  @javax.annotation.Nonnull
+  public JsonObject getJson() {
+    @javax.annotation.Nonnull final JsonObject json = new JsonObject();
+    json.addProperty("min", min);
+    json.addProperty("max", max);
+    json.addProperty("negatives", negatives);
+    json.addProperty("positives", positives);
+    json.addProperty("zeros", zeros);
+    json.addProperty("sum0", sum0);
+    json.addProperty("sum1", sum1);
+    json.addProperty("sum2", sum2);
+    json.addProperty("sumLog", sumLog);
+    return json;
+  }
+
+  public double getMean() {
+    return sum1 / sum0;
+  }
+
+  public double getMeanPower() {
+    return sumLog / (sum0 - zeros);
+  }
+
+  @Override
+  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> getMetrics() {
+    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+    map.put("count", sum0);
+    map.put("sum", sum1);
+    map.put("negative", negatives);
+    map.put("positive", positives);
+    map.put("min", min);
+    map.put("max", max);
+    map.put("mean", getMean());
+    map.put("stdDev", getStdDev());
+    map.put("meanExponent", getMeanPower());
+    map.put("zeros", zeros);
+    return map;
+  }
+
+  public double getStdDev() {
+    return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
+  }
+
   @javax.annotation.Nonnull
   public static com.simiacryptus.util.data.ScalarStatistics stats(@javax.annotation.Nonnull final double[] data) {
     @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics statistics = new PercentileStatistics();
-    Arrays.stream(data).forEach(statistics::add);
+    com.simiacryptus.ref.wrappers.RefArrays.stream(data).forEach(statistics::add);
     return statistics;
   }
 
@@ -106,9 +151,9 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     }
   }
 
-
   @javax.annotation.Nonnull
-  public final synchronized com.simiacryptus.util.data.ScalarStatistics add(@javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
+  public final synchronized com.simiacryptus.util.data.ScalarStatistics add(
+      @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
     @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 += right.sum0;
@@ -131,55 +176,9 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
     sumLog = 0;
   }
 
-  public int getCount() {
-    return sum0;
-  }
-
-  @javax.annotation.Nonnull
-  public JsonObject getJson() {
-    @javax.annotation.Nonnull final JsonObject json = new JsonObject();
-    json.addProperty("min", min);
-    json.addProperty("max", max);
-    json.addProperty("negatives", negatives);
-    json.addProperty("positives", positives);
-    json.addProperty("zeros", zeros);
-    json.addProperty("sum0", sum0);
-    json.addProperty("sum1", sum1);
-    json.addProperty("sum2", sum2);
-    json.addProperty("sumLog", sumLog);
-    return json;
-  }
-
-  public double getMean() {
-    return sum1 / sum0;
-  }
-
-  public double getMeanPower() {
-    return sumLog / (sum0 - zeros);
-  }
-
-  @Override
-  public Map<CharSequence, Object> getMetrics() {
-    @javax.annotation.Nonnull final HashMap<CharSequence, Object> map = new HashMap<>();
-    map.put("count", sum0);
-    map.put("sum", sum1);
-    map.put("negative", negatives);
-    map.put("positive", positives);
-    map.put("min", min);
-    map.put("max", max);
-    map.put("mean", getMean());
-    map.put("stdDev", getStdDev());
-    map.put("meanExponent", getMeanPower());
-    map.put("zeros", zeros);
-    return map;
-  }
-
-  public double getStdDev() {
-    return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
-  }
-
   public void readJson(@Nullable final JsonObject json) {
-    if (null == json) return;
+    if (null == json)
+      return;
     min = json.get("min").getAsDouble();
     max = json.get("max").getAsDouble();
     negatives = json.get("negatives").getAsInt();
@@ -192,7 +191,8 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   }
 
   @javax.annotation.Nonnull
-  public final synchronized com.simiacryptus.util.data.ScalarStatistics subtract(@javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
+  public final synchronized com.simiacryptus.util.data.ScalarStatistics subtract(
+      @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
     @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 -= right.sum0;

@@ -21,7 +21,8 @@ package com.simiacryptus.util.function;
 
 import java.util.function.Supplier;
 
-public class CachedSupplier<T> implements Supplier<T> {
+public @com.simiacryptus.ref.lang.RefAware
+class CachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   private volatile T cached;

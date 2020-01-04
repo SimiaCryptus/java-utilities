@@ -22,11 +22,11 @@ package com.simiacryptus.util.io;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class TeeOutputStream extends OutputStream {
+public @com.simiacryptus.ref.lang.RefAware
+class TeeOutputStream extends OutputStream {
   public final List<OutputStream> branches = new ArrayList<>();
   public final OutputStream primary;
   @Nullable
@@ -46,15 +46,25 @@ public class TeeOutputStream extends OutputStream {
 
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
-    branches.addAll(Arrays.asList(secondaries));
+    branches.addAll(com.simiacryptus.ref.wrappers.RefArrays.asList(secondaries));
+  }
+
+  public boolean isChainCloses() {
+    return chainCloses;
+  }
+
+  public TeeOutputStream setChainCloses(boolean chainCloses) {
+    this.chainCloses = chainCloses;
+    return this;
   }
 
   @Override
   public void close() throws IOException {
     primary.close();
-    if (isChainCloses()) for (@javax.annotation.Nonnull final OutputStream branch : branches) {
-      branch.close();
-    }
+    if (isChainCloses())
+      for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+        branch.close();
+      }
   }
 
   @Override
@@ -119,14 +129,5 @@ public class TeeOutputStream extends OutputStream {
     for (@javax.annotation.Nonnull final OutputStream branch : branches) {
       branch.write(b);
     }
-  }
-
-  public boolean isChainCloses() {
-    return chainCloses;
-  }
-
-  public TeeOutputStream setChainCloses(boolean chainCloses) {
-    this.chainCloses = chainCloses;
-    return this;
   }
 }

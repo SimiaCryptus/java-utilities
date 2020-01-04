@@ -21,9 +21,9 @@ package com.simiacryptus.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 
-public class LOG {
+public @com.simiacryptus.ref.lang.RefAware
+class LOG {
 
   private static final long startTime = System.nanoTime();
 
@@ -36,20 +36,35 @@ public class LOG {
     LOG.d(msg + "\n  " + LOG.toString(e).replace("\n", "\n  "), args);
   }
 
+  public static String toString(final Throwable e) {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    final PrintStream s = new PrintStream(out);
+    try {
+      e.printStackTrace(s);
+    } finally {
+      s.close();
+    }
+    final String exception = out.toString();
+    return exception;
+  }
+
   private static void log(final Severity debug, final String msg, final Object[] args) {
     final String formatted = String.format(msg, args);
-    final StackTraceElement caller = Arrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
-      Class<?> clazz;
-      try {
-        clazz = Class.forName(stack.getClassName());
-      } catch (final Exception e) {
-        return true;
-      }
-      if (clazz == Thread.class) return false;
-      return clazz != LOG.class;
-    }).findFirst().get();
+    final StackTraceElement caller = com.simiacryptus.ref.wrappers.RefArrays
+        .stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
+          Class<?> clazz;
+          try {
+            clazz = Class.forName(stack.getClassName());
+          } catch (final Exception e) {
+            return true;
+          }
+          if (clazz == Thread.class)
+            return false;
+          return clazz != LOG.class;
+        }).findFirst().get();
     final double time = (System.nanoTime() - LOG.startTime) / 1000000000.;
-    final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(), formatted.replaceAll("\n", "\n\t"));
+    final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
+        formatted.replaceAll("\n", "\n\t"));
     System.out.println(line);
   }
 
@@ -63,13 +78,13 @@ public class LOG {
         if (args[i] instanceof double[]) {
           args[i] = LOG.toString((double[]) args[i]);
         } else if (args[i] instanceof int[]) {
-          args[i] = Arrays.toString((int[]) args[i]);
+          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((int[]) args[i]);
         } else if (args[i] instanceof long[]) {
-          args[i] = Arrays.toString((long[]) args[i]);
+          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((long[]) args[i]);
         } else if (args[i] instanceof byte[]) {
-          args[i] = Arrays.toString((byte[]) args[i]);
+          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((byte[]) args[i]);
         } else {
-          args[i] = Arrays.toString((Object[]) args[i]);
+          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((Object[]) args[i]);
         }
       }
     }
@@ -84,18 +99,6 @@ public class LOG {
       sb.append(String.format("%.3f", v));
     }
     return "[" + sb + "]";
-  }
-
-  public static String toString(final Throwable e) {
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    final PrintStream s = new PrintStream(out);
-    try {
-      e.printStackTrace(s);
-    } finally {
-      s.close();
-    }
-    final String exception = out.toString();
-    return exception;
   }
 
   public enum Severity {

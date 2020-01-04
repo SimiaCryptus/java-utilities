@@ -28,7 +28,8 @@ import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-public class KryoUtil {
+public @com.simiacryptus.ref.lang.RefAware
+class KryoUtil {
 
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
 
@@ -46,9 +47,9 @@ public class KryoUtil {
             return new EnumMapSerializer();
           }
           final Serializer<?> serializer = super.getDefaultSerializer(clazz);
-//          if (serializer instanceof FieldSerializer) {
-//            ((FieldSerializer<?>) serializer).setCopyTransient(false);
-//          }
+          //          if (serializer instanceof FieldSerializer) {
+          //            ((FieldSerializer<?>) serializer).setCopyTransient(false);
+          //          }
           return serializer;
         }
 

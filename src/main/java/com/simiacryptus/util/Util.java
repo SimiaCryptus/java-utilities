@@ -25,7 +25,6 @@ import com.google.common.cache.LoadingCache;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.io.TeeInputStream;
 import com.simiacryptus.util.test.LabeledObject;
-import com.simiacryptus.util.test.SysOutInterceptor;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
@@ -51,18 +50,14 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 import java.util.zip.GZIPInputStream;
 
-public class Util {
+public @com.simiacryptus.ref.lang.RefAware
+class Util {
 
-  private static final Logger log = LoggerFactory.getLogger(Util.class);
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
     public final Random r = new Random(System.nanoTime());
 
@@ -71,18 +66,31 @@ public class Util {
       return new Random(r.nextLong());
     }
   };
-  private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(0);
+  private static final Logger log = LoggerFactory.getLogger(Util.class);
+  private static final java.util.concurrent.atomic.AtomicInteger idcounter = new java.util.concurrent.atomic.AtomicInteger(
+      0);
   private static final String jvmId = UUID.randomUUID().toString();
 
-  public static void add(@javax.annotation.Nonnull final DoubleSupplier f, @javax.annotation.Nonnull final double[] data) {
+  public static CharSequence getCaller() {
+    return toString(getStackTrace(4));
+  }
+
+  public static StackTraceElement[] getStackTrace() {
+    return getStackTrace(4);
+  }
+
+  public static void add(@javax.annotation.Nonnull final DoubleSupplier f,
+                         @javax.annotation.Nonnull final double[] data) {
     for (int i = 0; i < data.length; i++) {
       data[i] += f.getAsDouble();
     }
   }
 
-  public static Stream<byte[]> binaryStream(final String path, @javax.annotation.Nonnull final String name, final int skip, final int recordSize) throws IOException {
+  public static com.simiacryptus.ref.wrappers.RefStream<byte[]> binaryStream(final String path,
+                                                                             @javax.annotation.Nonnull final String name, final int skip, final int recordSize) throws IOException {
     @javax.annotation.Nonnull final File file = new File(path, name);
-    final byte[] fileData = IOUtils.toByteArray(new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)))));
+    final byte[] fileData = IOUtils
+        .toByteArray(new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)))));
     @javax.annotation.Nonnull final DataInputStream in = new DataInputStream(new ByteArrayInputStream(fileData));
     in.skip(skip);
     return com.simiacryptus.util.Util.toIterator(new BinaryChunkIterator(in, recordSize));
@@ -114,21 +122,17 @@ public class Util {
 
   public static Supplier<InputStream> getStreamSupplier(URI url) {
     return () -> {
-      TrustManager[] trustManagers = {
-          new X509TrustManager() {
-            public X509Certificate[] getAcceptedIssuers() {
-              return new X509Certificate[0];
-            }
+      TrustManager[] trustManagers = {new X509TrustManager() {
+        public X509Certificate[] getAcceptedIssuers() {
+          return new X509Certificate[0];
+        }
 
-            public void checkClientTrusted(
-                X509Certificate[] certs, String authType) {
-            }
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {
+        }
 
-            public void checkServerTrusted(
-                X509Certificate[] certs, String authType) {
-            }
-          }
-      };
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {
+        }
+      }};
       try {
         SSLContext ctx = SSLContext.getInstance("TLS");
         ctx.init(null, trustManagers, null);
@@ -146,7 +150,9 @@ public class Util {
     };
   }
 
-  public static InputStream cacheStream(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+  public static InputStream cacheStream(@javax.annotation.Nonnull final String url,
+                                        @javax.annotation.Nonnull final String file)
+      throws IOException, NoSuchAlgorithmException, KeyManagementException {
     if (new File(file).exists()) {
       return new FileInputStream(file);
     } else {
@@ -154,7 +160,8 @@ public class Util {
     }
   }
 
-  public static File cacheFile(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+  public static File cacheFile(@javax.annotation.Nonnull final String url, @javax.annotation.Nonnull final String file)
+      throws IOException, NoSuchAlgorithmException, KeyManagementException {
     final File fileLoc = new File(file).getCanonicalFile().getAbsoluteFile();
     if (!fileLoc.exists()) {
       log.info(String.format("Downloading %s to %s", url, fileLoc));
@@ -164,26 +171,23 @@ public class Util {
     return fileLoc;
   }
 
-  public static InputStream get(@javax.annotation.Nonnull String url) throws NoSuchAlgorithmException, KeyManagementException, IOException {
-    @javax.annotation.Nonnull final TrustManager[] trustManagers = {
-        new X509TrustManager() {
-          @Override
-          public void checkClientTrusted(
-              final X509Certificate[] certs, final String authType) {
-          }
+  public static InputStream get(@javax.annotation.Nonnull String url)
+      throws NoSuchAlgorithmException, KeyManagementException, IOException {
+    @javax.annotation.Nonnull final TrustManager[] trustManagers = {new X509TrustManager() {
+      @javax.annotation.Nonnull
+      @Override
+      public X509Certificate[] getAcceptedIssuers() {
+        return new X509Certificate[0];
+      }
 
-          @Override
-          public void checkServerTrusted(
-              final X509Certificate[] certs, final String authType) {
-          }
+      @Override
+      public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+      }
 
-          @javax.annotation.Nonnull
-          @Override
-          public X509Certificate[] getAcceptedIssuers() {
-            return new X509Certificate[0];
-          }
-        }
-    };
+      @Override
+      public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+      }
+    }};
     @javax.annotation.Nonnull final SSLContext ctx = SSLContext.getInstance("TLS");
     ctx.init(null, trustManagers, null);
     final SSLSocketFactory sslFactory = ctx.getSocketFactory();
@@ -196,16 +200,19 @@ public class Util {
     return urlConnection.getInputStream();
   }
 
-  public static InputStream cacheStream(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+  public static InputStream cacheStream(@javax.annotation.Nonnull final URI url)
+      throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheStream(url.toString(), new File(url.getPath()).getName());
   }
 
-  public static File cacheFile(@javax.annotation.Nonnull final URI url) throws IOException, NoSuchAlgorithmException, KeyManagementException {
+  public static File cacheFile(@javax.annotation.Nonnull final URI url)
+      throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return com.simiacryptus.util.Util.cacheFile(url.toString(), new File(url.getPath()).getName());
   }
 
   public static CharSequence[] currentStack() {
-    return Stream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
+    return com.simiacryptus.ref.wrappers.RefStream.of(Thread.currentThread().getStackTrace()).map(Object::toString)
+        .toArray(i -> new CharSequence[i]);
   }
 
   @javax.annotation.Nonnull
@@ -233,12 +240,14 @@ public class Util {
   public static void layout(@javax.annotation.Nonnull final Component c) {
     c.doLayout();
     if (c instanceof Container) {
-      Arrays.stream(((Container) c).getComponents()).forEach(com.simiacryptus.util.Util::layout);
+      com.simiacryptus.ref.wrappers.RefArrays.stream(((Container) c).getComponents())
+          .forEach(com.simiacryptus.util.Util::layout);
     }
   }
 
   public static String mkString(@javax.annotation.Nonnull final CharSequence separator, final CharSequence... strs) {
-    return Arrays.asList(strs).stream().collect(Collectors.joining(separator));
+    return com.simiacryptus.ref.wrappers.RefArrays.asList(strs).stream()
+        .collect(com.simiacryptus.ref.wrappers.RefCollectors.joining(separator));
   }
 
   public static String pathTo(@javax.annotation.Nonnull final File from, @javax.annotation.Nonnull final File to) {
@@ -261,23 +270,28 @@ public class Util {
 
   @Nullable
   public static BufferedImage maximumSize(@Nullable final BufferedImage image, int width) {
-    if (null == image) return image;
+    if (null == image)
+      return image;
     width = Math.min(image.getWidth(), width);
-    if (width == image.getWidth()) return image;
+    if (width == image.getWidth())
+      return image;
     final int height = image.getHeight() * width / image.getWidth();
     @javax.annotation.Nonnull final BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     final Graphics gfx = rerender.getGraphics();
-    @javax.annotation.Nonnull final RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+    @javax.annotation.Nonnull final RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION,
+        RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     ((Graphics2D) gfx).setRenderingHints(hints);
     gfx.drawImage(image, 0, 0, rerender.getWidth(), rerender.getHeight(), null);
     return rerender;
   }
 
   public static BufferedImage toImage(final Component component) {
-    if (null == component) return null;
+    if (null == component)
+      return null;
     try {
       com.simiacryptus.util.Util.layout(component);
-      @javax.annotation.Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
+      @javax.annotation.Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(),
+          BufferedImage.TYPE_INT_RGB);
       final Graphics2D g = img.createGraphics();
       g.setColor(component.getForeground());
       g.setFont(component.getFont());
@@ -306,28 +320,37 @@ public class Util {
     return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
 
-  public static <T> Stream<T> toIterator(@javax.annotation.Nonnull final Iterator<T> iterator) {
-    return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toIterator(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator) {
+    return com.simiacryptus.ref.wrappers.RefStreamSupport
+        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
 
-  public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator) {
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator) {
     return com.simiacryptus.util.Util.toStream(iterator, 0);
   }
 
-  public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size) {
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator, final int size) {
     return com.simiacryptus.util.Util.toStream(iterator, size, false);
   }
 
-  public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size, final boolean parallel) {
-    return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator, final int size,
+      final boolean parallel) {
+    return com.simiacryptus.ref.wrappers.RefStreamSupport.stream(
+        com.simiacryptus.ref.wrappers.RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
 
   public static UUID uuid() {
-    @javax.annotation.Nonnull String index = Integer.toHexString(com.simiacryptus.util.Util.idcounter.incrementAndGet());
+    @javax.annotation.Nonnull
+    String index = Integer.toHexString(com.simiacryptus.util.Util.idcounter.incrementAndGet());
     while (index.length() < 8) {
       index = "0" + index;
     }
-    @javax.annotation.Nonnull final String tempId = com.simiacryptus.util.Util.jvmId.substring(0, com.simiacryptus.util.Util.jvmId.length() - index.length()) + index;
+    @javax.annotation.Nonnull final String tempId = com.simiacryptus.util.Util.jvmId.substring(0,
+        com.simiacryptus.util.Util.jvmId.length() - index.length()) + index;
     return UUID.fromString(tempId);
   }
 
@@ -368,19 +391,18 @@ public class Util {
   }
 
   public static void runAllParallel(@Nonnull Runnable... runnables) {
-    Arrays.stream(runnables)
-        .parallel()
-        .forEach(Runnable::run);
+    com.simiacryptus.ref.wrappers.RefArrays.stream(runnables).parallel().forEach(Runnable::run);
   }
 
   public static void runAllSerial(@Nonnull Runnable... runnables) {
-    Arrays.stream(runnables)
-        .forEach(Runnable::run);
+    com.simiacryptus.ref.wrappers.RefArrays.stream(runnables).forEach(Runnable::run);
   }
 
-  public static String toString(@Nonnull Consumer<PrintStream> fn) {
-    @Nonnull java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
-    try (@Nonnull PrintStream out = new PrintStream(buffer)) {
+  public static String toString(@Nonnull com.simiacryptus.ref.wrappers.RefConsumer<PrintStream> fn) {
+    @Nonnull
+    java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+    try (@Nonnull
+         PrintStream out = new PrintStream(buffer)) {
       fn.accept(out);
     }
     return new String(buffer.toByteArray(), Charset.forName("UTF-8"));
@@ -391,22 +413,14 @@ public class Util {
   }
 
   public static String toString(final StackTraceElement[] stack, final CharSequence delimiter) {
-    return Arrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber()).reduce((a, b) -> a + delimiter + b).orElse("");
-  }
-
-  public static StackTraceElement[] getStackTrace() {
-    return getStackTrace(4);
+    return com.simiacryptus.ref.wrappers.RefArrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber())
+        .reduce((a, b) -> a + delimiter + b).orElse("");
   }
 
   public static StackTraceElement[] getStackTrace(final int skip) {
-    return Arrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
-        .filter(x -> x.getClassName().startsWith("com.simiacryptus."))
-        .limit(500)
+    return com.simiacryptus.ref.wrappers.RefArrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
+        .filter(x -> x.getClassName().startsWith("com.simiacryptus.")).limit(500)
         .toArray(i -> new StackTraceElement[i]);
-  }
-
-  public static CharSequence getCaller() {
-    return toString(getStackTrace(4));
   }
 
   public static float[] getFloats(double[] doubles) {

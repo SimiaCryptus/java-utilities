@@ -19,22 +19,40 @@
 
 package com.simiacryptus.util;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Maps.EntryTransformer;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.RefMaps.EntryTransformer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CountCollection<T, C extends Map<T, AtomicInteger>> {
+public @com.simiacryptus.ref.lang.RefAware
+class CountCollection<T, C extends com.simiacryptus.ref.wrappers.RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
 
   protected final C map;
 
   public CountCollection(final C collection) {
     super();
     this.map = collection;
+  }
+
+  public com.simiacryptus.ref.wrappers.RefList<T> getList() {
+    final com.simiacryptus.ref.wrappers.RefArrayList<T> list = new com.simiacryptus.ref.wrappers.RefArrayList<T>();
+    for (final Entry<T, AtomicInteger> e : this.map.entrySet()) {
+      for (int i = 0; i < e.getValue().get(); i++) {
+        list.add(e.getKey());
+      }
+    }
+    return list;
+  }
+
+  public com.simiacryptus.ref.wrappers.RefMap<T, Integer> getMap() {
+    return com.simiacryptus.ref.wrappers.RefMaps.transformEntries(this.map,
+        new EntryTransformer<T, AtomicInteger, Integer>() {
+          @Override
+          public Integer transformEntry(final T key, final AtomicInteger value) {
+            return value.get();
+          }
+        });
   }
 
   public int add(final T bits) {
@@ -60,26 +78,6 @@ public class CountCollection<T, C extends Map<T, AtomicInteger>> {
       this.map.put(bits, counter);
     }
     return counter;
-  }
-
-  public List<T> getList() {
-    final ArrayList<T> list = new ArrayList<T>();
-    for (final Entry<T, AtomicInteger> e : this.map.entrySet()) {
-      for (int i = 0; i < e.getValue().get(); i++) {
-        list.add(e.getKey());
-      }
-    }
-    return list;
-  }
-
-  public Map<T, Integer> getMap() {
-    return Maps.transformEntries(this.map,
-        new EntryTransformer<T, AtomicInteger, Integer>() {
-          @Override
-          public Integer transformEntry(final T key, final AtomicInteger value) {
-            return value.get();
-          }
-        });
   }
 
 }

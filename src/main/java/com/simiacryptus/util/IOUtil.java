@@ -32,9 +32,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
-import java.util.Arrays;
 
-public class IOUtil {
+public @com.simiacryptus.ref.lang.RefAware
+class IOUtil {
   private static final ObjectMapper objectMapper = JsonUtil.getMapper();
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
     @Override
@@ -75,7 +75,7 @@ public class IOUtil {
       Output output = new Output(buffer.get());
       new KryoReflectionFactorySupport().writeClassAndObject(output, obj);
       output.close();
-      IOUtils.write(Arrays.copyOf(output.getBuffer(), output.position()), file);
+      IOUtils.write(com.simiacryptus.ref.wrappers.RefArrays.copyOf(output.getBuffer(), output.position()), file);
       file.close();
     } catch (IOException e) {
       throw new RuntimeException(e);

@@ -31,20 +31,29 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
-public class JsonUtil {
+public @com.simiacryptus.ref.lang.RefAware
+class JsonUtil {
+
+  public static ObjectMapper getMapper() {
+    ObjectMapper enable = new ObjectMapper()
+        //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+        .enable(SerializationFeature.INDENT_OUTPUT);
+    return enable;
+  }
 
   public static double[] getDoubleArray(@javax.annotation.Nonnull final JsonArray array) {
-    return IntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
+    return com.simiacryptus.ref.wrappers.RefIntStream.range(0, array.size())
+        .mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
 
   @Nullable
   public static int[] getIntArray(@Nullable final JsonArray array) {
-    if (null == array) return null;
-    return IntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
+    if (null == array)
+      return null;
+    return com.simiacryptus.ref.wrappers.RefIntStream.range(0, array.size()).map(i -> array.get(i).getAsInt())
+        .toArray();
   }
 
   @javax.annotation.Nonnull
@@ -80,13 +89,6 @@ public class JsonUtil {
     return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
   }
 
-  public static ObjectMapper getMapper() {
-    ObjectMapper enable = new ObjectMapper()
-        //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-        .enable(SerializationFeature.INDENT_OUTPUT);
-    return enable;
-  }
-
   public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
     if (file.exists()) {
       return getMapper().readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
@@ -107,14 +109,11 @@ public class JsonUtil {
 
   public static JsonArray toIntArray(int[] array) {
     JsonArray jsonElements = new JsonArray();
-    Arrays.stream(array).forEach(jsonElements::add);
+    com.simiacryptus.ref.wrappers.RefArrays.stream(array).forEach(jsonElements::add);
     return jsonElements;
   }
 
   public static JsonObject toJson(byte[] buf) {
-    return new GsonBuilder().create().fromJson(
-        new InputStreamReader(new ByteArrayInputStream(
-            buf
-        )), JsonObject.class);
+    return new GsonBuilder().create().fromJson(new InputStreamReader(new ByteArrayInputStream(buf)), JsonObject.class);
   }
 }

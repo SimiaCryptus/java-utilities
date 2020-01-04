@@ -19,8 +19,7 @@
 
 package com.simiacryptus.util.binary.bitset;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Maps.EntryTransformer;
+import com.simiacryptus.ref.wrappers.RefMaps.EntryTransformer;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -28,30 +27,26 @@ import com.simiacryptus.util.binary.codes.Gaussian;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map.Entry;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CountTreeBitsCollection extends
-    BitsCollection<TreeMap<Bits, AtomicInteger>> {
+public @com.simiacryptus.ref.lang.RefAware
+class CountTreeBitsCollection
+    extends BitsCollection<com.simiacryptus.ref.wrappers.RefTreeMap<Bits, AtomicInteger>> {
 
   public static boolean SERIALIZATION_CHECKS = false;
   private boolean useBinomials = true;
 
   public CountTreeBitsCollection() {
-    super(new TreeMap<Bits, AtomicInteger>());
+    super(new com.simiacryptus.ref.wrappers.RefTreeMap<Bits, AtomicInteger>());
   }
 
-  public CountTreeBitsCollection(final BitInputStream bitStream)
-      throws IOException {
+  public CountTreeBitsCollection(final BitInputStream bitStream) throws IOException {
     this();
     this.read(bitStream);
   }
 
-  public CountTreeBitsCollection(final BitInputStream bitStream,
-                                 final int bitDepth) throws IOException {
+  public CountTreeBitsCollection(final BitInputStream bitStream, final int bitDepth) throws IOException {
     this(bitDepth);
     this.read(bitStream);
   }
@@ -60,21 +55,25 @@ public class CountTreeBitsCollection extends
     this(BitInputStream.toBitStream(data));
   }
 
-  public CountTreeBitsCollection(final byte[] data, final int bitDepth)
-      throws IOException {
+  public CountTreeBitsCollection(final byte[] data, final int bitDepth) throws IOException {
     this(BitInputStream.toBitStream(data), bitDepth);
   }
 
   public CountTreeBitsCollection(final int bitDepth) {
-    super(bitDepth, new TreeMap<Bits, AtomicInteger>());
+    super(bitDepth, new com.simiacryptus.ref.wrappers.RefTreeMap<Bits, AtomicInteger>());
+  }
+
+  public CountTreeBitsCollection setUseBinomials(final boolean useBinomials) {
+    this.useBinomials = useBinomials;
+    return this;
   }
 
   public static <T> T isNull(final T value, final T defaultValue) {
     return null == value ? defaultValue : value;
   }
 
-  public TreeMap<Bits, Long> computeSums() {
-    final TreeMap<Bits, Long> sums = new TreeMap<Bits, Long>();
+  public com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> computeSums() {
+    final com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> sums = new com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long>();
     long total = 0;
     for (final Entry<Bits, AtomicInteger> e : this.map.entrySet()) {
       sums.put(e.getKey(), total += e.getValue().get());
@@ -91,27 +90,6 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  private void read(final BitInputStream in, final Bits code, final long size)
-      throws IOException {
-    if (SERIALIZATION_CHECKS) {
-      in.expect(SerializationChecks.StartTree);
-    }
-    final BranchCounts branchCounts = this.readBranchCounts(in, code, size);
-    if (0 < branchCounts.terminals) {
-      this.map.put(code, new AtomicInteger((int) branchCounts.terminals));
-    }
-    if (0 < branchCounts.zeroCount) {
-      this.read(in, code.concatenate(Bits.ZERO), branchCounts.zeroCount);
-    }
-    // Get one-suffixed primary
-    if (branchCounts.oneCount > 0) {
-      this.read(in, code.concatenate(Bits.ONE), branchCounts.oneCount);
-    }
-    if (SERIALIZATION_CHECKS) {
-      in.expect(SerializationChecks.EndTree);
-    }
-  }
-
   public void read(final BitInputStream in, final int size) throws IOException {
     this.getMap().clear();
     if (0 < size) {
@@ -119,8 +97,49 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  protected BranchCounts readBranchCounts(final BitInputStream in,
-                                          final Bits code, final long size) throws IOException {
+  public long sum(final com.simiacryptus.ref.wrappers.RefCollection<Long> values) {
+    long total = 0;
+    for (final Long v : values) {
+      total += v;
+    }
+    return total;
+  }
+
+  public byte[] toBytes() throws IOException {
+    final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
+    final BitOutputStream out = new BitOutputStream(outBuffer);
+    this.write(out);
+    out.flush();
+    return outBuffer.toByteArray();
+  }
+
+  public boolean useBinomials() {
+    return this.useBinomials;
+  }
+
+  @Override
+  public void write(final BitOutputStream out) throws IOException {
+    final com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> sums = this.computeSums();
+    final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
+    out.writeVarLong(value);
+    if (0 < value) {
+      this.write(out, Bits.NULL, sums);
+    }
+  }
+
+  public void write(final BitOutputStream out, final int size) throws IOException {
+    final com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> sums = this.computeSums();
+    final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
+    if (value != size) {
+      throw new RuntimeException();
+    }
+    if (0 < value) {
+      this.write(out, Bits.NULL, sums);
+    }
+  }
+
+  protected BranchCounts readBranchCounts(final BitInputStream in, final Bits code, final long size)
+      throws IOException {
     final BranchCounts branchCounts = new BranchCounts(code, size);
     final CodeType currentCodeType = this.getType(code);
     long maximum = size;
@@ -145,8 +164,7 @@ public class CountTreeBitsCollection extends
     return branchCounts;
   }
 
-  protected long readTerminalCount(final BitInputStream in, final long size)
-      throws IOException {
+  protected long readTerminalCount(final BitInputStream in, final long size) throws IOException {
     if (SERIALIZATION_CHECKS) {
       in.expect(SerializationChecks.BeforeTerminal);
     }
@@ -157,8 +175,7 @@ public class CountTreeBitsCollection extends
     return readBoundedLong;
   }
 
-  protected long readZeroBranchSize(final BitInputStream in, final long max,
-                                    final Bits code) throws IOException {
+  protected long readZeroBranchSize(final BitInputStream in, final long max, final Bits code) throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -177,59 +194,94 @@ public class CountTreeBitsCollection extends
     return value;
   }
 
-  public CountTreeBitsCollection setUseBinomials(final boolean useBinomials) {
-    this.useBinomials = useBinomials;
-    return this;
-  }
+  protected void writeBranchCounts(final BranchCounts branch, final BitOutputStream out) throws IOException {
+    final CodeType currentCodeType = this.getType(branch.path);
+    long maximum = branch.size;
+    assert maximum >= branch.terminals;
+    if (currentCodeType == CodeType.Unknown) {
+      this.writeTerminalCount(out, branch.terminals, maximum);
+    } else if (currentCodeType == CodeType.Terminal) {
+      assert branch.size == branch.terminals;
+      assert 0 == branch.zeroCount;
+      assert 0 == branch.oneCount;
+    } else
+      assert currentCodeType != CodeType.Prefix || 0 == branch.terminals;
+    maximum -= branch.terminals;
 
-  public long sum(final Collection<Long> values) {
-    long total = 0;
-    for (final Long v : values) {
-      total += v;
+    assert maximum >= branch.zeroCount;
+    if (0 < maximum) {
+      this.writeZeroBranchSize(out, branch.zeroCount, maximum, branch.path);
+      maximum -= branch.zeroCount;
+    } else {
+      assert 0 == branch.zeroCount;
     }
-    return total;
+    assert maximum == branch.oneCount;
   }
 
-  public byte[] toBytes() throws IOException {
-    final ByteArrayOutputStream outBuffer = new ByteArrayOutputStream();
-    final BitOutputStream out = new BitOutputStream(outBuffer);
-    this.write(out);
-    out.flush();
-    return outBuffer.toByteArray();
+  protected void writeTerminalCount(final BitOutputStream out, final long value, final long max) throws IOException {
+    assert 0 <= value;
+    assert max >= value;
+    if (SERIALIZATION_CHECKS) {
+      out.write(SerializationChecks.BeforeTerminal);
+    }
+    out.writeBoundedLong(value, 1 + max);
+    if (SERIALIZATION_CHECKS) {
+      out.write(SerializationChecks.AfterTerminal);
+    }
   }
 
-  public boolean useBinomials() {
-    return this.useBinomials;
+  protected void writeZeroBranchSize(final BitOutputStream out, final long value, final long max, final Bits bits)
+      throws IOException {
+    assert 0 <= value;
+    assert max >= value;
+    if (SERIALIZATION_CHECKS) {
+      out.write(SerializationChecks.BeforeCount);
+    }
+    if (this.useBinomials) {
+      Gaussian.fromBinomial(0.5, max).encode(out, value, max);
+    } else {
+      out.writeBoundedLong(value, 1 + max);
+    }
+    if (SERIALIZATION_CHECKS) {
+      out.write(SerializationChecks.AfterCount);
+    }
   }
 
-  @Override
-  public void write(final BitOutputStream out) throws IOException {
-    final TreeMap<Bits, Long> sums = this.computeSums();
-    final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
-    out.writeVarLong(value);
-    if (0 < value) {
-      this.write(out, Bits.NULL, sums);
+  private void read(final BitInputStream in, final Bits code, final long size) throws IOException {
+    if (SERIALIZATION_CHECKS) {
+      in.expect(SerializationChecks.StartTree);
+    }
+    final BranchCounts branchCounts = this.readBranchCounts(in, code, size);
+    if (0 < branchCounts.terminals) {
+      this.map.put(code, new AtomicInteger((int) branchCounts.terminals));
+    }
+    if (0 < branchCounts.zeroCount) {
+      this.read(in, code.concatenate(Bits.ZERO), branchCounts.zeroCount);
+    }
+    // Get one-suffixed primary
+    if (branchCounts.oneCount > 0) {
+      this.read(in, code.concatenate(Bits.ONE), branchCounts.oneCount);
+    }
+    if (SERIALIZATION_CHECKS) {
+      in.expect(SerializationChecks.EndTree);
     }
   }
 
   private void write(final BitOutputStream out, final Bits currentCode,
-                     final NavigableMap<Bits, Long> sums) throws IOException {
+                     final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> sums) throws IOException {
     final Entry<Bits, Long> firstEntry = sums.firstEntry();
-    final NavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
+    final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
     final Bits splitCode = currentCode.concatenate(Bits.ONE);
-    final NavigableMap<Bits, Long> zeroMap = remainder
-        .headMap(splitCode, false);
-    final NavigableMap<Bits, Long> oneMap = remainder.tailMap(splitCode, true);
+    final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> zeroMap = remainder.headMap(splitCode, false);
+    final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> oneMap = remainder.tailMap(splitCode, true);
 
     final int firstEntryCount = this.map.get(firstEntry.getKey()).get();
     final long baseCount = firstEntry.getValue() - firstEntryCount;
     final long endCount = sums.lastEntry().getValue();
     final long size = endCount - baseCount;
 
-    final long terminals = firstEntry.getKey().equals(currentCode) ? firstEntryCount
-        : 0;
-    final long zeroCount = 0 == zeroMap.size() ? 0 : zeroMap.lastEntry()
-        .getValue() - baseCount - terminals;
+    final long terminals = firstEntry.getKey().equals(currentCode) ? firstEntryCount : 0;
+    final long zeroCount = 0 == zeroMap.size() ? 0 : zeroMap.lastEntry().getValue() - baseCount - terminals;
     final long oneCount = size - terminals - zeroCount;
 
     final EntryTransformer<Bits, Long, Long> transformer = new EntryTransformer<Bits, Long, Long>() {
@@ -238,18 +290,11 @@ public class CountTreeBitsCollection extends
         return (long) CountTreeBitsCollection.this.map.get(key).get();
       }
     };
-    assert size == this.sum(Maps.transformEntries(sums, transformer).values());
-    assert zeroCount == this.sum(Maps.transformEntries(zeroMap, transformer)
-        .values());
-    assert oneCount == this.sum(Maps.transformEntries(oneMap, transformer)
-        .values());
+    assert size == this.sum(com.simiacryptus.ref.wrappers.RefMaps.transformEntries(sums, transformer).values());
+    assert zeroCount == this.sum(com.simiacryptus.ref.wrappers.RefMaps.transformEntries(zeroMap, transformer).values());
+    assert oneCount == this.sum(com.simiacryptus.ref.wrappers.RefMaps.transformEntries(oneMap, transformer).values());
 
-    final BranchCounts branchCounts = new BranchCounts(
-        currentCode,
-        size,
-        terminals,
-        zeroCount,
-        oneCount);
+    final BranchCounts branchCounts = new BranchCounts(currentCode, size, terminals, zeroCount, oneCount);
 
     if (SERIALIZATION_CHECKS) {
       out.write(SerializationChecks.StartTree);
@@ -266,82 +311,12 @@ public class CountTreeBitsCollection extends
     }
   }
 
-  public void write(final BitOutputStream out, final int size)
-      throws IOException {
-    final TreeMap<Bits, Long> sums = this.computeSums();
-    final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
-    if (value != size) {
-      throw new RuntimeException();
-    }
-    if (0 < value) {
-      this.write(out, Bits.NULL, sums);
-    }
-  }
-
-  protected void writeBranchCounts(final BranchCounts branch,
-                                   final BitOutputStream out) throws IOException {
-    final CodeType currentCodeType = this.getType(branch.path);
-    long maximum = branch.size;
-    assert maximum >= branch.terminals;
-    if (currentCodeType == CodeType.Unknown) {
-      this.writeTerminalCount(out, branch.terminals, maximum);
-    } else if (currentCodeType == CodeType.Terminal) {
-      assert branch.size == branch.terminals;
-      assert 0 == branch.zeroCount;
-      assert 0 == branch.oneCount;
-    } else assert currentCodeType != CodeType.Prefix || 0 == branch.terminals;
-    maximum -= branch.terminals;
-
-    assert maximum >= branch.zeroCount;
-    if (0 < maximum) {
-      this.writeZeroBranchSize(out, branch.zeroCount, maximum, branch.path);
-      maximum -= branch.zeroCount;
-    } else {
-      assert 0 == branch.zeroCount;
-    }
-    assert maximum == branch.oneCount;
-  }
-
-  protected void writeTerminalCount(final BitOutputStream out,
-                                    final long value, final long max) throws IOException {
-    assert 0 <= value;
-    assert max >= value;
-    if (SERIALIZATION_CHECKS) {
-      out.write(SerializationChecks.BeforeTerminal);
-    }
-    out.writeBoundedLong(value, 1 + max);
-    if (SERIALIZATION_CHECKS) {
-      out.write(SerializationChecks.AfterTerminal);
-    }
-  }
-
-  protected void writeZeroBranchSize(final BitOutputStream out,
-                                     final long value, final long max, final Bits bits) throws IOException {
-    assert 0 <= value;
-    assert max >= value;
-    if (SERIALIZATION_CHECKS) {
-      out.write(SerializationChecks.BeforeCount);
-    }
-    if (this.useBinomials) {
-      Gaussian.fromBinomial(0.5, max).encode(out, value, max);
-    } else {
-      out.writeBoundedLong(value, 1 + max);
-    }
-    if (SERIALIZATION_CHECKS) {
-      out.write(SerializationChecks.AfterCount);
-    }
-  }
-
   public enum SerializationChecks {
-    StartTree,
-    EndTree,
-    BeforeCount,
-    AfterCount,
-    BeforeTerminal,
-    AfterTerminal
+    StartTree, EndTree, BeforeCount, AfterCount, BeforeTerminal, AfterTerminal
   }
 
-  public static class BranchCounts {
+  public static @com.simiacryptus.ref.lang.RefAware
+  class BranchCounts {
     public Bits path;
     public long size;
     public long terminals;
@@ -353,8 +328,8 @@ public class CountTreeBitsCollection extends
       this.size = size;
     }
 
-    public BranchCounts(final Bits path, final long size, final long terminals,
-                        final long zeroCount, final long oneCount) {
+    public BranchCounts(final Bits path, final long size, final long terminals, final long zeroCount,
+                        final long oneCount) {
       this.path = path;
       this.size = size;
       this.terminals = terminals;

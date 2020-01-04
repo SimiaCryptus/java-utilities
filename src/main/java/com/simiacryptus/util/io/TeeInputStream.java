@@ -23,12 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-
-public class TeeInputStream extends InputStream {
+public @com.simiacryptus.ref.lang.RefAware
+class TeeInputStream extends InputStream {
 
   private final OutputStream cache;
   private final InputStream inputStream;
-
 
   public TeeInputStream(final InputStream inputStream, final OutputStream cache) {
     this.inputStream = inputStream;

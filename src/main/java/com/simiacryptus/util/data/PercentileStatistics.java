@@ -21,20 +21,28 @@ package com.simiacryptus.util.data;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("serial")
-public class PercentileStatistics extends ScalarStatistics {
+public @com.simiacryptus.ref.lang.RefAware
+class PercentileStatistics extends ScalarStatistics {
 
   private final List<double[]> values = new ArrayList<>();
+
+  @Override
+  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> getMetrics() {
+    final com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> map = super.getMetrics();
+    map.put("tp50", getPercentile(0.5));
+    map.put("tp75", getPercentile(0.75));
+    map.put("tp90", getPercentile(0.9));
+    return map;
+  }
 
   @Nullable
   @Override
   public synchronized ScalarStatistics add(@javax.annotation.Nonnull final double... values) {
     if (null != this.values) {
-      this.values.add(Arrays.copyOf(values, values.length));
+      this.values.add(com.simiacryptus.ref.wrappers.RefArrays.copyOf(values, values.length));
     }
     super.add(values);
     return null;
@@ -46,18 +54,11 @@ public class PercentileStatistics extends ScalarStatistics {
     super.clear();
   }
 
-  @Override
-  public Map<CharSequence, Object> getMetrics() {
-    final Map<CharSequence, Object> map = super.getMetrics();
-    map.put("tp50", getPercentile(0.5));
-    map.put("tp75", getPercentile(0.75));
-    map.put("tp90", getPercentile(0.9));
-    return map;
-  }
-
   public synchronized Double getPercentile(final double percentile) {
-    if (null == values) return Double.NaN;
-    return values.parallelStream().flatMapToDouble(x -> Arrays.stream(x)).sorted().skip((int) (percentile * values.size())).findFirst().orElse(Double.NaN);
+    if (null == values)
+      return Double.NaN;
+    return values.parallelStream().flatMapToDouble(x -> com.simiacryptus.ref.wrappers.RefArrays.stream(x)).sorted()
+        .skip((int) (percentile * values.size())).findFirst().orElse(Double.NaN);
   }
 
 }

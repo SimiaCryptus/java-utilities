@@ -19,14 +19,15 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Spliterator;
 
-
-public abstract class DataLoader<T> {
-  private final List<T> queue = Collections.synchronizedList(new ArrayList<>());
+public abstract @com.simiacryptus.ref.lang.RefAware
+class DataLoader<T> extends ReferenceCountingBase {
+  private final com.simiacryptus.ref.wrappers.RefList<T> queue = com.simiacryptus.ref.wrappers.RefCollections
+      .synchronizedList(new com.simiacryptus.ref.wrappers.RefArrayList<>());
   @Nullable
   private volatile Thread thread;
 
@@ -43,8 +44,6 @@ public abstract class DataLoader<T> {
     }
   }
 
-  protected abstract void read(List<T> queue);
-
   public void stop() {
     if (thread != null) {
       thread.interrupt();
@@ -56,7 +55,7 @@ public abstract class DataLoader<T> {
     }
   }
 
-  public Stream<T> stream() {
+  public com.simiacryptus.ref.wrappers.RefStream<T> stream() {
     if (thread == null) {
       synchronized (this) {
         if (thread == null) {
@@ -66,7 +65,12 @@ public abstract class DataLoader<T> {
         }
       }
     }
-    @Nullable final Iterator<T> iterator = new AsyncListIterator<>(queue, thread);
-    return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT), false).filter(x -> x != null);
+    @Nullable final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator = new AsyncListIterator<>(queue, thread);
+    return com.simiacryptus.ref.wrappers.RefStreamSupport
+        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
+            false)
+        .filter(x -> x != null);
   }
+
+  protected abstract void read(com.simiacryptus.ref.wrappers.RefList<T> queue);
 }

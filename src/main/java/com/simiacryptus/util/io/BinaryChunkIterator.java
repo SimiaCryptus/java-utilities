@@ -19,15 +19,14 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.wrappers.RefIteratorBase;
+
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-public final class BinaryChunkIterator implements Iterator<byte[]> {
+public final @com.simiacryptus.ref.lang.RefAware
+class BinaryChunkIterator extends RefIteratorBase<byte[]> {
 
   private final DataInputStream in;
   private final int recordSize;
@@ -36,6 +35,29 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     super();
     this.in = in;
     this.recordSize = recordSize;
+  }
+
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toIterator(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIterator<T> iterator) {
+    return com.simiacryptus.ref.wrappers.RefStreamSupport
+        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
+  }
+
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator) {
+    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, 0);
+  }
+
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator, final int size) {
+    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, size, false);
+  }
+
+  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
+      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator, final int size,
+      final boolean parallel) {
+    return com.simiacryptus.ref.wrappers.RefStreamSupport.stream(
+        com.simiacryptus.ref.wrappers.RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
 
   @javax.annotation.Nonnull
@@ -50,22 +72,6 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
       pos += read;
     }
     return b;
-  }
-
-  public static <T> Stream<T> toIterator(@javax.annotation.Nonnull final Iterator<T> iterator) {
-    return StreamSupport.stream(Spliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
-  }
-
-  public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator) {
-    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, 0);
-  }
-
-  public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size) {
-    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, size, false);
-  }
-
-  public static <T> Stream<T> toStream(@javax.annotation.Nonnull final Iterator<T> iterator, final int size, final boolean parallel) {
-    return StreamSupport.stream(Spliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
 
   @Override
@@ -88,7 +94,7 @@ public final class BinaryChunkIterator implements Iterator<byte[]> {
     }
   }
 
-  public Stream<byte[]> toStream() {
+  public com.simiacryptus.ref.wrappers.RefStream<byte[]> toStream() {
     return com.simiacryptus.util.io.BinaryChunkIterator.toStream(this);
   }
 }

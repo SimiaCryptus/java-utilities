@@ -19,14 +19,32 @@
 
 package com.simiacryptus.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+
 import java.util.function.Supplier;
 
-public class MonitoredObject implements MonitoredItem {
+public @com.simiacryptus.ref.lang.RefAware
+class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
 
-  private final Map<CharSequence, Object> items = new HashMap<>();
+  private final com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> items = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+
+  @javax.annotation.Nonnull
+  @Override
+  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> getMetrics() {
+    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, Object> returnValue = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+    items.entrySet().stream().parallel().forEach(e -> {
+      final CharSequence k = e.getKey();
+      final Object v = e.getValue();
+      if (v instanceof MonitoredItem) {
+        returnValue.put(k, ((MonitoredItem) v).getMetrics());
+      } else if (v instanceof Supplier) {
+        returnValue.put(k, ((Supplier<?>) v).get());
+      } else {
+        returnValue.put(k, v);
+      }
+    });
+    return returnValue;
+  }
 
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject addConst(final CharSequence key, final Object item) {
@@ -48,7 +66,8 @@ public class MonitoredObject implements MonitoredItem {
 
   @javax.annotation.Nonnull
   public com.simiacryptus.util.MonitoredObject clearConstants() {
-    @javax.annotation.Nonnull final HashSet<CharSequence> keys = new HashSet<>(items.keySet());
+    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefHashSet<CharSequence> keys = new com.simiacryptus.ref.wrappers.RefHashSet<>(
+        items.keySet());
     for (final CharSequence k : keys) {
       final Object v = items.get(k);
       if (v instanceof com.simiacryptus.util.MonitoredObject) {
@@ -58,23 +77,5 @@ public class MonitoredObject implements MonitoredItem {
       }
     }
     return this;
-  }
-
-  @javax.annotation.Nonnull
-  @Override
-  public Map<CharSequence, Object> getMetrics() {
-    @javax.annotation.Nonnull final HashMap<CharSequence, Object> returnValue = new HashMap<>();
-    items.entrySet().stream().parallel().forEach(e -> {
-      final CharSequence k = e.getKey();
-      final Object v = e.getValue();
-      if (v instanceof MonitoredItem) {
-        returnValue.put(k, ((MonitoredItem) v).getMetrics());
-      } else if (v instanceof Supplier) {
-        returnValue.put(k, ((Supplier<?>) v).get());
-      } else {
-        returnValue.put(k, v);
-      }
-    });
-    return returnValue;
   }
 }

@@ -38,34 +38,37 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class GifSequenceWriter {
+public @com.simiacryptus.ref.lang.RefAware
+class GifSequenceWriter {
 
   protected ImageWriter gifWriter;
   protected ImageWriteParam imageWriteParam;
   protected IIOMetadata imageMetaData;
 
-  public GifSequenceWriter(
-      ImageOutputStream outputStream,
-      int imageType,
-      int timeBetweenFramesMS,
-      boolean loopContinuously) throws IOException {
+  public GifSequenceWriter(ImageOutputStream outputStream, int imageType, int timeBetweenFramesMS,
+                           boolean loopContinuously) throws IOException {
 
     gifWriter = getWriter("gif");
     imageWriteParam = gifWriter.getDefaultWriteParam();
     ImageTypeSpecifier imageTypeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(imageType);
     imageMetaData = gifWriter.getDefaultImageMetadata(imageTypeSpecifier, imageWriteParam);
     String metaFormatName = imageMetaData.getNativeMetadataFormatName();
-    @Nonnull IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
-    @Nonnull IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
+    @Nonnull
+    IIOMetadataNode root = (IIOMetadataNode) imageMetaData.getAsTree(metaFormatName);
+    @Nonnull
+    IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
     graphicsControlExtensionNode.setAttribute("disposalMethod", "none");
     graphicsControlExtensionNode.setAttribute("userInputFlag", "FALSE");
     graphicsControlExtensionNode.setAttribute("transparentColorFlag", "FALSE");
     graphicsControlExtensionNode.setAttribute("delayTime", Integer.toString(timeBetweenFramesMS / 10));
     graphicsControlExtensionNode.setAttribute("transparentColorIndex", "0");
-    @Nonnull IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
+    @Nonnull
+    IIOMetadataNode commentsNode = getNode(root, "CommentExtensions");
     commentsNode.setAttribute("CommentExtension", "Created by MindsEye");
-    @Nonnull IIOMetadataNode appEntensionsNode = getNode(root, "ApplicationExtensions");
-    @Nonnull IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
+    @Nonnull
+    IIOMetadataNode appEntensionsNode = getNode(root, "ApplicationExtensions");
+    @Nonnull
+    IIOMetadataNode child = new IIOMetadataNode("ApplicationExtension");
     child.setAttribute("applicationID", "NETSCAPE");
     child.setAttribute("authenticationCode", "2.0");
 
@@ -77,15 +80,21 @@ public class GifSequenceWriter {
     gifWriter.prepareWriteSequence(null);
   }
 
-  public static void write(File gif, int timeBetweenFramesMS, boolean loopContinuously, @Nonnull BufferedImage... images) throws IOException {
-    @Nonnull ImageOutputStream output = new FileImageOutputStream(gif);
+  public static void write(File gif, int timeBetweenFramesMS, boolean loopContinuously,
+                           @Nonnull BufferedImage... images) throws IOException {
+    @Nonnull
+    ImageOutputStream output = new FileImageOutputStream(gif);
     write(output, timeBetweenFramesMS, loopContinuously, images);
   }
 
-  public static void write(ImageOutputStream output, int timeBetweenFramesMS, boolean loopContinuously, @Nonnull BufferedImage... images) throws IOException {
+  public static void write(ImageOutputStream output, int timeBetweenFramesMS, boolean loopContinuously,
+                           @Nonnull BufferedImage... images) throws IOException {
     try {
-      @Nonnull GifSequenceWriter writer = new GifSequenceWriter(output, images[0].getType(), timeBetweenFramesMS, loopContinuously);
-      for (@Nonnull BufferedImage image : images) {
+      @Nonnull
+      GifSequenceWriter writer = new GifSequenceWriter(output, images[0].getType(), timeBetweenFramesMS,
+          loopContinuously);
+      for (@Nonnull
+          BufferedImage image : images) {
         writer.writeToSequence(image);
       }
       writer.close();
@@ -104,30 +113,25 @@ public class GifSequenceWriter {
   }
 
   @Nonnull
-  private static IIOMetadataNode getNode(
-      @Nonnull IIOMetadataNode rootNode,
-      String nodeName) {
+  private static IIOMetadataNode getNode(@Nonnull IIOMetadataNode rootNode, String nodeName) {
     int nNodes = rootNode.getLength();
     for (int i = 0; i < nNodes; i++) {
-      if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName)
-          == 0) {
-        @Nonnull IIOMetadataNode item = (IIOMetadataNode) rootNode.item(i);
-        if (null == item) throw new IllegalStateException();
+      if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName) == 0) {
+        @Nonnull
+        IIOMetadataNode item = (IIOMetadataNode) rootNode.item(i);
+        if (null == item)
+          throw new IllegalStateException();
         return item;
       }
     }
-    @Nonnull IIOMetadataNode node = new IIOMetadataNode(nodeName);
+    @Nonnull
+    IIOMetadataNode node = new IIOMetadataNode(nodeName);
     rootNode.appendChild(node);
     return (node);
   }
 
   public void writeToSequence(@Nonnull RenderedImage img) throws IOException {
-    gifWriter.writeToSequence(
-        new IIOImage(
-            img,
-            null,
-            imageMetaData),
-        imageWriteParam);
+    gifWriter.writeToSequence(new IIOImage(img, null, imageMetaData), imageWriteParam);
   }
 
   public void close() throws IOException {

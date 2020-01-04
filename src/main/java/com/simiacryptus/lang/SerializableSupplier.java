@@ -22,5 +22,6 @@ package com.simiacryptus.lang;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
-public interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+public @com.simiacryptus.ref.lang.RefAware
+interface SerializableSupplier<T> extends Supplier<T>, Serializable {
 }

@@ -22,9 +22,9 @@ package com.simiacryptus.util.io;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 
-public class AsyncOutputStream extends FilterOutputStream {
+public @com.simiacryptus.ref.lang.RefAware
+class AsyncOutputStream extends FilterOutputStream {
 
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
 
@@ -56,7 +56,7 @@ public class AsyncOutputStream extends FilterOutputStream {
 
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) {
-    @javax.annotation.Nonnull final byte[] _b = Arrays.copyOfRange(b, off, Math.min(b.length, off + len));
+    @javax.annotation.Nonnull final byte[] _b = com.simiacryptus.ref.wrappers.RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
     queue.submit(() -> {
       try {
         out.write(_b);

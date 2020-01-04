@@ -19,8 +19,7 @@
 
 package com.simiacryptus.util;
 
-import java.util.Map;
-
-public interface MonitoredItem {
-  Map<CharSequence, Object> getMetrics();
+public @com.simiacryptus.ref.lang.RefAware
+interface MonitoredItem {
+  com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> getMetrics();
 }

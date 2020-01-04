@@ -23,7 +23,8 @@ import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
-public class SoftCachedSupplier<T> implements Supplier<T> {
+public @com.simiacryptus.ref.lang.RefAware
+class SoftCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   @Nullable
@@ -36,7 +37,8 @@ public class SoftCachedSupplier<T> implements Supplier<T> {
   @Nullable
   @Override
   public T get() {
-    @Nullable T obj = null == cached ? null : cached.get();
+    @Nullable
+    T obj = null == cached ? null : cached.get();
     if (null == obj) {
       synchronized (this) {
         obj = null == cached ? null : cached.get();

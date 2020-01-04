@@ -27,29 +27,33 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Map;
 
-public class LocalAppSettings {
+public @com.simiacryptus.ref.lang.RefAware
+class LocalAppSettings {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalAppSettings.class);
 
-  public final HashMap<String, String> properties = new HashMap<>();
+  public final Map<String, String> properties = new HashMap<>();
 
-  public LocalAppSettings(HashMap<String, String> properties) {
+  public LocalAppSettings(com.simiacryptus.ref.wrappers.RefHashMap<String, String> properties) {
     this.properties.putAll(properties);
   }
 
-  public static HashMap<String, String> read() {
+  public static com.simiacryptus.ref.wrappers.RefHashMap<String, String> read() {
     return read(new File("."));
 
   }
 
-  public static HashMap<String, String> read(File workingDir) {
+  public static com.simiacryptus.ref.wrappers.RefHashMap<String, String> read(File workingDir) {
     File parentFile = workingDir.getParentFile();
     File file = new File(workingDir, "app.json");
     if (file.exists()) {
-      HashMap<String, String> settings = null;
+      com.simiacryptus.ref.wrappers.RefHashMap<String, String> settings = null;
       try {
-        settings = JsonUtil.getMapper().readValue(new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")), HashMap.class);
+        settings = JsonUtil.getMapper().readValue(
+            new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")),
+            com.simiacryptus.ref.wrappers.RefHashMap.class);
         settings.forEach((k, v) -> logger.info(String.format("Loaded %s = %s from %s", k, v, file)));
       } catch (IOException e) {
         throw new RuntimeException(e);
@@ -61,7 +65,7 @@ public class LocalAppSettings {
     } else if (parentFile != null && parentFile.exists()) {
       return read(parentFile);
     } else {
-      return new HashMap<>();
+      return new com.simiacryptus.ref.wrappers.RefHashMap<>();
     }
 
   }

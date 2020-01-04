@@ -19,32 +19,38 @@
 
 package com.simiacryptus.lang;
 
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public class StaticResourcePool<T> {
+public @com.simiacryptus.ref.lang.RefAware
+class StaticResourcePool<T> extends ReferenceCountingBase {
 
   @javax.annotation.Nonnull
-  private final List<T> all;
+  private final com.simiacryptus.ref.wrappers.RefList<T> all;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
 
-  public StaticResourcePool(@javax.annotation.Nonnull final List<T> items) {
+  public StaticResourcePool(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<T> items) {
     super();
-    this.all = Collections.unmodifiableList(new ArrayList<>(items));
+    this.all = com.simiacryptus.ref.wrappers.RefCollections
+        .unmodifiableList(new com.simiacryptus.ref.wrappers.RefArrayList<>(items));
     pool.addAll(getAll());
   }
 
-  public void apply(@Nonnull final Consumer<T> f) {
+  @javax.annotation.Nonnull
+  public com.simiacryptus.ref.wrappers.RefList<T> getAll() {
+    return all;
+  }
+
+  public void apply(@Nonnull final com.simiacryptus.ref.wrappers.RefConsumer<T> f) {
     apply(f, x -> true, false);
   }
 
-  public void apply(@javax.annotation.Nonnull final Consumer<T> f, final Predicate<T> filter, final boolean exclusive) {
+  public void apply(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefConsumer<T> f,
+                    final Predicate<T> filter, final boolean exclusive) {
     T poll = get(filter, exclusive);
     try {
       f.accept(poll);
@@ -53,9 +59,29 @@ public class StaticResourcePool<T> {
     }
   }
 
+  public <U> U run(@Nonnull final Function<T, U> f) {
+    return run(f, x -> true, false);
+  }
+
+  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter,
+                   final boolean exclusive) {
+    if (all.isEmpty())
+      throw new IllegalStateException();
+    T poll = get(filter, exclusive);
+    try {
+      return f.apply(poll);
+    } finally {
+      this.pool.add(poll);
+    }
+  }
+
+  public int size() {
+    return getAll().size();
+  }
+
   @Nonnull
   private T get(Predicate<T> filter, final boolean exclusive) {
-    ArrayList<T> sampled = new ArrayList<>();
+    com.simiacryptus.ref.wrappers.RefArrayList<T> sampled = new com.simiacryptus.ref.wrappers.RefArrayList<>();
     try {
       T poll = this.pool.poll();
       while (null != poll) {
@@ -73,7 +99,8 @@ public class StaticResourcePool<T> {
       while (true) {
         final T poll;
         poll = this.pool.poll(5, TimeUnit.MINUTES);
-        if (null == poll) throw new RuntimeException("Timeout awaiting item from pool");
+        if (null == poll)
+          throw new RuntimeException("Timeout awaiting item from pool");
         if (exclusive && !filter.test(poll)) {
           this.pool.add(poll);
           Thread.sleep(0);
@@ -84,28 +111,5 @@ public class StaticResourcePool<T> {
     } catch (@javax.annotation.Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  @javax.annotation.Nonnull
-  public List<T> getAll() {
-    return all;
-  }
-
-  public <U> U run(@Nonnull final Function<T, U> f) {
-    return run(f, x -> true, false);
-  }
-
-  public <U> U run(@javax.annotation.Nonnull final Function<T, U> f, final Predicate<T> filter, final boolean exclusive) {
-    if (all.isEmpty()) throw new IllegalStateException();
-    T poll = get(filter, exclusive);
-    try {
-      return f.apply(poll);
-    } finally {
-      this.pool.add(poll);
-    }
-  }
-
-  public int size() {
-    return getAll().size();
   }
 }

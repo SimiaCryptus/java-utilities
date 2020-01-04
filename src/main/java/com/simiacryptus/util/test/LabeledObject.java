@@ -21,7 +21,8 @@ package com.simiacryptus.util.test;
 
 import java.util.function.Function;
 
-public class LabeledObject<T> {
+public @com.simiacryptus.ref.lang.RefAware
+class LabeledObject<T> {
   public final T data;
   public final String label;
 

@@ -28,7 +28,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SysOutInterceptor extends PrintStream {
+public @com.simiacryptus.ref.lang.RefAware
+class SysOutInterceptor extends PrintStream {
 
   public static final PrintStream ORIGINAL_OUT = System.out;
   public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
@@ -53,12 +54,19 @@ public class SysOutInterceptor extends PrintStream {
     super(out);
   }
 
+  @javax.annotation.Nonnull
+  public PrintStream getInner() {
+    return (PrintStream) out;
+  }
+
   public static LoggedResult<Void> withOutput(@javax.annotation.Nonnull final Runnable fn) {
     try {
-      if (SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
+      if (SysOutInterceptor.INSTANCE.isMonitoring.get())
+        throw new IllegalStateException();
       PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
       @javax.annotation.Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
-      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+      try (@javax.annotation.Nonnull
+           PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
         SysOutInterceptor.INSTANCE.threadHandler.set(ps);
         SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         fn.run();
@@ -75,13 +83,14 @@ public class SysOutInterceptor extends PrintStream {
     }
   }
 
-
   public static <T> LoggedResult<T> withOutput(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
     try {
-      if (SysOutInterceptor.INSTANCE.isMonitoring.get()) throw new IllegalStateException();
+      if (SysOutInterceptor.INSTANCE.isMonitoring.get())
+        throw new IllegalStateException();
       PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
       @javax.annotation.Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
-      try (@javax.annotation.Nonnull PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+      try (@javax.annotation.Nonnull
+           PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
         SysOutInterceptor.INSTANCE.threadHandler.set(ps);
         SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         T result = fn.get();
@@ -98,12 +107,12 @@ public class SysOutInterceptor extends PrintStream {
     }
   }
 
-
   @javax.annotation.Nonnull
   public SysOutInterceptor init() {
     if (!initialized.getAndSet(true)) {
       ch.qos.logback.classic.Logger root = ((ch.qos.logback.classic.Logger) log).getLoggerContext().getLogger("ROOT");
-      @javax.annotation.Nonnull ch.qos.logback.core.ConsoleAppender stdout = (ch.qos.logback.core.ConsoleAppender) root.getAppender("STDOUT");
+      @javax.annotation.Nonnull
+      ch.qos.logback.core.ConsoleAppender stdout = (ch.qos.logback.core.ConsoleAppender) root.getAppender("STDOUT");
       if (null != stdout) {
         stdout.setOutputStream(this);
       }
@@ -114,11 +123,6 @@ public class SysOutInterceptor extends PrintStream {
 
   public PrintStream currentHandler() {
     return threadHandler.get();
-  }
-
-  @javax.annotation.Nonnull
-  public PrintStream getInner() {
-    return (PrintStream) out;
   }
 
   @Override
@@ -143,7 +147,8 @@ public class SysOutInterceptor extends PrintStream {
     return previous;
   }
 
-  public static class LoggedResult<T> {
+  public static @com.simiacryptus.ref.lang.RefAware
+  class LoggedResult<T> {
     public final String log;
     public final T obj;
 

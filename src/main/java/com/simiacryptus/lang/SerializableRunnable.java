@@ -21,5 +21,6 @@ package com.simiacryptus.lang;
 
 import java.io.Serializable;
 
-public interface SerializableRunnable extends Runnable, Serializable {
+public @com.simiacryptus.ref.lang.RefAware
+interface SerializableRunnable extends Runnable, Serializable {
 }

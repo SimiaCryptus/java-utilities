@@ -22,5 +22,6 @@ package com.simiacryptus.lang;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
-public interface SerializableCallable<T> extends Callable<T>, Serializable {
+public @com.simiacryptus.ref.lang.RefAware
+interface SerializableCallable<T> extends Callable<T>, Serializable {
 }

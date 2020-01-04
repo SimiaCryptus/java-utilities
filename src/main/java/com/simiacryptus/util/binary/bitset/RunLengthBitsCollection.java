@@ -24,14 +24,14 @@ import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RunLengthBitsCollection extends
-    BitsCollection<HashMap<Bits, AtomicInteger>> {
+public @com.simiacryptus.ref.lang.RefAware
+class RunLengthBitsCollection
+    extends BitsCollection<com.simiacryptus.ref.wrappers.RefHashMap<Bits, AtomicInteger>> {
   public RunLengthBitsCollection(final int bitDepth) {
-    super(bitDepth, new HashMap<Bits, AtomicInteger>());
+    super(bitDepth, new com.simiacryptus.ref.wrappers.RefHashMap<Bits, AtomicInteger>());
   }
 
   @Override

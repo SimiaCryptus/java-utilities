@@ -19,13 +19,15 @@
 
 package com.simiacryptus.lang;
 
-import java.util.ArrayList;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+
 import java.util.function.Predicate;
 
-public abstract class ResourcePool<T> {
+public abstract @com.simiacryptus.ref.lang.RefAware
+class ResourcePool<T> extends ReferenceCountingBase {
 
   @javax.annotation.Nonnull
-  private final java.util.HashSet<T> all;
+  private final com.simiacryptus.ref.wrappers.RefHashSet<T> all;
   private final ThreadLocal<T> currentValue = new ThreadLocal<>();
   private final int maxItems;
   private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
@@ -33,7 +35,7 @@ public abstract class ResourcePool<T> {
   public ResourcePool(final int maxItems) {
     super();
     this.maxItems = maxItems;
-    this.all = new java.util.HashSet<>(this.maxItems);
+    this.all = new com.simiacryptus.ref.wrappers.RefHashSet<>(this.maxItems);
   }
 
   public abstract T create();
@@ -43,7 +45,7 @@ public abstract class ResourcePool<T> {
   }
 
   public T get(Predicate<T> filter) {
-    ArrayList<T> sampled = new ArrayList<>();
+    com.simiacryptus.ref.wrappers.RefArrayList<T> sampled = new com.simiacryptus.ref.wrappers.RefArrayList<>();
     try {
       T poll = this.pool.poll();
       while (null != poll) {
@@ -78,7 +80,7 @@ public abstract class ResourcePool<T> {
     return apply(f, x -> true);
   }
 
-  public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f) {
+  public void apply(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefConsumer<T> f) {
     apply(f, x -> true);
   }
 
@@ -98,7 +100,8 @@ public abstract class ResourcePool<T> {
     }
   }
 
-  public void apply(@javax.annotation.Nonnull final java.util.function.Consumer<T> f, final Predicate<T> filter) {
+  public void apply(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefConsumer<T> f,
+                    final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);

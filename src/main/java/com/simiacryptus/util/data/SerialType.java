@@ -22,7 +22,10 @@ package com.simiacryptus.util.data;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public interface SerialType<T> {
+public @com.simiacryptus.ref.lang.RefAware
+interface SerialType<T> {
+  int getSize();
+
   default SerialArrayList<T> newList() {
     return new SerialArrayList<T>(this);
   }
@@ -34,8 +37,6 @@ public interface SerialType<T> {
   default SerialArrayList<T> newList(T... items) {
     return new SerialArrayList<T>(this, items);
   }
-
-  int getSize();
 
   T read(ByteBuffer input) throws IOException;
 

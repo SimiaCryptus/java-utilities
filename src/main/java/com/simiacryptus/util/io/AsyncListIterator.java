@@ -20,22 +20,17 @@
 package com.simiacryptus.util.io;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
-import java.util.List;
 
-public class AsyncListIterator<T> implements Iterator<T> {
-  private final List<T> queue;
+public @com.simiacryptus.ref.lang.RefAware
+class AsyncListIterator<T>
+    extends com.simiacryptus.ref.wrappers.RefIteratorBase<T> {
+  private final com.simiacryptus.ref.wrappers.RefList<T> queue;
   private final Thread thread;
   int index = -1;
 
-  public AsyncListIterator(final List<T> queue, final Thread thread) {
+  public AsyncListIterator(final com.simiacryptus.ref.wrappers.RefList<T> queue, final Thread thread) {
     this.thread = thread;
     this.queue = queue;
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
   }
 
   @Override

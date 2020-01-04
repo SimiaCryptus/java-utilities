@@ -20,7 +20,8 @@
 package com.simiacryptus.lang;
 
 import java.io.Serializable;
-import java.util.function.Consumer;
 
-public interface SerializableConsumer<T> extends Consumer<T>, Serializable {
+public @com.simiacryptus.ref.lang.RefAware
+interface SerializableConsumer<T>
+    extends com.simiacryptus.ref.wrappers.RefConsumer<T>, Serializable {
 }

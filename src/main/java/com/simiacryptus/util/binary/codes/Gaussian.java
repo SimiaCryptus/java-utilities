@@ -24,7 +24,8 @@ import com.simiacryptus.util.binary.BitOutputStream;
 
 import java.io.IOException;
 
-public class Gaussian {
+public @com.simiacryptus.ref.lang.RefAware
+class Gaussian {
 
   public static final double LOG2 = Math.log(2);
   public final double mean;
@@ -51,8 +52,7 @@ public class Gaussian {
     this.stdDev = stdDev;
   }
 
-  public static Gaussian fromBinomial(final double probability,
-                                      final long totalPopulation) {
+  public static Gaussian fromBinomial(final double probability, final long totalPopulation) {
     if (0. >= totalPopulation) {
       throw new IllegalArgumentException();
     }
@@ -68,17 +68,14 @@ public class Gaussian {
     if (Double.isInfinite(probability)) {
       throw new IllegalArgumentException();
     }
-    return new Gaussian(
-        probability * totalPopulation,
-        Math.sqrt(totalPopulation * probability * (1 - probability)));
+    return new Gaussian(probability * totalPopulation, Math.sqrt(totalPopulation * probability * (1 - probability)));
   }
 
   public static double log2(final double d) {
     return Math.log(d) / LOG2;
   }
 
-  public long decode(final BitInputStream in, final long max)
-      throws IOException {
+  public long decode(final BitInputStream in, final long max) throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -121,8 +118,7 @@ public class Gaussian {
     }
   }
 
-  public void encode(final BitOutputStream out, final long value, final long max)
-      throws IOException {
+  public void encode(final BitOutputStream out, final long value, final long max) throws IOException {
     if (0 == max) {
       return;
     }

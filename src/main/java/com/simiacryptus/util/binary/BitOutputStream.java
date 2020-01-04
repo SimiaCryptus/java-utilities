@@ -22,10 +22,9 @@ package com.simiacryptus.util.binary;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.function.Consumer;
 
-public class BitOutputStream implements AutoCloseable {
+public @com.simiacryptus.ref.lang.RefAware
+class BitOutputStream implements AutoCloseable {
 
   static final int varLongDepths[] = {6, 14, 30, 62};
   private final OutputStream inner;
@@ -37,7 +36,11 @@ public class BitOutputStream implements AutoCloseable {
     this.inner = inner;
   }
 
-  public static Bits toBits(Consumer<BitOutputStream> fn) {
+  public int getTotalBitsWritten() {
+    return totalBitsWritten;
+  }
+
+  public static Bits toBits(com.simiacryptus.ref.wrappers.RefConsumer<BitOutputStream> fn) {
     try {
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       BitOutputStream out = new BitOutputStream(buffer);
@@ -47,10 +50,6 @@ public class BitOutputStream implements AutoCloseable {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public int getTotalBitsWritten() {
-    return totalBitsWritten;
   }
 
   public synchronized void flush() throws IOException {
@@ -98,10 +97,8 @@ public class BitOutputStream implements AutoCloseable {
     this.write(new Bits(value, 32));
   }
 
-  public Bits writeBoundedLong(final long value, final long max)
-      throws IOException {
-    final int bits = 0 >= max ? 0 : (int) (Math
-        .floor(Math.log(max) / Math.log(2)) + 1);
+  public Bits writeBoundedLong(final long value, final long max) throws IOException {
+    final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2)) + 1);
     if (0 < bits) {
       Bits toWrite = new Bits(value, bits);
       this.write(toWrite);
@@ -113,7 +110,7 @@ public class BitOutputStream implements AutoCloseable {
 
   public void writeVarLong(final long value) throws IOException {
     final int bitLength = new Bits(value).bitLength;
-    int type = Arrays.binarySearch(varLongDepths, bitLength);
+    int type = com.simiacryptus.ref.wrappers.RefArrays.binarySearch(varLongDepths, bitLength);
     if (type < 0) {
       type = -type - 1;
     }
@@ -126,10 +123,11 @@ public class BitOutputStream implements AutoCloseable {
   }
 
   public void writeVarShort(final short value, int optimal) throws IOException {
-    if (value < 0) throw new IllegalArgumentException();
+    if (value < 0)
+      throw new IllegalArgumentException();
     int[] varShortDepths = {optimal, 16};
     final int bitLength = new Bits(value).bitLength;
-    int type = Arrays.binarySearch(varShortDepths, bitLength);
+    int type = com.simiacryptus.ref.wrappers.RefArrays.binarySearch(varShortDepths, bitLength);
     if (type < 0) {
       type = -type - 1;
     }

@@ -20,9 +20,9 @@
 package com.simiacryptus.util.data;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
-public class IntArray {
+public @com.simiacryptus.ref.lang.RefAware
+class IntArray {
 
   public final int[] data;
 
@@ -32,12 +32,14 @@ public class IntArray {
 
   @Override
   public boolean equals(@Nullable final Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
     @javax.annotation.Nonnull final com.simiacryptus.util.data.IntArray intArray = (com.simiacryptus.util.data.IntArray) o;
 
-    return Arrays.equals(data, intArray.data);
+    return com.simiacryptus.ref.wrappers.RefArrays.equals(data, intArray.data);
   }
 
   public int get(final int i) {
@@ -46,7 +48,7 @@ public class IntArray {
 
   @Override
   public int hashCode() {
-    return Arrays.hashCode(data);
+    return com.simiacryptus.ref.wrappers.RefArrays.hashCode(data);
   }
 
   public int size() {
