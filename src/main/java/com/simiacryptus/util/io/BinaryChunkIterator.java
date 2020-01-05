@@ -19,13 +19,15 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.wrappers.RefIteratorBase;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
 
+import javax.annotation.Nonnull;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Spliterator;
 
-public final @com.simiacryptus.ref.lang.RefAware
+public final @RefAware
 class BinaryChunkIterator extends RefIteratorBase<byte[]> {
 
   private final DataInputStream in;
@@ -37,32 +39,32 @@ class BinaryChunkIterator extends RefIteratorBase<byte[]> {
     this.recordSize = recordSize;
   }
 
-  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toIterator(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIterator<T> iterator) {
-    return com.simiacryptus.ref.wrappers.RefStreamSupport
-        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
+  public static <T> RefStream<T> toIterator(
+      @Nonnull final RefIterator<T> iterator) {
+    return RefStreamSupport
+        .stream(RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
   }
 
-  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator) {
-    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, 0);
+  public static <T> RefStream<T> toStream(
+      @Nonnull final RefIteratorBase<T> iterator) {
+    return BinaryChunkIterator.toStream(iterator, 0);
   }
 
-  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator, final int size) {
-    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(iterator, size, false);
+  public static <T> RefStream<T> toStream(
+      @Nonnull final RefIteratorBase<T> iterator, final int size) {
+    return BinaryChunkIterator.toStream(iterator, size, false);
   }
 
-  public static <T> com.simiacryptus.ref.wrappers.RefStream<T> toStream(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator, final int size,
+  public static <T> RefStream<T> toStream(
+      @Nonnull final RefIteratorBase<T> iterator, final int size,
       final boolean parallel) {
-    return com.simiacryptus.ref.wrappers.RefStreamSupport.stream(
-        com.simiacryptus.ref.wrappers.RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
+    return RefStreamSupport.stream(
+        RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
   }
 
-  @javax.annotation.Nonnull
-  private static byte[] read(@javax.annotation.Nonnull final DataInputStream i, final int s) throws IOException {
-    @javax.annotation.Nonnull final byte[] b = new byte[s];
+  @Nonnull
+  private static byte[] read(@Nonnull final DataInputStream i, final int s) throws IOException {
+    @Nonnull final byte[] b = new byte[s];
     int pos = 0;
     while (b.length > pos) {
       final int read = i.read(b, pos, b.length - pos);
@@ -78,23 +80,23 @@ class BinaryChunkIterator extends RefIteratorBase<byte[]> {
   public boolean hasNext() {
     try {
       return 0 < in.available();
-    } catch (@javax.annotation.Nonnull final Throwable e) {
+    } catch (@Nonnull final Throwable e) {
       return false;
     }
   }
 
-  @javax.annotation.Nonnull
+  @Nonnull
   @Override
   public byte[] next() {
     assert hasNext();
     try {
-      return com.simiacryptus.util.io.BinaryChunkIterator.read(in, recordSize);
-    } catch (@javax.annotation.Nonnull final IOException e) {
+      return BinaryChunkIterator.read(in, recordSize);
+    } catch (@Nonnull final IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  public com.simiacryptus.ref.wrappers.RefStream<byte[]> toStream() {
-    return com.simiacryptus.util.io.BinaryChunkIterator.toStream(this);
+  public RefStream<byte[]> toStream() {
+    return BinaryChunkIterator.toStream(this);
   }
 }

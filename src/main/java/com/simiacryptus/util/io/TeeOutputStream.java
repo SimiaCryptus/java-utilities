@@ -19,13 +19,17 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TeeOutputStream extends OutputStream {
   public final List<OutputStream> branches = new ArrayList<>();
   public final OutputStream primary;
@@ -46,7 +50,7 @@ class TeeOutputStream extends OutputStream {
 
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
-    branches.addAll(com.simiacryptus.ref.wrappers.RefArrays.asList(secondaries));
+    branches.addAll(RefArrays.asList(secondaries));
   }
 
   public boolean isChainCloses() {
@@ -62,7 +66,7 @@ class TeeOutputStream extends OutputStream {
   public void close() throws IOException {
     primary.close();
     if (isChainCloses())
-      for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+      for (@Nonnull final OutputStream branch : branches) {
         branch.close();
       }
   }
@@ -70,17 +74,17 @@ class TeeOutputStream extends OutputStream {
   @Override
   public void flush() throws IOException {
     primary.flush();
-    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+    for (@Nonnull final OutputStream branch : branches) {
       branch.flush();
     }
   }
 
-  @javax.annotation.Nonnull
+  @Nonnull
   public PipedInputStream newInputStream() throws IOException {
-    @javax.annotation.Nonnull final com.simiacryptus.util.io.TeeOutputStream outTee = this;
-    @javax.annotation.Nonnull final AtomicReference<Runnable> onClose = new AtomicReference<>();
-    @javax.annotation.Nonnull final PipedOutputStream outPipe = new PipedOutputStream();
-    @javax.annotation.Nonnull final PipedInputStream in = new PipedInputStream() {
+    @Nonnull final TeeOutputStream outTee = this;
+    @Nonnull final AtomicReference<Runnable> onClose = new AtomicReference<>();
+    @Nonnull final PipedOutputStream outPipe = new PipedOutputStream();
+    @Nonnull final PipedInputStream in = new PipedInputStream() {
       @Override
       public void close() throws IOException {
         outPipe.close();
@@ -88,7 +92,7 @@ class TeeOutputStream extends OutputStream {
       }
     };
     outPipe.connect(in);
-    @javax.annotation.Nonnull final OutputStream outAsync = new AsyncOutputStream(outPipe);
+    @Nonnull final OutputStream outAsync = new AsyncOutputStream(outPipe);
     new Thread(() -> {
       try {
         if (null != heapBuffer) {
@@ -96,7 +100,7 @@ class TeeOutputStream extends OutputStream {
           outAsync.flush();
         }
         outTee.branches.add(outAsync);
-      } catch (@javax.annotation.Nonnull final IOException e) {
+      } catch (@Nonnull final IOException e) {
         e.printStackTrace();
       }
     }).start();
@@ -110,7 +114,7 @@ class TeeOutputStream extends OutputStream {
   @Override
   public synchronized void write(final byte[] b) throws IOException {
     primary.write(b);
-    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+    for (@Nonnull final OutputStream branch : branches) {
       branch.write(b);
     }
   }
@@ -118,7 +122,7 @@ class TeeOutputStream extends OutputStream {
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) throws IOException {
     primary.write(b, off, len);
-    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+    for (@Nonnull final OutputStream branch : branches) {
       branch.write(b, off, len);
     }
   }
@@ -126,7 +130,7 @@ class TeeOutputStream extends OutputStream {
   @Override
   public synchronized void write(final int b) throws IOException {
     primary.write(b);
-    for (@javax.annotation.Nonnull final OutputStream branch : branches) {
+    for (@Nonnull final OutputStream branch : branches) {
       branch.write(b);
     }
   }

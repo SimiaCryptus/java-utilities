@@ -19,10 +19,12 @@
 
 package com.simiacryptus.util.data;
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 interface SerialType<T> {
   int getSize();
 

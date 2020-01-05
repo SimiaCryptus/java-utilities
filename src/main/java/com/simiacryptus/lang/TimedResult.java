@@ -19,10 +19,13 @@
 
 package com.simiacryptus.lang;
 
+import com.simiacryptus.ref.lang.RefAware;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.management.ManagementFactory;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TimedResult<T> {
   public final T result;
   public final long timeNanos;
@@ -34,7 +37,7 @@ class TimedResult<T> {
     this.gcMs = gcMs;
   }
 
-  public static <T> com.simiacryptus.lang.TimedResult<T> time(@javax.annotation.Nonnull final UncheckedSupplier<T> fn) {
+  public static <T> TimedResult<T> time(@Nonnull final UncheckedSupplier<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
     final long start = System.nanoTime();
@@ -42,33 +45,33 @@ class TimedResult<T> {
     T result = null;
     try {
       result = fn.get();
-    } catch (@javax.annotation.Nonnull final RuntimeException e) {
+    } catch (@Nonnull final RuntimeException e) {
       throw e;
-    } catch (@javax.annotation.Nonnull final Exception e) {
+    } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
     long wallClockTime = System.nanoTime() - start;
     long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum()
         - priorGcMs;
-    return new com.simiacryptus.lang.TimedResult<T>(result, wallClockTime, gcTime);
+    return new TimedResult<T>(result, wallClockTime, gcTime);
   }
 
-  public static <T> com.simiacryptus.lang.TimedResult<Void> time(
-      @javax.annotation.Nonnull final UncheckedRunnable<T> fn) {
+  public static <T> TimedResult<Void> time(
+      @Nonnull final UncheckedRunnable<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
     final long start = System.nanoTime();
     try {
       fn.get();
-    } catch (@javax.annotation.Nonnull final RuntimeException e) {
+    } catch (@Nonnull final RuntimeException e) {
       throw e;
-    } catch (@javax.annotation.Nonnull final Exception e) {
+    } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
     long wallClockTime = System.nanoTime() - start;
     long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum()
         - priorGcMs;
-    return new com.simiacryptus.lang.TimedResult<Void>(null, wallClockTime, gcTime);
+    return new TimedResult<Void>(null, wallClockTime, gcTime);
   }
 
   public double seconds() {

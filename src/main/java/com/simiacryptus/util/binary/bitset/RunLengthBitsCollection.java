@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.binary.bitset;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefHashMap;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -27,11 +29,11 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class RunLengthBitsCollection
-    extends BitsCollection<com.simiacryptus.ref.wrappers.RefHashMap<Bits, AtomicInteger>> {
+    extends BitsCollection<RefHashMap<Bits, AtomicInteger>> {
   public RunLengthBitsCollection(final int bitDepth) {
-    super(bitDepth, new com.simiacryptus.ref.wrappers.RefHashMap<Bits, AtomicInteger>());
+    super(bitDepth, new RefHashMap<Bits, AtomicInteger>());
   }
 
   @Override

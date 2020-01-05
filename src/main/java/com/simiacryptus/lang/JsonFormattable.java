@@ -19,10 +19,11 @@
 
 package com.simiacryptus.lang;
 
+import com.simiacryptus.ref.lang.RefAware;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 interface JsonFormattable {
 
   JSONObject toJson() throws JSONException;

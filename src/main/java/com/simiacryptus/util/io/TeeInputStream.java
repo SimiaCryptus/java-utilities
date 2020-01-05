@@ -19,11 +19,13 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TeeInputStream extends InputStream {
 
   private final OutputStream cache;

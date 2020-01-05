@@ -19,23 +19,30 @@
 
 package com.simiacryptus.lang;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.RefArrayList;
+import com.simiacryptus.ref.wrappers.RefConsumer;
+import com.simiacryptus.ref.wrappers.RefHashSet;
 
+import javax.annotation.Nonnull;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-public abstract @com.simiacryptus.ref.lang.RefAware
+public abstract @RefAware
 class ResourcePool<T> extends ReferenceCountingBase {
 
-  @javax.annotation.Nonnull
-  private final com.simiacryptus.ref.wrappers.RefHashSet<T> all;
+  @Nonnull
+  private final RefHashSet<T> all;
   private final ThreadLocal<T> currentValue = new ThreadLocal<>();
   private final int maxItems;
-  private final java.util.concurrent.LinkedBlockingQueue<T> pool = new java.util.concurrent.LinkedBlockingQueue<>();
+  private final LinkedBlockingQueue<T> pool = new LinkedBlockingQueue<>();
 
   public ResourcePool(final int maxItems) {
     super();
     this.maxItems = maxItems;
-    this.all = new com.simiacryptus.ref.wrappers.RefHashSet<>(this.maxItems);
+    this.all = new RefHashSet<>(this.maxItems);
   }
 
   public abstract T create();
@@ -45,7 +52,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
   }
 
   public T get(Predicate<T> filter) {
-    com.simiacryptus.ref.wrappers.RefArrayList<T> sampled = new com.simiacryptus.ref.wrappers.RefArrayList<>();
+    RefArrayList<T> sampled = new RefArrayList<>();
     try {
       T poll = this.pool.poll();
       while (null != poll) {
@@ -67,7 +74,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
     }
     try {
       return this.pool.take();
-    } catch (@javax.annotation.Nonnull final InterruptedException e) {
+    } catch (@Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
   }
@@ -76,15 +83,15 @@ class ResourcePool<T> extends ReferenceCountingBase {
     return all.size();
   }
 
-  public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f) {
+  public <U> U apply(@Nonnull final Function<T, U> f) {
     return apply(f, x -> true);
   }
 
-  public void apply(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefConsumer<T> f) {
+  public void apply(@Nonnull final RefConsumer<T> f) {
     apply(f, x -> true);
   }
 
-  public <U> U apply(@javax.annotation.Nonnull final java.util.function.Function<T, U> f, final Predicate<T> filter) {
+  public <U> U apply(@Nonnull final Function<T, U> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       return f.apply(prior);
@@ -100,7 +107,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
     }
   }
 
-  public void apply(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefConsumer<T> f,
+  public void apply(@Nonnull final RefConsumer<T> f,
                     final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {

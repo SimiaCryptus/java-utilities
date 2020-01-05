@@ -19,11 +19,14 @@
 
 package com.simiacryptus.util.binary;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class BitInputStream {
 
   private final InputStream inner;
@@ -91,7 +94,7 @@ class BitInputStream {
       int bytesRead = this.inner.read(buffer);
       if (bytesRead > 0) {
         this.remainder = this.remainder
-            .concatenate(new Bits(com.simiacryptus.ref.wrappers.RefArrays.copyOf(buffer, bytesRead)));
+            .concatenate(new Bits(RefArrays.copyOf(buffer, bytesRead)));
       }
     }
     return this.remainder;

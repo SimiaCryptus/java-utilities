@@ -25,6 +25,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefIntStream;
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
@@ -33,7 +36,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class JsonUtil {
 
   public static ObjectMapper getMapper() {
@@ -43,8 +46,8 @@ class JsonUtil {
     return enable;
   }
 
-  public static double[] getDoubleArray(@javax.annotation.Nonnull final JsonArray array) {
-    return com.simiacryptus.ref.wrappers.RefIntStream.range(0, array.size())
+  public static double[] getDoubleArray(@Nonnull final JsonArray array) {
+    return RefIntStream.range(0, array.size())
         .mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
 
@@ -52,22 +55,22 @@ class JsonUtil {
   public static int[] getIntArray(@Nullable final JsonArray array) {
     if (null == array)
       return null;
-    return com.simiacryptus.ref.wrappers.RefIntStream.range(0, array.size()).map(i -> array.get(i).getAsInt())
+    return RefIntStream.range(0, array.size()).map(i -> array.get(i).getAsInt())
         .toArray();
   }
 
-  @javax.annotation.Nonnull
-  public static JsonArray getJson(@javax.annotation.Nonnull final double[] kernelDims) {
-    @javax.annotation.Nonnull final JsonArray array = new JsonArray();
+  @Nonnull
+  public static JsonArray getJson(@Nonnull final double[] kernelDims) {
+    @Nonnull final JsonArray array = new JsonArray();
     for (final double k : kernelDims) {
       array.add(new JsonPrimitive(k));
     }
     return array;
   }
 
-  @javax.annotation.Nonnull
-  public static JsonArray getJson(@javax.annotation.Nonnull final int[] kernelDims) {
-    @javax.annotation.Nonnull final JsonArray array = new JsonArray();
+  @Nonnull
+  public static JsonArray getJson(@Nonnull final int[] kernelDims) {
+    @Nonnull final JsonArray array = new JsonArray();
     for (final int k : kernelDims) {
       array.add(new JsonPrimitive(k));
     }
@@ -109,7 +112,7 @@ class JsonUtil {
 
   public static JsonArray toIntArray(int[] array) {
     JsonArray jsonElements = new JsonArray();
-    com.simiacryptus.ref.wrappers.RefArrays.stream(array).forEach(jsonElements::add);
+    RefArrays.stream(array).forEach(jsonElements::add);
     return jsonElements;
   }
 

@@ -19,12 +19,13 @@
 
 package com.simiacryptus.util.binary.codes;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 
 import java.io.IOException;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class Gaussian {
 
   public static final double LOG2 = Math.log(2);

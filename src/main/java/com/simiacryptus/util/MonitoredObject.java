@@ -19,19 +19,24 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.RefHashMap;
+import com.simiacryptus.ref.wrappers.RefHashSet;
+import com.simiacryptus.ref.wrappers.RefMap;
 
+import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
 
-  private final com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> items = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+  private final RefMap<CharSequence, Object> items = new RefHashMap<>();
 
-  @javax.annotation.Nonnull
+  @Nonnull
   @Override
-  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> getMetrics() {
-    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, Object> returnValue = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+  public RefMap<CharSequence, Object> getMetrics() {
+    @Nonnull final RefHashMap<CharSequence, Object> returnValue = new RefHashMap<>();
     items.entrySet().stream().parallel().forEach(e -> {
       final CharSequence k = e.getKey();
       final Object v = e.getValue();
@@ -46,32 +51,32 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
     return returnValue;
   }
 
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject addConst(final CharSequence key, final Object item) {
+  @Nonnull
+  public MonitoredObject addConst(final CharSequence key, final Object item) {
     items.put(key, item);
     return this;
   }
 
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject addField(final CharSequence key, final Supplier<Object> item) {
+  @Nonnull
+  public MonitoredObject addField(final CharSequence key, final Supplier<Object> item) {
     items.put(key, item);
     return this;
   }
 
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject addObj(final CharSequence key, final MonitoredItem item) {
+  @Nonnull
+  public MonitoredObject addObj(final CharSequence key, final MonitoredItem item) {
     items.put(key, item);
     return this;
   }
 
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.MonitoredObject clearConstants() {
-    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefHashSet<CharSequence> keys = new com.simiacryptus.ref.wrappers.RefHashSet<>(
+  @Nonnull
+  public MonitoredObject clearConstants() {
+    @Nonnull final RefHashSet<CharSequence> keys = new RefHashSet<>(
         items.keySet());
     for (final CharSequence k : keys) {
       final Object v = items.get(k);
-      if (v instanceof com.simiacryptus.util.MonitoredObject) {
-        ((com.simiacryptus.util.MonitoredObject) v).clearConstants();
+      if (v instanceof MonitoredObject) {
+        ((MonitoredObject) v).clearConstants();
       } else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
         items.remove(k);
       }

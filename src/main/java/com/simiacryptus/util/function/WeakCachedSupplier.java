@@ -19,21 +19,25 @@
 
 package com.simiacryptus.util.function;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefWeakReference;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class WeakCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   @Nullable
-  private volatile com.simiacryptus.ref.wrappers.RefWeakReference<T> cached;
+  private volatile RefWeakReference<T> cached;
 
   public WeakCachedSupplier(final Supplier<T> fn) {
     this.fn = fn;
   }
 
-  @javax.annotation.Nonnull
+  @Nonnull
   public SoftCachedSupplier<T> getSoftRef() {
     return new SoftCachedSupplier<>(this::get);
   }
@@ -49,7 +53,7 @@ class WeakCachedSupplier<T> implements Supplier<T> {
         if (null == obj) {
           obj = fn.get();
           if (null != obj) {
-            cached = new com.simiacryptus.ref.wrappers.RefWeakReference<>(obj);
+            cached = new RefWeakReference<>(obj);
           }
         }
       }

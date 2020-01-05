@@ -19,9 +19,12 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
+
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class LabeledObject<T> {
   public final T data;
   public final String label;
@@ -32,15 +35,15 @@ class LabeledObject<T> {
     this.label = name;
   }
 
-  @javax.annotation.Nonnull
-  public <U> com.simiacryptus.util.test.LabeledObject<U> map(@javax.annotation.Nonnull final Function<T, U> f) {
-    return new com.simiacryptus.util.test.LabeledObject<>(f.apply(this.data), this.label);
+  @Nonnull
+  public <U> LabeledObject<U> map(@Nonnull final Function<T, U> f) {
+    return new LabeledObject<>(f.apply(this.data), this.label);
   }
 
-  @javax.annotation.Nonnull
+  @Nonnull
   @Override
   public String toString() {
-    @javax.annotation.Nonnull final StringBuffer sb = new StringBuffer("LabeledObject{");
+    @Nonnull final StringBuffer sb = new StringBuffer("LabeledObject{");
     sb.append("data=").append(data);
     sb.append(", label='").append(label).append('\'');
     sb.append('}');

@@ -19,10 +19,13 @@
 
 package com.simiacryptus.util.binary;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+
 import java.util.Base64;
 import java.util.Random;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class Bits implements Comparable<Bits> {
   public static Bits ONE = new Bits(1, 1);
   public static Bits ZERO = new Bits(0, 1);
@@ -46,7 +49,7 @@ class Bits implements Comparable<Bits> {
       throw new IllegalArgumentException();
     }
     this.bitLength = length;
-    this.bytes = com.simiacryptus.ref.wrappers.RefArrays.copyOf(data, data.length); // Bits.shiftLeft(data, (data.length * 8 - length) % 8);
+    this.bytes = RefArrays.copyOf(data, data.length); // Bits.shiftLeft(data, (data.length * 8 - length) % 8);
   }
 
   public Bits(final long data) {
@@ -88,7 +91,7 @@ class Bits implements Comparable<Bits> {
   }
 
   public byte[] getBytes() {
-    return com.simiacryptus.ref.wrappers.RefArrays.copyOf(this.bytes, this.bytes.length);
+    return RefArrays.copyOf(this.bytes, this.bytes.length);
   }
 
   public static Bits divide(long numerator, long denominator, long maxBits) {
@@ -185,7 +188,7 @@ class Bits implements Comparable<Bits> {
   public static byte[] trim(final byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
       if (bytes[i] != 0) {
-        return com.simiacryptus.ref.wrappers.RefArrays.copyOfRange(bytes, i, bytes.length);
+        return RefArrays.copyOfRange(bytes, i, bytes.length);
       }
     }
     return new byte[]{};
@@ -286,7 +289,7 @@ class Bits implements Comparable<Bits> {
       return false;
     }
     final Bits other = (Bits) obj;
-    if (!com.simiacryptus.ref.wrappers.RefArrays.equals(this.bytes, other.bytes)) {
+    if (!RefArrays.equals(this.bytes, other.bytes)) {
       return false;
     }
     return this.bitLength == other.bitLength;
@@ -296,7 +299,7 @@ class Bits implements Comparable<Bits> {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + com.simiacryptus.ref.wrappers.RefArrays.hashCode(this.bytes);
+    result = prime * result + RefArrays.hashCode(this.bytes);
     result = prime * result + this.bitLength;
     return result;
   }

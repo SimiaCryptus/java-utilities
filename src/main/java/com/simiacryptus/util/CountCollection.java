@@ -19,14 +19,19 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.RefArrayList;
+import com.simiacryptus.ref.wrappers.RefList;
+import com.simiacryptus.ref.wrappers.RefMap;
+import com.simiacryptus.ref.wrappers.RefMaps;
 import com.simiacryptus.ref.wrappers.RefMaps.EntryTransformer;
 
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @com.simiacryptus.ref.lang.RefAware
-class CountCollection<T, C extends com.simiacryptus.ref.wrappers.RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
+public @RefAware
+class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
 
   protected final C map;
 
@@ -35,8 +40,8 @@ class CountCollection<T, C extends com.simiacryptus.ref.wrappers.RefMap<T, Atomi
     this.map = collection;
   }
 
-  public com.simiacryptus.ref.wrappers.RefList<T> getList() {
-    final com.simiacryptus.ref.wrappers.RefArrayList<T> list = new com.simiacryptus.ref.wrappers.RefArrayList<T>();
+  public RefList<T> getList() {
+    final RefArrayList<T> list = new RefArrayList<T>();
     for (final Entry<T, AtomicInteger> e : this.map.entrySet()) {
       for (int i = 0; i < e.getValue().get(); i++) {
         list.add(e.getKey());
@@ -45,8 +50,8 @@ class CountCollection<T, C extends com.simiacryptus.ref.wrappers.RefMap<T, Atomi
     return list;
   }
 
-  public com.simiacryptus.ref.wrappers.RefMap<T, Integer> getMap() {
-    return com.simiacryptus.ref.wrappers.RefMaps.transformEntries(this.map,
+  public RefMap<T, Integer> getMap() {
+    return RefMaps.transformEntries(this.map,
         new EntryTransformer<T, AtomicInteger, Integer>() {
           @Override
           public Integer transformEntry(final T key, final AtomicInteger value) {

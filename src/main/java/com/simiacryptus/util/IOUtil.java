@@ -24,6 +24,8 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import org.apache.commons.io.IOUtils;
 
@@ -33,7 +35,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class IOUtil {
   private static final ObjectMapper objectMapper = JsonUtil.getMapper();
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
@@ -75,7 +77,7 @@ class IOUtil {
       Output output = new Output(buffer.get());
       new KryoReflectionFactorySupport().writeClassAndObject(output, obj);
       output.close();
-      IOUtils.write(com.simiacryptus.ref.wrappers.RefArrays.copyOf(output.getBuffer(), output.position()), file);
+      IOUtils.write(RefArrays.copyOf(output.getBuffer(), output.position()), file);
       file.close();
     } catch (IOException e) {
       throw new RuntimeException(e);

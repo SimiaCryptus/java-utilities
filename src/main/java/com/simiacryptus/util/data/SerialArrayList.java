@@ -19,11 +19,15 @@
 
 package com.simiacryptus.util.data;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefCollection;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.function.Function;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class SerialArrayList<U> {
   public final int unitSize;
   private final SerialType<U> factory;
@@ -33,7 +37,7 @@ class SerialArrayList<U> {
   public SerialArrayList(SerialType<U> factory, SerialArrayList<U>... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
-    this.maxByte = com.simiacryptus.ref.wrappers.RefArrays.stream(items).mapToInt(item -> item.maxByte).sum();
+    this.maxByte = RefArrays.stream(items).mapToInt(item -> item.maxByte).sum();
     this.buffer = new byte[this.maxByte];
     int cursor = 0;
     for (int i = 0; i < items.length; i++) {
@@ -43,7 +47,7 @@ class SerialArrayList<U> {
     }
   }
 
-  public SerialArrayList(SerialType<U> factory, com.simiacryptus.ref.wrappers.RefCollection<U> items) {
+  public SerialArrayList(SerialType<U> factory, RefCollection<U> items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.size() * unitSize];
@@ -120,13 +124,13 @@ class SerialArrayList<U> {
     }
   }
 
-  public synchronized int addAll(com.simiacryptus.ref.wrappers.RefCollection<U> data) {
+  public synchronized int addAll(RefCollection<U> data) {
     int startIndex = length();
     putAll(data, startIndex);
     return startIndex;
   }
 
-  public synchronized void putAll(com.simiacryptus.ref.wrappers.RefCollection<U> data, int startIndex) {
+  public synchronized void putAll(RefCollection<U> data, int startIndex) {
     putAll(new SerialArrayList<U>(factory, data), startIndex);
   }
 
@@ -154,14 +158,14 @@ class SerialArrayList<U> {
       return false;
     if (!factory.equals(that.factory))
       return false;
-    return com.simiacryptus.ref.wrappers.RefArrays.equals(buffer, that.buffer);
+    return RefArrays.equals(buffer, that.buffer);
   }
 
   @Override
   public int hashCode() {
     int result = factory.hashCode();
     result = 31 * result + unitSize;
-    result = 31 * result + com.simiacryptus.ref.wrappers.RefArrays.hashCode(buffer);
+    result = 31 * result + RefArrays.hashCode(buffer);
     result = 31 * result + maxByte;
     return result;
   }
@@ -180,7 +184,7 @@ class SerialArrayList<U> {
     while (targetBytes < bytes)
       targetBytes = Math.max(targetBytes * 2, 1);
     if (targetBytes > buffer.length) {
-      buffer = com.simiacryptus.ref.wrappers.RefArrays.copyOf(buffer, targetBytes);
+      buffer = RefArrays.copyOf(buffer, targetBytes);
     }
   }
 }

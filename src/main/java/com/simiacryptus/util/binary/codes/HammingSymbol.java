@@ -19,7 +19,9 @@
 
 package com.simiacryptus.util.binary.codes;
 
-public @com.simiacryptus.ref.lang.RefAware
+import com.simiacryptus.ref.lang.RefAware;
+
+public @RefAware
 class HammingSymbol<T extends Comparable<T>>
     implements Comparable<HammingSymbol<T>> {
 

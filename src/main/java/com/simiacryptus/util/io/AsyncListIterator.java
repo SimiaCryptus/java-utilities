@@ -19,16 +19,21 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefIteratorBase;
+import com.simiacryptus.ref.wrappers.RefList;
+
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class AsyncListIterator<T>
-    extends com.simiacryptus.ref.wrappers.RefIteratorBase<T> {
-  private final com.simiacryptus.ref.wrappers.RefList<T> queue;
+    extends RefIteratorBase<T> {
+  private final RefList<T> queue;
   private final Thread thread;
   int index = -1;
 
-  public AsyncListIterator(final com.simiacryptus.ref.wrappers.RefList<T> queue, final Thread thread) {
+  public AsyncListIterator(final RefList<T> queue, final Thread thread) {
     this.thread = thread;
     this.queue = queue;
   }
@@ -50,7 +55,7 @@ class AsyncListIterator<T>
         }
       }
       return null;
-    } catch (@javax.annotation.Nonnull final InterruptedException e) {
+    } catch (@Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
   }

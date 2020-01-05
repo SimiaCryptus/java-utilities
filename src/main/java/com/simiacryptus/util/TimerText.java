@@ -19,11 +19,13 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class TimerText {
   final long start = System.currentTimeMillis();
   private final SimpleDateFormat formatter;

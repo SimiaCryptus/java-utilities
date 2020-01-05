@@ -19,11 +19,13 @@
 
 package com.simiacryptus.util.function;
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class SoftCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;

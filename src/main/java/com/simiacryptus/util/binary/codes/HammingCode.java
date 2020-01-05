@@ -19,6 +19,9 @@
 
 package com.simiacryptus.util.binary.codes;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefCollection;
+import com.simiacryptus.ref.wrappers.RefTreeSet;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.Bits;
 import com.simiacryptus.util.binary.bitset.CountTreeBitsCollection;
@@ -27,16 +30,16 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class HammingCode<T extends Comparable<T>> {
   protected final TreeMap<Bits, T> forwardIndex = new TreeMap<Bits, T>();
   protected final HashMap<T, Bits> reverseIndex = new HashMap<T, Bits>();
   protected final HashMap<T, Integer> weights = new HashMap<T, Integer>();
   protected final long totalWeight;
 
-  public HammingCode(final com.simiacryptus.ref.wrappers.RefCollection<HammingSymbol<T>> symbols) {
+  public HammingCode(final RefCollection<HammingSymbol<T>> symbols) {
     if (0 < symbols.size()) {
-      final com.simiacryptus.ref.wrappers.RefTreeSet<SubCode<T>> assemblySet = new com.simiacryptus.ref.wrappers.RefTreeSet<SubCode<T>>();
+      final RefTreeSet<SubCode<T>> assemblySet = new RefTreeSet<SubCode<T>>();
       for (final HammingSymbol<T> s : symbols) {
         this.weights.put(s.key, s.count);
         assemblySet.add(new SubCode<T>(s.count, s.key));
@@ -66,7 +69,7 @@ class HammingCode<T extends Comparable<T>> {
   }
 
   public static boolean isPrefixFreeCode(final Set<Bits> keySet) {
-    final com.simiacryptus.ref.wrappers.RefTreeSet<Bits> check = new com.simiacryptus.ref.wrappers.RefTreeSet<Bits>();
+    final RefTreeSet<Bits> check = new RefTreeSet<Bits>();
     for (final Bits code : keySet) {
       final Bits ceiling = check.ceiling(code);
       if (null != ceiling && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
@@ -158,7 +161,7 @@ class HammingCode<T extends Comparable<T>> {
     return 0;
   }
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class HammingCodeCollection<T extends Comparable<T>> extends CountTreeBitsCollection {
 
     private final HammingCode<T> parent;
@@ -189,7 +192,7 @@ class HammingCode<T extends Comparable<T>> {
     }
   }
 
-  private static @com.simiacryptus.ref.lang.RefAware
+  private static @RefAware
   class SubCode<X extends Comparable<X>>
       implements Comparable<SubCode<X>> {
     final long count;

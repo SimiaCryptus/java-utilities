@@ -21,22 +21,24 @@ package com.simiacryptus.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
+import com.simiacryptus.ref.lang.RefAware;
 import de.javakaffee.kryoserializers.EnumMapSerializer;
 import de.javakaffee.kryoserializers.EnumSetSerializer;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 
+import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class KryoUtil {
 
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
 
-    @javax.annotation.Nonnull
+    @Nonnull
     @Override
     protected Kryo initialValue() {
-      @javax.annotation.Nonnull final Kryo kryo = new KryoReflectionFactorySupport() {
+      @Nonnull final Kryo kryo = new KryoReflectionFactorySupport() {
 
         @Override
         public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class clazz) {

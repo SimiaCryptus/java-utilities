@@ -19,16 +19,20 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+
+import javax.annotation.Nonnull;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class AsyncOutputStream extends FilterOutputStream {
 
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
 
-  public AsyncOutputStream(@javax.annotation.Nonnull final OutputStream stream) {
+  public AsyncOutputStream(@Nonnull final OutputStream stream) {
     super(stream);
   }
 
@@ -37,7 +41,7 @@ class AsyncOutputStream extends FilterOutputStream {
     queue.submit(() -> {
       try {
         out.close();
-      } catch (@javax.annotation.Nonnull final IOException e) {
+      } catch (@Nonnull final IOException e) {
         throw new RuntimeException(e);
       }
     });
@@ -48,7 +52,7 @@ class AsyncOutputStream extends FilterOutputStream {
     queue.submit(() -> {
       try {
         out.flush();
-      } catch (@javax.annotation.Nonnull final IOException e) {
+      } catch (@Nonnull final IOException e) {
         throw new RuntimeException(e);
       }
     });
@@ -56,11 +60,11 @@ class AsyncOutputStream extends FilterOutputStream {
 
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) {
-    @javax.annotation.Nonnull final byte[] _b = com.simiacryptus.ref.wrappers.RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
+    @Nonnull final byte[] _b = RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
     queue.submit(() -> {
       try {
         out.write(_b);
-      } catch (@javax.annotation.Nonnull final IOException e) {
+      } catch (@Nonnull final IOException e) {
         throw new RuntimeException(e);
       }
     });
@@ -71,7 +75,7 @@ class AsyncOutputStream extends FilterOutputStream {
     queue.submit(() -> {
       try {
         out.write(b);
-      } catch (@javax.annotation.Nonnull final IOException e) {
+      } catch (@Nonnull final IOException e) {
         throw new RuntimeException(e);
       }
     });

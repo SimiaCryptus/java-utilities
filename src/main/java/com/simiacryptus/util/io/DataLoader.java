@@ -19,15 +19,18 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.*;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Spliterator;
 
-public abstract @com.simiacryptus.ref.lang.RefAware
+public abstract @RefAware
 class DataLoader<T> extends ReferenceCountingBase {
-  private final com.simiacryptus.ref.wrappers.RefList<T> queue = com.simiacryptus.ref.wrappers.RefCollections
-      .synchronizedList(new com.simiacryptus.ref.wrappers.RefArrayList<>());
+  private final RefList<T> queue = RefCollections
+      .synchronizedList(new RefArrayList<>());
   @Nullable
   private volatile Thread thread;
 
@@ -50,12 +53,12 @@ class DataLoader<T> extends ReferenceCountingBase {
     }
     try {
       thread.join();
-    } catch (@javax.annotation.Nonnull final InterruptedException e) {
+    } catch (@Nonnull final InterruptedException e) {
       Thread.currentThread().interrupt();
     }
   }
 
-  public com.simiacryptus.ref.wrappers.RefStream<T> stream() {
+  public RefStream<T> stream() {
     if (thread == null) {
       synchronized (this) {
         if (thread == null) {
@@ -65,12 +68,12 @@ class DataLoader<T> extends ReferenceCountingBase {
         }
       }
     }
-    @Nullable final com.simiacryptus.ref.wrappers.RefIteratorBase<T> iterator = new AsyncListIterator<>(queue, thread);
-    return com.simiacryptus.ref.wrappers.RefStreamSupport
-        .stream(com.simiacryptus.ref.wrappers.RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
+    @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue, thread);
+    return RefStreamSupport
+        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
             false)
         .filter(x -> x != null);
   }
 
-  protected abstract void read(com.simiacryptus.ref.wrappers.RefList<T> queue);
+  protected abstract void read(RefList<T> queue);
 }

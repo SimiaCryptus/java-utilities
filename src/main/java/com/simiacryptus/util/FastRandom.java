@@ -19,7 +19,9 @@
 
 package com.simiacryptus.util;
 
-public @com.simiacryptus.ref.lang.RefAware
+import com.simiacryptus.ref.lang.RefAware;
+
+public @RefAware
 class FastRandom {
   public static final FastRandom INSTANCE = new FastRandom();
   private final long t;

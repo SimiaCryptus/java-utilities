@@ -20,13 +20,18 @@
 package com.simiacryptus.util.data;
 
 import com.google.gson.JsonObject;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefHashMap;
+import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.util.MonitoredItem;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class ScalarStatistics implements MonitoredItem, Serializable {
   private static final double zeroTol = 1e-20;
   private volatile double max = -Double.POSITIVE_INFINITY;
@@ -43,9 +48,9 @@ class ScalarStatistics implements MonitoredItem, Serializable {
     return sum0;
   }
 
-  @javax.annotation.Nonnull
+  @Nonnull
   public JsonObject getJson() {
-    @javax.annotation.Nonnull final JsonObject json = new JsonObject();
+    @Nonnull final JsonObject json = new JsonObject();
     json.addProperty("min", min);
     json.addProperty("max", max);
     json.addProperty("negatives", negatives);
@@ -67,8 +72,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
   }
 
   @Override
-  public com.simiacryptus.ref.wrappers.RefMap<CharSequence, Object> getMetrics() {
-    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefHashMap<CharSequence, Object> map = new com.simiacryptus.ref.wrappers.RefHashMap<>();
+  public RefMap<CharSequence, Object> getMetrics() {
+    @Nonnull final RefHashMap<CharSequence, Object> map = new RefHashMap<>();
     map.put("count", sum0);
     map.put("sum", sum1);
     map.put("negative", negatives);
@@ -86,15 +91,15 @@ class ScalarStatistics implements MonitoredItem, Serializable {
     return Math.sqrt(Math.abs(Math.pow(getMean(), 2) - sum2 / sum0));
   }
 
-  @javax.annotation.Nonnull
-  public static com.simiacryptus.util.data.ScalarStatistics stats(@javax.annotation.Nonnull final double[] data) {
-    @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics statistics = new PercentileStatistics();
-    com.simiacryptus.ref.wrappers.RefArrays.stream(data).forEach(statistics::add);
+  @Nonnull
+  public static ScalarStatistics stats(@Nonnull final double[] data) {
+    @Nonnull final ScalarStatistics statistics = new PercentileStatistics();
+    RefArrays.stream(data).forEach(statistics::add);
     return statistics;
   }
 
   @Nullable
-  public com.simiacryptus.util.data.ScalarStatistics add(@javax.annotation.Nonnull final double... values) {
+  public ScalarStatistics add(@Nonnull final double... values) {
     double v1 = 0;
     double v2 = 0;
     double vmax = max;
@@ -108,7 +113,7 @@ class ScalarStatistics implements MonitoredItem, Serializable {
       v2 += v * v;
       vmin = Math.min(vmin, v);
       vmax = Math.max(vmax, v);
-      if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
+      if (Math.abs(v) < ScalarStatistics.zeroTol) {
         z++;
       } else {
         if (v < 0) {
@@ -139,7 +144,7 @@ class ScalarStatistics implements MonitoredItem, Serializable {
     sum2 += v * v;
     min = Math.min(min, v);
     max = Math.max(max, v);
-    if (Math.abs(v) < com.simiacryptus.util.data.ScalarStatistics.zeroTol) {
+    if (Math.abs(v) < ScalarStatistics.zeroTol) {
       zeros++;
     } else {
       if (v < 0) {
@@ -151,10 +156,10 @@ class ScalarStatistics implements MonitoredItem, Serializable {
     }
   }
 
-  @javax.annotation.Nonnull
-  public final synchronized com.simiacryptus.util.data.ScalarStatistics add(
-      @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
-    @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
+  @Nonnull
+  public final synchronized ScalarStatistics add(
+      @Nonnull final ScalarStatistics right) {
+    @Nonnull final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 += right.sum0;
     sum.sum1 += sum1;
@@ -190,10 +195,10 @@ class ScalarStatistics implements MonitoredItem, Serializable {
     sumLog = json.get("sumLog").getAsDouble();
   }
 
-  @javax.annotation.Nonnull
-  public final synchronized com.simiacryptus.util.data.ScalarStatistics subtract(
-      @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics right) {
-    @javax.annotation.Nonnull final com.simiacryptus.util.data.ScalarStatistics sum = new com.simiacryptus.util.data.ScalarStatistics();
+  @Nonnull
+  public final synchronized ScalarStatistics subtract(
+      @Nonnull final ScalarStatistics right) {
+    @Nonnull final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 -= right.sum0;
     sum.sum1 += sum1;

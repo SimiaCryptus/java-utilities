@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefHashMap;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,31 +31,31 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class LocalAppSettings {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalAppSettings.class);
 
   public final Map<String, String> properties = new HashMap<>();
 
-  public LocalAppSettings(com.simiacryptus.ref.wrappers.RefHashMap<String, String> properties) {
+  public LocalAppSettings(RefHashMap<String, String> properties) {
     this.properties.putAll(properties);
   }
 
-  public static com.simiacryptus.ref.wrappers.RefHashMap<String, String> read() {
+  public static RefHashMap<String, String> read() {
     return read(new File("."));
 
   }
 
-  public static com.simiacryptus.ref.wrappers.RefHashMap<String, String> read(File workingDir) {
+  public static RefHashMap<String, String> read(File workingDir) {
     File parentFile = workingDir.getParentFile();
     File file = new File(workingDir, "app.json");
     if (file.exists()) {
-      com.simiacryptus.ref.wrappers.RefHashMap<String, String> settings = null;
+      RefHashMap<String, String> settings = null;
       try {
         settings = JsonUtil.getMapper().readValue(
             new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")),
-            com.simiacryptus.ref.wrappers.RefHashMap.class);
+            RefHashMap.class);
         settings.forEach((k, v) -> logger.info(String.format("Loaded %s = %s from %s", k, v, file)));
       } catch (IOException e) {
         throw new RuntimeException(e);
@@ -65,7 +67,7 @@ class LocalAppSettings {
     } else if (parentFile != null && parentFile.exists()) {
       return read(parentFile);
     } else {
-      return new com.simiacryptus.ref.wrappers.RefHashMap<>();
+      return new RefHashMap<>();
     }
 
   }

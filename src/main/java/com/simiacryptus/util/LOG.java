@@ -19,10 +19,13 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class LOG {
 
   private static final long startTime = System.nanoTime();
@@ -50,7 +53,7 @@ class LOG {
 
   private static void log(final Severity debug, final String msg, final Object[] args) {
     final String formatted = String.format(msg, args);
-    final StackTraceElement caller = com.simiacryptus.ref.wrappers.RefArrays
+    final StackTraceElement caller = RefArrays
         .stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
           Class<?> clazz;
           try {
@@ -78,13 +81,13 @@ class LOG {
         if (args[i] instanceof double[]) {
           args[i] = LOG.toString((double[]) args[i]);
         } else if (args[i] instanceof int[]) {
-          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((int[]) args[i]);
+          args[i] = RefArrays.toString((int[]) args[i]);
         } else if (args[i] instanceof long[]) {
-          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((long[]) args[i]);
+          args[i] = RefArrays.toString((long[]) args[i]);
         } else if (args[i] instanceof byte[]) {
-          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((byte[]) args[i]);
+          args[i] = RefArrays.toString((byte[]) args[i]);
         } else {
-          args[i] = com.simiacryptus.ref.wrappers.RefArrays.toString((Object[]) args[i]);
+          args[i] = RefArrays.toString((Object[]) args[i]);
         }
       }
     }

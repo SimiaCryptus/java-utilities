@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util.binary.bitset;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.util.CountCollection;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
@@ -27,8 +29,8 @@ import com.simiacryptus.util.binary.Bits;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract @com.simiacryptus.ref.lang.RefAware
-class BitsCollection<C extends com.simiacryptus.ref.wrappers.RefMap<Bits, AtomicInteger>>
+public abstract @RefAware
+class BitsCollection<C extends RefMap<Bits, AtomicInteger>>
     extends CountCollection<Bits, C> {
 
   public final Integer bitDepth;

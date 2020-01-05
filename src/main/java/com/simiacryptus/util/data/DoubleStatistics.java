@@ -19,21 +19,25 @@
 
 package com.simiacryptus.util.data;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefArrays;
+
+import javax.annotation.Nonnull;
 import java.util.DoubleSummaryStatistics;
 import java.util.stream.Collector;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class DoubleStatistics extends DoubleSummaryStatistics {
 
-  @javax.annotation.Nonnull
-  public static Collector<Double, com.simiacryptus.util.data.DoubleStatistics, com.simiacryptus.util.data.DoubleStatistics> COLLECTOR = Collector
-      .of(com.simiacryptus.util.data.DoubleStatistics::new, com.simiacryptus.util.data.DoubleStatistics::accept,
-          com.simiacryptus.util.data.DoubleStatistics::combine, d -> d);
+  @Nonnull
+  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector
+      .of(DoubleStatistics::new, DoubleStatistics::accept,
+          DoubleStatistics::combine, d -> d);
 
-  @javax.annotation.Nonnull
-  public static Collector<Number, com.simiacryptus.util.data.DoubleStatistics, com.simiacryptus.util.data.DoubleStatistics> NUMBERS = Collector
-      .of(com.simiacryptus.util.data.DoubleStatistics::new, (a, n) -> a.accept(n.doubleValue()),
-          com.simiacryptus.util.data.DoubleStatistics::combine, d -> d);
+  @Nonnull
+  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector
+      .of(DoubleStatistics::new, (a, n) -> a.accept(n.doubleValue()),
+          DoubleStatistics::combine, d -> d);
 
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
   private double sumOfSquare = 0.0d;
@@ -59,15 +63,15 @@ class DoubleStatistics extends DoubleSummaryStatistics {
     sumOfSquareWithCompensation(squareValue);
   }
 
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.data.DoubleStatistics accept(@javax.annotation.Nonnull final double[] value) {
-    com.simiacryptus.ref.wrappers.RefArrays.stream(value).forEach(this::accept);
+  @Nonnull
+  public DoubleStatistics accept(@Nonnull final double[] value) {
+    RefArrays.stream(value).forEach(this::accept);
     return this;
   }
 
-  @javax.annotation.Nonnull
-  public com.simiacryptus.util.data.DoubleStatistics combine(
-      @javax.annotation.Nonnull final com.simiacryptus.util.data.DoubleStatistics other) {
+  @Nonnull
+  public DoubleStatistics combine(
+      @Nonnull final DoubleStatistics other) {
     super.combine(other);
     simpleSumOfSquare += other.simpleSumOfSquare;
     sumOfSquareWithCompensation(other.sumOfSquare);

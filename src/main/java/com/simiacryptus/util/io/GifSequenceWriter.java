@@ -26,6 +26,8 @@ package com.simiacryptus.util.io;
 // http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
 // Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
+import com.simiacryptus.ref.lang.RefAware;
+
 import javax.annotation.Nonnull;
 import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
@@ -38,7 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class GifSequenceWriter {
 
   protected ImageWriter gifWriter;

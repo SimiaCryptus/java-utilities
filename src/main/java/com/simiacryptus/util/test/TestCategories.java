@@ -19,18 +19,20 @@
 
 package com.simiacryptus.util.test;
 
-public @com.simiacryptus.ref.lang.RefAware
+import com.simiacryptus.ref.lang.RefAware;
+
+public @RefAware
 class TestCategories {
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class Report {
   }
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class ResearchCode {
   }
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class UnitTest {
   }
 }

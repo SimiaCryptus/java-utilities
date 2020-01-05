@@ -19,97 +19,101 @@
 
 package com.simiacryptus.util;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.*;
+
+import javax.annotation.Nonnull;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class ArrayUtil {
 
-  @javax.annotation.Nonnull
-  public static double[] add(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x + y);
+  @Nonnull
+  public static double[] add(@Nonnull final double[] a, @Nonnull final double[] b) {
+    return ArrayUtil.op(a, b, (x, y) -> x + y);
   }
 
-  public static com.simiacryptus.ref.wrappers.RefList<double[]> add(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a,
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x + y);
+  public static RefList<double[]> add(
+      @Nonnull final RefList<double[]> a,
+      @Nonnull final RefList<double[]> b) {
+    return ArrayUtil.op(a, b, (x, y) -> x + y);
   }
 
-  public static double dot(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b) {
-    return com.simiacryptus.util.ArrayUtil.sum(com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x * y));
+  public static double dot(@Nonnull final double[] a, @Nonnull final double[] b) {
+    return ArrayUtil.sum(ArrayUtil.op(a, b, (x, y) -> x * y));
   }
 
-  public static double dot(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a,
-                           @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> b) {
-    return com.simiacryptus.util.ArrayUtil.sum(com.simiacryptus.util.ArrayUtil.multiply(a, b));
+  public static double dot(@Nonnull final RefList<double[]> a,
+                           @Nonnull final RefList<double[]> b) {
+    return ArrayUtil.sum(ArrayUtil.multiply(a, b));
   }
 
-  public static double magnitude(@javax.annotation.Nonnull final double[] a) {
-    return Math.sqrt(com.simiacryptus.util.ArrayUtil.dot(a, a));
+  public static double magnitude(@Nonnull final double[] a) {
+    return Math.sqrt(ArrayUtil.dot(a, a));
   }
 
-  public static double mean(@javax.annotation.Nonnull final double[] op) {
-    return com.simiacryptus.util.ArrayUtil.sum(op) / op.length;
+  public static double mean(@Nonnull final double[] op) {
+    return ArrayUtil.sum(op) / op.length;
   }
 
-  public static com.simiacryptus.ref.wrappers.RefList<double[]> minus(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a,
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x - y);
+  public static RefList<double[]> minus(
+      @Nonnull final RefList<double[]> a,
+      @Nonnull final RefList<double[]> b) {
+    return ArrayUtil.op(a, b, (x, y) -> x - y);
   }
 
-  @javax.annotation.Nonnull
-  public static double[] multiply(@javax.annotation.Nonnull final double[] a, final double b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, (x) -> x * b);
+  @Nonnull
+  public static double[] multiply(@Nonnull final double[] a, final double b) {
+    return ArrayUtil.op(a, (x) -> x * b);
   }
 
-  @javax.annotation.Nonnull
-  public static double[] multiply(@javax.annotation.Nonnull final double[] a,
-                                  @javax.annotation.Nonnull final double[] b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x * y);
+  @Nonnull
+  public static double[] multiply(@Nonnull final double[] a,
+                                  @Nonnull final double[] b) {
+    return ArrayUtil.op(a, b, (x, y) -> x * y);
   }
 
-  @javax.annotation.Nonnull
-  public static com.simiacryptus.ref.wrappers.RefList<double[]> multiply(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a, final double b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, x -> x * b);
+  @Nonnull
+  public static RefList<double[]> multiply(
+      @Nonnull final RefList<double[]> a, final double b) {
+    return ArrayUtil.op(a, x -> x * b);
   }
 
-  public static com.simiacryptus.ref.wrappers.RefList<double[]> multiply(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a,
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x * y);
+  public static RefList<double[]> multiply(
+      @Nonnull final RefList<double[]> a,
+      @Nonnull final RefList<double[]> b) {
+    return ArrayUtil.op(a, b, (x, y) -> x * y);
   }
 
-  @javax.annotation.Nonnull
-  public static double[] op(@javax.annotation.Nonnull final double[] a, @javax.annotation.Nonnull final double[] b,
-                            @javax.annotation.Nonnull final DoubleBinaryOperator fn) {
+  @Nonnull
+  public static double[] op(@Nonnull final double[] a, @Nonnull final double[] b,
+                            @Nonnull final DoubleBinaryOperator fn) {
     assert a.length == b.length;
-    @javax.annotation.Nonnull final double[] c = new double[a.length];
+    @Nonnull final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j], b[j]);
     }
     return c;
   }
 
-  @javax.annotation.Nonnull
-  public static double[] op(@javax.annotation.Nonnull final double[] a,
-                            @javax.annotation.Nonnull final DoubleUnaryOperator fn) {
-    @javax.annotation.Nonnull final double[] c = new double[a.length];
+  @Nonnull
+  public static double[] op(@Nonnull final double[] a,
+                            @Nonnull final DoubleUnaryOperator fn) {
+    @Nonnull final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j]);
     }
     return c;
   }
 
-  @javax.annotation.Nonnull
-  public static com.simiacryptus.ref.wrappers.RefList<double[]> op(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a,
-      @javax.annotation.Nonnull final DoubleUnaryOperator fn) {
-    @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefArrayList<double[]> list = new com.simiacryptus.ref.wrappers.RefArrayList<>();
+  @Nonnull
+  public static RefList<double[]> op(
+      @Nonnull final RefList<double[]> a,
+      @Nonnull final DoubleUnaryOperator fn) {
+    @Nonnull final RefArrayList<double[]> list = new RefArrayList<>();
     for (int i = 0; i < a.size(); i++) {
-      @javax.annotation.Nonnull final double[] c = new double[a.get(i).length];
+      @Nonnull final double[] c = new double[a.get(i).length];
       for (int j = 0; j < a.get(i).length; j++) {
         c[j] = fn.applyAsDouble(a.get(i)[j]);
       }
@@ -118,38 +122,38 @@ class ArrayUtil {
     return list;
   }
 
-  public static com.simiacryptus.ref.wrappers.RefList<double[]> op(
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a,
-      @javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> b,
-      @javax.annotation.Nonnull final DoubleBinaryOperator fn) {
+  public static RefList<double[]> op(
+      @Nonnull final RefList<double[]> a,
+      @Nonnull final RefList<double[]> b,
+      @Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
-    return com.simiacryptus.ref.wrappers.RefIntStream.range(0, a.size()).parallel().mapToObj(i -> {
+    return RefIntStream.range(0, a.size()).parallel().mapToObj(i -> {
       assert a.get(i).length == b.get(i).length;
-      @javax.annotation.Nonnull final double[] c = new double[a.get(i).length];
+      @Nonnull final double[] c = new double[a.get(i).length];
       for (int j = 0; j < a.get(i).length; j++) {
         c[j] = fn.applyAsDouble(a.get(i)[j], b.get(i)[j]);
       }
       return c;
-    }).collect(com.simiacryptus.ref.wrappers.RefCollectors.toList());
+    }).collect(RefCollectors.toList());
   }
 
-  @javax.annotation.Nonnull
-  public static double[] subtract(@javax.annotation.Nonnull final double[] a,
-                                  @javax.annotation.Nonnull final double[] b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, b, (x, y) -> x - y);
+  @Nonnull
+  public static double[] subtract(@Nonnull final double[] a,
+                                  @Nonnull final double[] b) {
+    return ArrayUtil.op(a, b, (x, y) -> x - y);
   }
 
-  public static double sum(@javax.annotation.Nonnull final double[] op) {
-    return com.simiacryptus.ref.wrappers.RefArrays.stream(op).sum();
+  public static double sum(@Nonnull final double[] op) {
+    return RefArrays.stream(op).sum();
   }
 
-  @javax.annotation.Nonnull
-  public static double[] sum(@javax.annotation.Nonnull final double[] a, final double b) {
-    return com.simiacryptus.util.ArrayUtil.op(a, (x) -> x + b);
+  @Nonnull
+  public static double[] sum(@Nonnull final double[] a, final double b) {
+    return ArrayUtil.op(a, (x) -> x + b);
   }
 
-  public static double sum(@javax.annotation.Nonnull final com.simiacryptus.ref.wrappers.RefList<double[]> a) {
-    return a.stream().parallel().mapToDouble(x -> com.simiacryptus.ref.wrappers.RefArrays.stream(x).sum()).sum();
+  public static double sum(@Nonnull final RefList<double[]> a) {
+    return a.stream().parallel().mapToDouble(x -> RefArrays.stream(x).sum()).sum();
   }
 
 }

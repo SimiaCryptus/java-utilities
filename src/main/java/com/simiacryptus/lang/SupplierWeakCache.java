@@ -19,14 +19,17 @@
 
 package com.simiacryptus.lang;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefWeakReference;
+
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   @Nullable
-  private com.simiacryptus.ref.wrappers.RefWeakReference<T> ptr;
+  private RefWeakReference<T> ptr;
 
   public SupplierWeakCache(final Supplier<T> fn) {
     this.fn = fn;
@@ -40,7 +43,7 @@ class SupplierWeakCache<T> implements Supplier<T> {
     T x = null == ptr ? null : ptr.get();
     if (null == x) {
       x = fn.get();
-      ptr = new com.simiacryptus.ref.wrappers.RefWeakReference<>(x);
+      ptr = new RefWeakReference<>(x);
     }
     return x;
   }

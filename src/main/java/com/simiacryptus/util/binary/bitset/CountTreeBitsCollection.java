@@ -19,7 +19,12 @@
 
 package com.simiacryptus.util.binary.bitset;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefCollection;
+import com.simiacryptus.ref.wrappers.RefMaps;
 import com.simiacryptus.ref.wrappers.RefMaps.EntryTransformer;
+import com.simiacryptus.ref.wrappers.RefNavigableMap;
+import com.simiacryptus.ref.wrappers.RefTreeMap;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -30,15 +35,15 @@ import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @com.simiacryptus.ref.lang.RefAware
+public @RefAware
 class CountTreeBitsCollection
-    extends BitsCollection<com.simiacryptus.ref.wrappers.RefTreeMap<Bits, AtomicInteger>> {
+    extends BitsCollection<RefTreeMap<Bits, AtomicInteger>> {
 
   public static boolean SERIALIZATION_CHECKS = false;
   private boolean useBinomials = true;
 
   public CountTreeBitsCollection() {
-    super(new com.simiacryptus.ref.wrappers.RefTreeMap<Bits, AtomicInteger>());
+    super(new RefTreeMap<Bits, AtomicInteger>());
   }
 
   public CountTreeBitsCollection(final BitInputStream bitStream) throws IOException {
@@ -60,7 +65,7 @@ class CountTreeBitsCollection
   }
 
   public CountTreeBitsCollection(final int bitDepth) {
-    super(bitDepth, new com.simiacryptus.ref.wrappers.RefTreeMap<Bits, AtomicInteger>());
+    super(bitDepth, new RefTreeMap<Bits, AtomicInteger>());
   }
 
   public CountTreeBitsCollection setUseBinomials(final boolean useBinomials) {
@@ -72,8 +77,8 @@ class CountTreeBitsCollection
     return null == value ? defaultValue : value;
   }
 
-  public com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> computeSums() {
-    final com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> sums = new com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long>();
+  public RefTreeMap<Bits, Long> computeSums() {
+    final RefTreeMap<Bits, Long> sums = new RefTreeMap<Bits, Long>();
     long total = 0;
     for (final Entry<Bits, AtomicInteger> e : this.map.entrySet()) {
       sums.put(e.getKey(), total += e.getValue().get());
@@ -97,7 +102,7 @@ class CountTreeBitsCollection
     }
   }
 
-  public long sum(final com.simiacryptus.ref.wrappers.RefCollection<Long> values) {
+  public long sum(final RefCollection<Long> values) {
     long total = 0;
     for (final Long v : values) {
       total += v;
@@ -119,7 +124,7 @@ class CountTreeBitsCollection
 
   @Override
   public void write(final BitOutputStream out) throws IOException {
-    final com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> sums = this.computeSums();
+    final RefTreeMap<Bits, Long> sums = this.computeSums();
     final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
     out.writeVarLong(value);
     if (0 < value) {
@@ -128,7 +133,7 @@ class CountTreeBitsCollection
   }
 
   public void write(final BitOutputStream out, final int size) throws IOException {
-    final com.simiacryptus.ref.wrappers.RefTreeMap<Bits, Long> sums = this.computeSums();
+    final RefTreeMap<Bits, Long> sums = this.computeSums();
     final long value = 0 == sums.size() ? 0 : sums.lastEntry().getValue();
     if (value != size) {
       throw new RuntimeException();
@@ -268,12 +273,12 @@ class CountTreeBitsCollection
   }
 
   private void write(final BitOutputStream out, final Bits currentCode,
-                     final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> sums) throws IOException {
+                     final RefNavigableMap<Bits, Long> sums) throws IOException {
     final Entry<Bits, Long> firstEntry = sums.firstEntry();
-    final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
+    final RefNavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
     final Bits splitCode = currentCode.concatenate(Bits.ONE);
-    final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> zeroMap = remainder.headMap(splitCode, false);
-    final com.simiacryptus.ref.wrappers.RefNavigableMap<Bits, Long> oneMap = remainder.tailMap(splitCode, true);
+    final RefNavigableMap<Bits, Long> zeroMap = remainder.headMap(splitCode, false);
+    final RefNavigableMap<Bits, Long> oneMap = remainder.tailMap(splitCode, true);
 
     final int firstEntryCount = this.map.get(firstEntry.getKey()).get();
     final long baseCount = firstEntry.getValue() - firstEntryCount;
@@ -290,9 +295,9 @@ class CountTreeBitsCollection
         return (long) CountTreeBitsCollection.this.map.get(key).get();
       }
     };
-    assert size == this.sum(com.simiacryptus.ref.wrappers.RefMaps.transformEntries(sums, transformer).values());
-    assert zeroCount == this.sum(com.simiacryptus.ref.wrappers.RefMaps.transformEntries(zeroMap, transformer).values());
-    assert oneCount == this.sum(com.simiacryptus.ref.wrappers.RefMaps.transformEntries(oneMap, transformer).values());
+    assert size == this.sum(RefMaps.transformEntries(sums, transformer).values());
+    assert zeroCount == this.sum(RefMaps.transformEntries(zeroMap, transformer).values());
+    assert oneCount == this.sum(RefMaps.transformEntries(oneMap, transformer).values());
 
     final BranchCounts branchCounts = new BranchCounts(currentCode, size, terminals, zeroCount, oneCount);
 
@@ -315,7 +320,7 @@ class CountTreeBitsCollection
     StartTree, EndTree, BeforeCount, AfterCount, BeforeTerminal, AfterTerminal
   }
 
-  public static @com.simiacryptus.ref.lang.RefAware
+  public static @RefAware
   class BranchCounts {
     public Bits path;
     public long size;

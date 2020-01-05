@@ -19,7 +19,9 @@
 
 package com.simiacryptus.util.binary;
 
-public @com.simiacryptus.ref.lang.RefAware
+import com.simiacryptus.ref.lang.RefAware;
+
+public @RefAware
 class Interval {
   public final long start;
   public final long max;
