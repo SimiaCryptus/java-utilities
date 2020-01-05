@@ -36,7 +36,7 @@ class PercentileStatistics extends ScalarStatistics {
 
   @Override
   public RefMap<CharSequence, Object> getMetrics() {
-    final RefMap<CharSequence, Object> map = super.getMetrics();
+    final RefMap<CharSequence, Object> map = super.getMetrics().addRef();
     map.put("tp50", getPercentile(0.5));
     map.put("tp75", getPercentile(0.75));
     map.put("tp90", getPercentile(0.9));

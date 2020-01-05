@@ -34,19 +34,19 @@ class ArrayUtil {
     return ArrayUtil.op(a, b, (x, y) -> x + y);
   }
 
-  public static RefList<double[]> add(
-      @Nonnull final RefList<double[]> a,
-      @Nonnull final RefList<double[]> b) {
-    return ArrayUtil.op(a, b, (x, y) -> x + y);
+  public static RefList<double[]> add(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
+    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0001 = ArrayUtil.op(a == null ? null : a,
+        b == null ? null : b, (x, y) -> x + y);
+    return temp_08_0001;
   }
 
   public static double dot(@Nonnull final double[] a, @Nonnull final double[] b) {
     return ArrayUtil.sum(ArrayUtil.op(a, b, (x, y) -> x * y));
   }
 
-  public static double dot(@Nonnull final RefList<double[]> a,
-                           @Nonnull final RefList<double[]> b) {
-    return ArrayUtil.sum(ArrayUtil.multiply(a, b));
+  public static double dot(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
+    double temp_08_0002 = ArrayUtil.sum(ArrayUtil.multiply(a == null ? null : a, b == null ? null : b));
+    return temp_08_0002;
   }
 
   public static double magnitude(@Nonnull final double[] a) {
@@ -57,10 +57,10 @@ class ArrayUtil {
     return ArrayUtil.sum(op) / op.length;
   }
 
-  public static RefList<double[]> minus(
-      @Nonnull final RefList<double[]> a,
-      @Nonnull final RefList<double[]> b) {
-    return ArrayUtil.op(a, b, (x, y) -> x - y);
+  public static RefList<double[]> minus(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
+    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0003 = ArrayUtil.op(a == null ? null : a,
+        b == null ? null : b, (x, y) -> x - y);
+    return temp_08_0003;
   }
 
   @Nonnull
@@ -69,21 +69,20 @@ class ArrayUtil {
   }
 
   @Nonnull
-  public static double[] multiply(@Nonnull final double[] a,
-                                  @Nonnull final double[] b) {
+  public static double[] multiply(@Nonnull final double[] a, @Nonnull final double[] b) {
     return ArrayUtil.op(a, b, (x, y) -> x * y);
   }
 
   @Nonnull
-  public static RefList<double[]> multiply(
-      @Nonnull final RefList<double[]> a, final double b) {
-    return ArrayUtil.op(a, x -> x * b);
+  public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, final double b) {
+    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0004 = ArrayUtil.op(a == null ? null : a, x -> x * b);
+    return temp_08_0004;
   }
 
-  public static RefList<double[]> multiply(
-      @Nonnull final RefList<double[]> a,
-      @Nonnull final RefList<double[]> b) {
-    return ArrayUtil.op(a, b, (x, y) -> x * y);
+  public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
+    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0005 = ArrayUtil.op(a == null ? null : a,
+        b == null ? null : b, (x, y) -> x * y);
+    return temp_08_0005;
   }
 
   @Nonnull
@@ -98,8 +97,7 @@ class ArrayUtil {
   }
 
   @Nonnull
-  public static double[] op(@Nonnull final double[] a,
-                            @Nonnull final DoubleUnaryOperator fn) {
+  public static double[] op(@Nonnull final double[] a, @Nonnull final DoubleUnaryOperator fn) {
     @Nonnull final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j]);
@@ -108,9 +106,7 @@ class ArrayUtil {
   }
 
   @Nonnull
-  public static RefList<double[]> op(
-      @Nonnull final RefList<double[]> a,
-      @Nonnull final DoubleUnaryOperator fn) {
+  public static RefList<double[]> op(@Nonnull final RefList<double[]> a, @Nonnull final DoubleUnaryOperator fn) {
     @Nonnull final RefArrayList<double[]> list = new RefArrayList<>();
     for (int i = 0; i < a.size(); i++) {
       @Nonnull final double[] c = new double[a.get(i).length];
@@ -119,27 +115,27 @@ class ArrayUtil {
       }
       list.add(c);
     }
+    a.freeRef();
     return list;
   }
 
-  public static RefList<double[]> op(
-      @Nonnull final RefList<double[]> a,
-      @Nonnull final RefList<double[]> b,
-      @Nonnull final DoubleBinaryOperator fn) {
+  public static RefList<double[]> op(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b,
+                                     @Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
-    return RefIntStream.range(0, a.size()).parallel().mapToObj(i -> {
-      assert a.get(i).length == b.get(i).length;
-      @Nonnull final double[] c = new double[a.get(i).length];
-      for (int j = 0; j < a.get(i).length; j++) {
-        c[j] = fn.applyAsDouble(a.get(i)[j], b.get(i)[j]);
-      }
-      return c;
-    }).collect(RefCollectors.toList());
+    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0006 = RefIntStream.range(0, a.size()).parallel().mapToObj(
+        com.simiacryptus.ref.lang.RefUtil.wrapInterface((java.util.function.IntFunction<? extends double[]>) i -> {
+          assert a.get(i).length == b.get(i).length;
+          @Nonnull final double[] c = new double[a.get(i).length];
+          for (int j = 0; j < a.get(i).length; j++) {
+            c[j] = fn.applyAsDouble(a.get(i)[j], b.get(i)[j]);
+          }
+          return c;
+        }, a == null ? null : a, b == null ? null : b)).collect(RefCollectors.toList());
+    return temp_08_0006;
   }
 
   @Nonnull
-  public static double[] subtract(@Nonnull final double[] a,
-                                  @Nonnull final double[] b) {
+  public static double[] subtract(@Nonnull final double[] a, @Nonnull final double[] b) {
     return ArrayUtil.op(a, b, (x, y) -> x - y);
   }
 
@@ -153,7 +149,9 @@ class ArrayUtil {
   }
 
   public static double sum(@Nonnull final RefList<double[]> a) {
-    return a.stream().parallel().mapToDouble(x -> RefArrays.stream(x).sum()).sum();
+    double temp_08_0007 = a.stream().parallel().mapToDouble(x -> RefArrays.stream(x).sum()).sum();
+    a.freeRef();
+    return temp_08_0007;
   }
 
 }

@@ -38,8 +38,7 @@ class TableOutput {
   public final Map<CharSequence, Class<?>> schema = new LinkedHashMap<>();
 
   @Nonnull
-  public static TableOutput create(
-      @Nonnull final Map<CharSequence, Object>... rows) {
+  public static TableOutput create(@Nonnull final Map<CharSequence, Object>... rows) {
     @Nonnull final TableOutput table = new TableOutput();
     Arrays.stream(rows).forEach(table::putRow);
     return table;
@@ -49,8 +48,15 @@ class TableOutput {
   @Nonnull
   public TableOutput calcNumberStats() {
     @Nonnull final TableOutput tableOutput = new TableOutput();
-    schema.entrySet().stream().filter(x -> Number.class.isAssignableFrom(x.getValue())).map(col -> {
+    schema.entrySet().stream().filter(x -> {
+      boolean temp_04_0001 = Number.class.isAssignableFrom(x.getValue());
+      if (null != x)
+        com.simiacryptus.ref.lang.RefUtil.freeRef(x);
+      return temp_04_0001;
+    }).map(col -> {
       final CharSequence key = col.getKey();
+      if (null != col)
+        com.simiacryptus.ref.lang.RefUtil.freeRef(col);
       final DoubleStatistics stats = rows.stream().filter(x -> x.containsKey(key)).map(x -> (Number) x.get(key))
           .collect(DoubleStatistics.NUMBERS);
       @Nonnull final LinkedHashMap<CharSequence, Object> row = new LinkedHashMap<>();
@@ -60,8 +66,7 @@ class TableOutput {
       row.put("stddev", stats.getStandardDeviation());
       row.put("nulls", rows.size() - stats.getCount());
       return row;
-    }).sorted(Comparator.comparing(x -> x.get("field").toString()))
-        .forEach(row -> tableOutput.putRow(row));
+    }).sorted(Comparator.comparing(x -> x.get("field").toString())).forEach(row -> tableOutput.putRow(row));
     return tableOutput;
   }
 
@@ -70,8 +75,7 @@ class TableOutput {
     rows.clear();
   }
 
-  public void putRow(
-      @Nonnull final Map<? extends CharSequence, ? extends Object> properties) {
+  public void putRow(@Nonnull final Map<? extends CharSequence, ? extends Object> properties) {
     for (@Nonnull final Entry<? extends CharSequence, ? extends Object> prop : properties.entrySet()) {
       final CharSequence propKey = prop.getKey();
       if (null != propKey) {
@@ -94,9 +98,7 @@ class TableOutput {
          ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (@Nonnull
            PrintStream printStream = new PrintStream(buffer)) {
-        @Nonnull final Collection<CharSequence> keys = sortCols
-            ? new TreeSet<CharSequence>(schema.keySet())
-            : schema.keySet();
+        @Nonnull final Collection<CharSequence> keys = sortCols ? new TreeSet<CharSequence>(schema.keySet()) : schema.keySet();
         final String formatString = keys.stream().map(k -> {
           switch (schema.get(k).getSimpleName()) {
             case "String":
@@ -129,9 +131,7 @@ class TableOutput {
          ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (@Nonnull
            PrintStream printStream = new PrintStream(buffer)) {
-        @Nonnull final Collection<CharSequence> keys = sortCols
-            ? new TreeSet<CharSequence>(schema.keySet())
-            : schema.keySet();
+        @Nonnull final Collection<CharSequence> keys = sortCols ? new TreeSet<CharSequence>(schema.keySet()) : schema.keySet();
         final String formatString = keys.stream().map(k -> {
           switch (schema.get(k).getSimpleName()) {
             case "String":
@@ -146,8 +146,7 @@ class TableOutput {
         }).map(s -> "<td>" + s + "</td>").collect(Collectors.joining(""));
         printStream.print("<table border=1>");
         printStream.print("<tr>");
-        printStream.println(keys.stream().map(s -> "<th>" + s + "</th>")
-            .collect(Collectors.joining("")).trim());
+        printStream.println(keys.stream().map(s -> "<th>" + s + "</th>").collect(Collectors.joining("")).trim());
         printStream.print("</tr>");
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.print("<tr>");
@@ -168,30 +167,49 @@ class TableOutput {
       try (@Nonnull
            PrintStream printStream = new PrintStream(buffer)) {
         final String formatString = schema.entrySet().stream().map(e -> {
-          switch (e.getValue().getSimpleName()) {
-            case "String":
-              return "%-" + rows.stream().mapToInt(x -> {
-                Object val = x.getOrDefault(e.getKey(), "");
-                return null == val ? 0 : val.toString().length();
-              }).max().getAsInt() + "s";
-            case "Integer":
-              return "%6d";
-            case "Double":
-              return "%.4f";
-            default:
-              return "%s";
+          try {
+            switch (e.getValue().getSimpleName()) {
+              case "String":
+                return "%-" + rows.stream().mapToInt(com.simiacryptus.ref.lang.RefUtil.wrapInterface(
+                    (java.util.function.ToIntFunction<? super java.util.Map<java.lang.CharSequence, java.lang.Object>>) x -> {
+                      Object val = x.getOrDefault(e.getKey(), "");
+                      return null == val ? 0 : val.toString().length();
+                    }, com.simiacryptus.ref.lang.RefUtil.addRef(e))).max().getAsInt() + "s";
+              case "Integer":
+                return "%6d";
+              case "Double":
+                return "%.4f";
+              default:
+                return "%s";
+            }
+          } finally {
+            if (null != e)
+              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
           }
         }).collect(Collectors.joining(" | "));
-        printStream.println(schema.entrySet().stream().map(x -> x.getKey())
-            .collect(Collectors.joining(" | ")).trim());
-        printStream.println(schema.entrySet().stream().map(x -> x.getKey()).map(x -> {
+        printStream.println(schema.entrySet().stream().map(x -> {
+          java.lang.CharSequence temp_04_0002 = x.getKey();
+          if (null != x)
+            com.simiacryptus.ref.lang.RefUtil.freeRef(x);
+          return temp_04_0002;
+        }).collect(Collectors.joining(" | ")).trim());
+        printStream.println(schema.entrySet().stream().map(x -> {
+          java.lang.CharSequence temp_04_0003 = x.getKey();
+          if (null != x)
+            com.simiacryptus.ref.lang.RefUtil.freeRef(x);
+          return temp_04_0003;
+        }).map(x -> {
           @Nonnull final char[] t = new char[x.length()];
           Arrays.fill(t, '-');
           return new String(t);
         }).collect(Collectors.joining(" | ")).trim());
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream
-              .println(String.format(formatString, schema.entrySet().stream().map(e -> row.get(e.getKey())).toArray()));
+          printStream.println(String.format(formatString, schema.entrySet().stream().map(e -> {
+            java.lang.Object temp_04_0004 = row.get(e.getKey());
+            if (null != e)
+              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+            return temp_04_0004;
+          }).toArray()));
         }
       }
       return buffer.toString();
@@ -209,46 +227,71 @@ class TableOutput {
         printStream.println(toMarkdownTable());
       }
     }
-    final List<Entry<CharSequence, Class<?>>> scalarCols = schema.entrySet().stream()
-        .filter(e -> Number.class.isAssignableFrom(e.getValue()))
-        .collect(Collectors.toList());
+    final List<Entry<CharSequence, Class<?>>> scalarCols = schema.entrySet().stream().filter(e -> {
+      boolean temp_04_0005 = Number.class.isAssignableFrom(e.getValue());
+      if (null != e)
+        com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+      return temp_04_0005;
+    }).collect(Collectors.toList());
     try (@Nonnull
          FileOutputStream file = new FileOutputStream(new File(path, "tensors.tsv"))) {
       try (@Nonnull
            PrintStream printStream = new PrintStream(file)) {
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(scalarCols.stream().map(e -> ((Number) row.getOrDefault(e.getKey(), 0)).doubleValue())
-              .map(x -> x.toString()).collect(Collectors.joining("\t")));
+          printStream.println(scalarCols.stream().map(e -> {
+            double temp_04_0006 = ((Number) row.getOrDefault(e.getKey(), 0)).doubleValue();
+            if (null != e)
+              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+            return temp_04_0006;
+          }).map(x -> x.toString()).collect(Collectors.joining("\t")));
         }
       }
     }
-    final List<Entry<CharSequence, Class<?>>> metadataCols = schema.entrySet().stream()
-        .filter(e -> String.class.isAssignableFrom(e.getValue()))
-        .collect(Collectors.toList());
+    final List<Entry<CharSequence, Class<?>>> metadataCols = schema.entrySet().stream().filter(e -> {
+      boolean temp_04_0007 = String.class.isAssignableFrom(e.getValue());
+      if (null != e)
+        com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+      return temp_04_0007;
+    }).collect(Collectors.toList());
     try (@Nonnull
          FileOutputStream file = new FileOutputStream(new File(path, "metadata.tsv"))) {
       try (@Nonnull
            PrintStream printStream = new PrintStream(file)) {
         if (1 < metadataCols.size()) {
-          printStream.println(metadataCols.stream().map(e -> e.getKey())
-              .collect(Collectors.joining("\t")));
+          printStream.println(metadataCols.stream().map(e -> {
+            java.lang.CharSequence temp_04_0008 = e.getKey();
+            if (null != e)
+              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+            return temp_04_0008;
+          }).collect(Collectors.joining("\t")));
         }
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(metadataCols.stream().map(e -> ((CharSequence) row.getOrDefault(e.getKey(), "")))
-              .collect(Collectors.joining("\t")));
+          printStream.println(metadataCols.stream().map(e -> {
+            java.lang.CharSequence temp_04_0009 = ((CharSequence) row.getOrDefault(e.getKey(), ""));
+            if (null != e)
+              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+            return temp_04_0009;
+          }).collect(Collectors.joining("\t")));
         }
       }
     }
-    final List<Entry<CharSequence, Class<?>>> urlCols = schema.entrySet().stream()
-        .filter(e -> URL.class.isAssignableFrom(e.getValue()))
-        .collect(Collectors.toList());
+    final List<Entry<CharSequence, Class<?>>> urlCols = schema.entrySet().stream().filter(e -> {
+      boolean temp_04_0010 = URL.class.isAssignableFrom(e.getValue());
+      if (null != e)
+        com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+      return temp_04_0010;
+    }).collect(Collectors.toList());
     try (@Nonnull
          FileOutputStream file = new FileOutputStream(new File(path, "bookmarks.txt"))) {
       try (@Nonnull
            PrintStream printStream = new PrintStream(file)) {
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(urlCols.stream().map(e -> row.get(e.getKey()).toString())
-              .collect(Collectors.joining("\t")));
+          printStream.println(urlCols.stream().map(e -> {
+            java.lang.String temp_04_0011 = row.get(e.getKey()).toString();
+            if (null != e)
+              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+            return temp_04_0011;
+          }).collect(Collectors.joining("\t")));
         }
       }
     }

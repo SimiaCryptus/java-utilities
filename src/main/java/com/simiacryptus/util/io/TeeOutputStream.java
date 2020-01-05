@@ -50,7 +50,10 @@ class TeeOutputStream extends OutputStream {
 
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
-    branches.addAll(RefArrays.asList(secondaries));
+    com.simiacryptus.ref.wrappers.RefList<java.io.OutputStream> temp_11_0001 = RefArrays.asList(secondaries);
+    branches.addAll(temp_11_0001);
+    if (null != temp_11_0001)
+      temp_11_0001.freeRef();
   }
 
   public boolean isChainCloses() {

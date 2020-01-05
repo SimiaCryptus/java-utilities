@@ -157,8 +157,7 @@ class ScalarStatistics implements MonitoredItem, Serializable {
   }
 
   @Nonnull
-  public final synchronized ScalarStatistics add(
-      @Nonnull final ScalarStatistics right) {
+  public final synchronized ScalarStatistics add(@Nonnull final ScalarStatistics right) {
     @Nonnull final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 += right.sum0;
@@ -196,8 +195,7 @@ class ScalarStatistics implements MonitoredItem, Serializable {
   }
 
   @Nonnull
-  public final synchronized ScalarStatistics subtract(
-      @Nonnull final ScalarStatistics right) {
+  public final synchronized ScalarStatistics subtract(@Nonnull final ScalarStatistics right) {
     @Nonnull final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 -= right.sum0;
@@ -210,6 +208,10 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Override
   public String toString() {
-    return getMetrics().toString();
+    com.simiacryptus.ref.wrappers.RefMap<java.lang.CharSequence, java.lang.Object> temp_10_0002 = getMetrics();
+    java.lang.String temp_10_0001 = temp_10_0002.toString();
+    if (null != temp_10_0002)
+      temp_10_0002.freeRef();
+    return temp_10_0001;
   }
 }

@@ -29,10 +29,25 @@ import java.util.Spliterator;
 
 public abstract @RefAware
 class DataLoader<T> extends ReferenceCountingBase {
-  private final RefList<T> queue = RefCollections
-      .synchronizedList(new RefArrayList<>());
+  private final RefList<T> queue = RefCollections.synchronizedList(new RefArrayList<>());
   @Nullable
   private volatile Thread thread;
+
+  public static @SuppressWarnings("unused")
+  DataLoader[] addRefs(DataLoader[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef)
+        .toArray((x) -> new DataLoader[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  DataLoader[][] addRefs(DataLoader[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs)
+        .toArray((x) -> new DataLoader[x][]);
+  }
 
   public void clear() throws InterruptedException {
     if (thread != null) {
@@ -62,17 +77,31 @@ class DataLoader<T> extends ReferenceCountingBase {
     if (thread == null) {
       synchronized (this) {
         if (thread == null) {
-          thread = new Thread(() -> read(queue));
+          thread = new Thread(() -> read(queue == null ? null : queue.addRef()));
           thread.setDaemon(true);
           thread.start();
         }
       }
     }
-    @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue, thread);
-    return RefStreamSupport
-        .stream(RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
-            false)
-        .filter(x -> x != null);
+    @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_06_0001 = RefStreamSupport.stream(
+        RefSpliterators.spliteratorUnknownSize(iterator == null ? null : iterator.addRef(), Spliterator.DISTINCT),
+        false).filter(x -> x != null);
+    if (null != iterator)
+      iterator.freeRef();
+    return temp_06_0001;
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+    if (null != queue)
+      queue.freeRef();
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  DataLoader<T> addRef() {
+    return (DataLoader<T>) super.addRef();
   }
 
   protected abstract void read(RefList<T> queue);

@@ -89,8 +89,7 @@ class GaussianTest {
   private long decode(final Gaussian gaussian, final int max, final byte[] serializedData) throws IOException {
     final ByteArrayInputStream inBuffer = new ByteArrayInputStream(serializedData);
     final BitInputStream in = new BitInputStream(inBuffer);
-    final long decoded = gaussian.decode(in, max);
-    return decoded;
+    return gaussian.decode(in, max);
   }
 
   private byte[] encode(final Gaussian gaussian, final int max, final int i) throws IOException {
@@ -98,8 +97,7 @@ class GaussianTest {
     final BitOutputStream out = new BitOutputStream(outBuffer);
     gaussian.encode(out, i, max);
     out.flush();
-    final byte[] serializedData = outBuffer.toByteArray();
-    return serializedData;
+    return outBuffer.toByteArray();
   }
 
   private double test(final Gaussian gaussian, final int max) throws IOException {

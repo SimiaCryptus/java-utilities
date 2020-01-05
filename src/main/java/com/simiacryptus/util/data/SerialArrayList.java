@@ -54,6 +54,8 @@ class SerialArrayList<U> {
     int i = 0;
     for (U x : items)
       set(i++, x);
+    if (null != items)
+      items.freeRef();
   }
 
   public SerialArrayList(SerialType<U> factory, U... items) {
@@ -126,12 +128,16 @@ class SerialArrayList<U> {
 
   public synchronized int addAll(RefCollection<U> data) {
     int startIndex = length();
-    putAll(data, startIndex);
+    putAll(data == null ? null : data.addRef(), startIndex);
+    if (null != data)
+      data.freeRef();
     return startIndex;
   }
 
   public synchronized void putAll(RefCollection<U> data, int startIndex) {
-    putAll(new SerialArrayList<U>(factory, data), startIndex);
+    putAll(new SerialArrayList<U>(factory, data == null ? null : data.addRef()), startIndex);
+    if (null != data)
+      data.freeRef();
   }
 
   public synchronized void putAll(SerialArrayList<U> data, int startIndex) {

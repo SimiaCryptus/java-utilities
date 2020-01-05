@@ -30,10 +30,25 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public @RefAware
-class RunLengthBitsCollection
-    extends BitsCollection<RefHashMap<Bits, AtomicInteger>> {
+class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, AtomicInteger>> {
   public RunLengthBitsCollection(final int bitDepth) {
     super(bitDepth, new RefHashMap<Bits, AtomicInteger>());
+  }
+
+  public static @SuppressWarnings("unused")
+  RunLengthBitsCollection[] addRefs(RunLengthBitsCollection[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRef)
+        .toArray((x) -> new RunLengthBitsCollection[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  RunLengthBitsCollection[][] addRefs(RunLengthBitsCollection[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRefs)
+        .toArray((x) -> new RunLengthBitsCollection[x][]);
   }
 
   @Override
@@ -48,11 +63,24 @@ class RunLengthBitsCollection
 
   @Override
   public void write(final BitOutputStream out) throws IOException {
-    out.write(new Bits(this.getList().size(), 32));
+    com.simiacryptus.ref.wrappers.RefList<com.simiacryptus.util.binary.Bits> temp_12_0001 = this.getList();
+    out.write(new Bits(temp_12_0001.size(), 32));
+    if (null != temp_12_0001)
+      temp_12_0001.freeRef();
     for (final Entry<Bits, AtomicInteger> e : this.map.entrySet()) {
       out.write(e.getKey());
       out.write(new Bits(e.getValue().get(), 32));
     }
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  RunLengthBitsCollection addRef() {
+    return (RunLengthBitsCollection) super.addRef();
   }
 
 }

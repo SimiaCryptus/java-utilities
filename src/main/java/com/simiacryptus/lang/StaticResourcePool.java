@@ -41,22 +41,46 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
 
   public StaticResourcePool(@Nonnull final RefList<T> items) {
     super();
-    this.all = RefCollections
-        .unmodifiableList(new RefArrayList<>(items));
-    pool.addAll(getAll());
+    {
+      com.simiacryptus.ref.wrappers.RefList<T> temp_03_0001 = RefCollections
+          .unmodifiableList(new RefArrayList<>(items == null ? null : items.addRef()));
+      this.all = temp_03_0001 == null ? null : temp_03_0001.addRef();
+      if (null != temp_03_0001)
+        temp_03_0001.freeRef();
+    }
+    items.freeRef();
+    com.simiacryptus.ref.wrappers.RefList<T> temp_03_0002 = getAll();
+    pool.addAll(temp_03_0002);
+    if (null != temp_03_0002)
+      temp_03_0002.freeRef();
   }
 
   @Nonnull
   public RefList<T> getAll() {
-    return all;
+    return all == null ? null : all.addRef();
+  }
+
+  public static @SuppressWarnings("unused")
+  StaticResourcePool[] addRefs(StaticResourcePool[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRef)
+        .toArray((x) -> new StaticResourcePool[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  StaticResourcePool[][] addRefs(StaticResourcePool[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRefs)
+        .toArray((x) -> new StaticResourcePool[x][]);
   }
 
   public void apply(@Nonnull final RefConsumer<T> f) {
     apply(f, x -> true, false);
   }
 
-  public void apply(@Nonnull final RefConsumer<T> f,
-                    final Predicate<T> filter, final boolean exclusive) {
+  public void apply(@Nonnull final RefConsumer<T> f, final Predicate<T> filter, final boolean exclusive) {
     T poll = get(filter, exclusive);
     try {
       f.accept(poll);
@@ -69,8 +93,7 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
     return run(f, x -> true, false);
   }
 
-  public <U> U run(@Nonnull final Function<T, U> f, final Predicate<T> filter,
-                   final boolean exclusive) {
+  public <U> U run(@Nonnull final Function<T, U> f, final Predicate<T> filter, final boolean exclusive) {
     if (all.isEmpty())
       throw new IllegalStateException();
     T poll = get(filter, exclusive);
@@ -82,7 +105,22 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
   }
 
   public int size() {
-    return getAll().size();
+    com.simiacryptus.ref.wrappers.RefList<T> temp_03_0004 = getAll();
+    int temp_03_0003 = temp_03_0004.size();
+    if (null != temp_03_0004)
+      temp_03_0004.freeRef();
+    return temp_03_0003;
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+    all.freeRef();
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  StaticResourcePool<T> addRef() {
+    return (StaticResourcePool<T>) super.addRef();
   }
 
   @Nonnull
@@ -92,6 +130,8 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
       T poll = this.pool.poll();
       while (null != poll) {
         if (filter.test(poll)) {
+          if (null != sampled)
+            sampled.freeRef();
           return poll;
         } else {
           sampled.add(poll);
@@ -101,6 +141,8 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
     } finally {
       pool.addAll(sampled);
     }
+    if (null != sampled)
+      sampled.freeRef();
     try {
       while (true) {
         final T poll;

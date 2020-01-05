@@ -47,24 +47,22 @@ class LOG {
     } finally {
       s.close();
     }
-    final String exception = out.toString();
-    return exception;
+    return out.toString();
   }
 
   private static void log(final Severity debug, final String msg, final Object[] args) {
     final String formatted = String.format(msg, args);
-    final StackTraceElement caller = RefArrays
-        .stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
-          Class<?> clazz;
-          try {
-            clazz = Class.forName(stack.getClassName());
-          } catch (final Exception e) {
-            return true;
-          }
-          if (clazz == Thread.class)
-            return false;
-          return clazz != LOG.class;
-        }).findFirst().get();
+    final StackTraceElement caller = RefArrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
+      Class<?> clazz;
+      try {
+        clazz = Class.forName(stack.getClassName());
+      } catch (final Exception e) {
+        return true;
+      }
+      if (clazz == Thread.class)
+        return false;
+      return clazz != LOG.class;
+    }).findFirst().get();
     final double time = (System.nanoTime() - LOG.startTime) / 1000000000.;
     final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
         formatted.replaceAll("\n", "\n\t"));

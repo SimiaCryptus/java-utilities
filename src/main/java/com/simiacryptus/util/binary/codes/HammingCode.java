@@ -50,6 +50,8 @@ class HammingCode<T extends Comparable<T>> {
         assemblySet.add(new SubCode<T>(zero, one));
       }
       final SubCode<T> root = assemblySet.first();
+      if (null != assemblySet)
+        assemblySet.freeRef();
       this.forwardIndex.putAll(root.codes);
       this.reverseIndex.putAll(root.index);
       totalWeight = root.count;
@@ -58,6 +60,8 @@ class HammingCode<T extends Comparable<T>> {
     }
     assert this.verifyIndexes();
     assert this.forwardIndex.size() == symbols.size();
+    if (null != symbols)
+      symbols.freeRef();
   }
 
   public CountTreeBitsCollection getSetEncoder() {
@@ -73,14 +77,20 @@ class HammingCode<T extends Comparable<T>> {
     for (final Bits code : keySet) {
       final Bits ceiling = check.ceiling(code);
       if (null != ceiling && (ceiling.startsWith(code) || code.startsWith(ceiling))) {
+        if (null != check)
+          check.freeRef();
         return false;
       }
       final Bits floor = check.floor(code);
       if (null != floor && (floor.startsWith(code) || code.startsWith(floor))) {
+        if (null != check)
+          check.freeRef();
         return false;
       }
       check.add(code);
     }
+    if (null != check)
+      check.freeRef();
     return true;
   }
 
@@ -96,7 +106,10 @@ class HammingCode<T extends Comparable<T>> {
       entry = this.forwardIndex.floorEntry(remainder);
     }
     in.read(entry.getKey().bitLength);
-    return entry.getValue();
+    T temp_05_0001 = entry.getValue();
+    if (null != entry)
+      com.simiacryptus.ref.lang.RefUtil.freeRef(entry);
+    return temp_05_0001;
   }
 
   public Entry<Bits, T> decode(final Bits data) {
@@ -120,9 +133,7 @@ class HammingCode<T extends Comparable<T>> {
 
   public SortedMap<Bits, T> getCodes(final Bits fromKey) {
     final Bits next = fromKey.next();
-    final SortedMap<Bits, T> subMap = null == next ? this.forwardIndex.tailMap(fromKey)
-        : this.forwardIndex.subMap(fromKey, next);
-    return subMap;
+    return null == next ? this.forwardIndex.tailMap(fromKey) : this.forwardIndex.subMap(fromKey, next);
   }
 
   public CountTreeBitsCollection getSetEncoder(final BitInputStream data) throws IOException {
@@ -181,20 +192,41 @@ class HammingCode<T extends Comparable<T>> {
       this.parent = parent;
     }
 
+    public static @SuppressWarnings("unused")
+    HammingCodeCollection[] addRefs(HammingCodeCollection[] array) {
+      if (array == null)
+        return null;
+      return java.util.Arrays.stream(array).filter((x) -> x != null).map(HammingCodeCollection::addRef)
+          .toArray((x) -> new HammingCodeCollection[x]);
+    }
+
     @Override
     public CodeType getType(final Bits bits) {
       final Entry<Bits, T> code = parent.decode(bits);
       if (null == code) {
+        if (null != code)
+          com.simiacryptus.ref.lang.RefUtil.freeRef(code);
         return CodeType.Prefix;
       }
       assert bits.equals(code.getKey());
+      if (null != code)
+        com.simiacryptus.ref.lang.RefUtil.freeRef(code);
       return CodeType.Terminal;
+    }
+
+    public @SuppressWarnings("unused")
+    void _free() {
+    }
+
+    public @Override
+    @SuppressWarnings("unused")
+    HammingCodeCollection<T> addRef() {
+      return (HammingCodeCollection<T>) super.addRef();
     }
   }
 
   private static @RefAware
-  class SubCode<X extends Comparable<X>>
-      implements Comparable<SubCode<X>> {
+  class SubCode<X extends Comparable<X>> implements Comparable<SubCode<X>> {
     final long count;
     final TreeMap<Bits, X> codes;
     final TreeMap<X, Bits> index;

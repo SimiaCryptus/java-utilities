@@ -42,7 +42,28 @@ class ResourcePool<T> extends ReferenceCountingBase {
   public ResourcePool(final int maxItems) {
     super();
     this.maxItems = maxItems;
-    this.all = new RefHashSet<>(this.maxItems);
+    {
+      com.simiacryptus.ref.wrappers.RefHashSet<T> temp_01_0001 = new RefHashSet<>(this.maxItems);
+      this.all = temp_01_0001 == null ? null : temp_01_0001.addRef();
+      if (null != temp_01_0001)
+        temp_01_0001.freeRef();
+    }
+  }
+
+  public static @SuppressWarnings("unused")
+  ResourcePool[] addRefs(ResourcePool[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef)
+        .toArray((x) -> new ResourcePool[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  ResourcePool[][] addRefs(ResourcePool[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRefs)
+        .toArray((x) -> new ResourcePool[x][]);
   }
 
   public abstract T create();
@@ -57,6 +78,8 @@ class ResourcePool<T> extends ReferenceCountingBase {
       T poll = this.pool.poll();
       while (null != poll) {
         if (filter.test(poll)) {
+          if (null != sampled)
+            sampled.freeRef();
           return poll;
         } else {
           sampled.add(poll);
@@ -65,6 +88,8 @@ class ResourcePool<T> extends ReferenceCountingBase {
     } finally {
       pool.addAll(sampled);
     }
+    if (null != sampled)
+      sampled.freeRef();
     synchronized (this.all) {
       if (this.all.size() < this.maxItems) {
         T poll = create();
@@ -107,8 +132,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
     }
   }
 
-  public void apply(@Nonnull final RefConsumer<T> f,
-                    final Predicate<T> filter) {
+  public void apply(@Nonnull final RefConsumer<T> f, final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);
@@ -122,5 +146,16 @@ class ResourcePool<T> extends ReferenceCountingBase {
         currentValue.remove();
       }
     }
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+    all.freeRef();
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  ResourcePool<T> addRef() {
+    return (ResourcePool<T>) super.addRef();
   }
 }

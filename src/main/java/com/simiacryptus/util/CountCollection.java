@@ -37,7 +37,14 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
 
   public CountCollection(final C collection) {
     super();
-    this.map = collection;
+    {
+      C temp_00_0001 = com.simiacryptus.ref.lang.RefUtil.addRef(collection);
+      this.map = com.simiacryptus.ref.lang.RefUtil.addRef(temp_00_0001);
+      if (null != temp_00_0001)
+        temp_00_0001.freeRef();
+    }
+    if (null != collection)
+      collection.freeRef();
   }
 
   public RefList<T> getList() {
@@ -51,7 +58,7 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
   }
 
   public RefMap<T, Integer> getMap() {
-    return RefMaps.transformEntries(this.map,
+    return RefMaps.transformEntries(com.simiacryptus.ref.lang.RefUtil.addRef(this.map),
         new EntryTransformer<T, AtomicInteger, Integer>() {
           @Override
           public Integer transformEntry(final T key, final AtomicInteger value) {
@@ -60,12 +67,40 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
         });
   }
 
+  public static @SuppressWarnings("unused")
+  CountCollection[] addRefs(CountCollection[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRef)
+        .toArray((x) -> new CountCollection[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  CountCollection[][] addRefs(CountCollection[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRefs)
+        .toArray((x) -> new CountCollection[x][]);
+  }
+
   public int add(final T bits) {
     return this.getCounter(bits).incrementAndGet();
   }
 
   public int add(final T bits, final int count) {
     return this.getCounter(bits).addAndGet(count);
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+    if (null != map)
+      map.freeRef();
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  CountCollection<T, C> addRef() {
+    return (CountCollection<T, C>) super.addRef();
   }
 
   protected int count(final T key) {

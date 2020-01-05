@@ -39,27 +39,45 @@ class BinaryChunkIterator extends RefIteratorBase<byte[]> {
     this.recordSize = recordSize;
   }
 
-  public static <T> RefStream<T> toIterator(
-      @Nonnull final RefIterator<T> iterator) {
-    return RefStreamSupport
-        .stream(RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
+  public static <T> RefStream<T> toIterator(@Nonnull final RefIterator<T> iterator) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_07_0001 = RefStreamSupport
+        .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, 1, Spliterator.ORDERED), false);
+    return temp_07_0001;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final RefIteratorBase<T> iterator) {
-    return BinaryChunkIterator.toStream(iterator, 0);
+  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_07_0002 = BinaryChunkIterator
+        .toStream(iterator == null ? null : iterator, 0);
+    return temp_07_0002;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final RefIteratorBase<T> iterator, final int size) {
-    return BinaryChunkIterator.toStream(iterator, size, false);
+  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_07_0003 = BinaryChunkIterator
+        .toStream(iterator == null ? null : iterator, size, false);
+    return temp_07_0003;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final RefIteratorBase<T> iterator, final int size,
-      final boolean parallel) {
-    return RefStreamSupport.stream(
-        RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
+  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size,
+                                          final boolean parallel) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_07_0004 = RefStreamSupport
+        .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);
+    return temp_07_0004;
+  }
+
+  public static @SuppressWarnings("unused")
+  BinaryChunkIterator[] addRefs(BinaryChunkIterator[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(BinaryChunkIterator::addRef)
+        .toArray((x) -> new BinaryChunkIterator[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  BinaryChunkIterator[][] addRefs(BinaryChunkIterator[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(BinaryChunkIterator::addRefs)
+        .toArray((x) -> new BinaryChunkIterator[x][]);
   }
 
   @Nonnull
@@ -97,6 +115,16 @@ class BinaryChunkIterator extends RefIteratorBase<byte[]> {
   }
 
   public RefStream<byte[]> toStream() {
-    return BinaryChunkIterator.toStream(this);
+    return BinaryChunkIterator.toStream(this.addRef());
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  BinaryChunkIterator addRef() {
+    return (BinaryChunkIterator) super.addRef();
   }
 }

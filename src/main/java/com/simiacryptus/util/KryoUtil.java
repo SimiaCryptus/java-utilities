@@ -38,7 +38,7 @@ class KryoUtil {
     @Nonnull
     @Override
     protected Kryo initialValue() {
-      @Nonnull final Kryo kryo = new KryoReflectionFactorySupport() {
+      return new KryoReflectionFactorySupport() {
 
         @Override
         public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class clazz) {
@@ -48,15 +48,13 @@ class KryoUtil {
           if (EnumMap.class.isAssignableFrom(clazz)) {
             return new EnumMapSerializer();
           }
-          final Serializer<?> serializer = super.getDefaultSerializer(clazz);
           //          if (serializer instanceof FieldSerializer) {
           //            ((FieldSerializer<?>) serializer).setCopyTransient(false);
           //          }
-          return serializer;
+          return super.getDefaultSerializer(clazz);
         }
 
       };
-      return kryo;
     }
 
   };

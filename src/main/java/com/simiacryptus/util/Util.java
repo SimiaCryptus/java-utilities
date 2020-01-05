@@ -70,8 +70,7 @@ class Util {
     }
   };
   private static final Logger log = LoggerFactory.getLogger(Util.class);
-  private static final AtomicInteger idcounter = new AtomicInteger(
-      0);
+  private static final AtomicInteger idcounter = new AtomicInteger(0);
   private static final String jvmId = UUID.randomUUID().toString();
 
   public static CharSequence getCaller() {
@@ -82,15 +81,14 @@ class Util {
     return getStackTrace(4);
   }
 
-  public static void add(@Nonnull final DoubleSupplier f,
-                         @Nonnull final double[] data) {
+  public static void add(@Nonnull final DoubleSupplier f, @Nonnull final double[] data) {
     for (int i = 0; i < data.length; i++) {
       data[i] += f.getAsDouble();
     }
   }
 
-  public static RefStream<byte[]> binaryStream(final String path,
-                                               @Nonnull final String name, final int skip, final int recordSize) throws IOException {
+  public static RefStream<byte[]> binaryStream(final String path, @Nonnull final String name, final int skip,
+                                               final int recordSize) throws IOException {
     @Nonnull final File file = new File(path, name);
     final byte[] fileData = IOUtils
         .toByteArray(new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)))));
@@ -153,8 +151,7 @@ class Util {
     };
   }
 
-  public static InputStream cacheStream(@Nonnull final String url,
-                                        @Nonnull final String file)
+  public static InputStream cacheStream(@Nonnull final String url, @Nonnull final String file)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
     if (new File(file).exists()) {
       return new FileInputStream(file);
@@ -214,8 +211,7 @@ class Util {
   }
 
   public static CharSequence[] currentStack() {
-    return RefStream.of(Thread.currentThread().getStackTrace()).map(Object::toString)
-        .toArray(i -> new CharSequence[i]);
+    return RefStream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
   }
 
   @Nonnull
@@ -243,14 +239,16 @@ class Util {
   public static void layout(@Nonnull final Component c) {
     c.doLayout();
     if (c instanceof Container) {
-      RefArrays.stream(((Container) c).getComponents())
-          .forEach(Util::layout);
+      RefArrays.stream(((Container) c).getComponents()).forEach(Util::layout);
     }
   }
 
   public static String mkString(@Nonnull final CharSequence separator, final CharSequence... strs) {
-    return RefArrays.asList(strs).stream()
-        .collect(RefCollectors.joining(separator));
+    com.simiacryptus.ref.wrappers.RefList<java.lang.CharSequence> temp_09_0006 = RefArrays.asList(strs);
+    java.lang.String temp_09_0005 = temp_09_0006.stream().collect(RefCollectors.joining(separator));
+    if (null != temp_09_0006)
+      temp_09_0006.freeRef();
+    return temp_09_0005;
   }
 
   public static String pathTo(@Nonnull final File from, @Nonnull final File to) {
@@ -323,27 +321,28 @@ class Util {
     return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
   }
 
-  public static <T> RefStream<T> toIterator(
-      @Nonnull final RefIteratorBase<T> iterator) {
-    return RefStreamSupport
-        .stream(RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
+  public static <T> RefStream<T> toIterator(@Nonnull final RefIteratorBase<T> iterator) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0001 = RefStreamSupport
+        .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, 1, Spliterator.ORDERED), false);
+    return temp_09_0001;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final RefIteratorBase<T> iterator) {
-    return Util.toStream(iterator, 0);
+  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0002 = Util.toStream(iterator == null ? null : iterator, 0);
+    return temp_09_0002;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final RefIteratorBase<T> iterator, final int size) {
-    return Util.toStream(iterator, size, false);
+  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size,
+        false);
+    return temp_09_0003;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final RefIteratorBase<T> iterator, final int size,
-      final boolean parallel) {
-    return RefStreamSupport.stream(
-        RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
+  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size,
+                                          final boolean parallel) {
+    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0004 = RefStreamSupport
+        .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);
+    return temp_09_0004;
   }
 
   public static UUID uuid() {
@@ -352,8 +351,7 @@ class Util {
     while (index.length() < 8) {
       index = "0" + index;
     }
-    @Nonnull final String tempId = Util.jvmId.substring(0,
-        Util.jvmId.length() - index.length()) + index;
+    @Nonnull final String tempId = Util.jvmId.substring(0, Util.jvmId.length() - index.length()) + index;
     return UUID.fromString(tempId);
   }
 

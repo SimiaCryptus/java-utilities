@@ -37,50 +37,85 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
   @Override
   public RefMap<CharSequence, Object> getMetrics() {
     @Nonnull final RefHashMap<CharSequence, Object> returnValue = new RefHashMap<>();
-    items.entrySet().stream().parallel().forEach(e -> {
-      final CharSequence k = e.getKey();
-      final Object v = e.getValue();
-      if (v instanceof MonitoredItem) {
-        returnValue.put(k, ((MonitoredItem) v).getMetrics());
-      } else if (v instanceof Supplier) {
-        returnValue.put(k, ((Supplier<?>) v).get());
-      } else {
-        returnValue.put(k, v);
-      }
-    });
+    com.simiacryptus.ref.wrappers.RefSet<java.util.Map.Entry<java.lang.CharSequence, java.lang.Object>> temp_14_0001 = items
+        .entrySet();
+    temp_14_0001.stream().parallel().forEach(com.simiacryptus.ref.lang.RefUtil.wrapInterface(
+        (java.util.function.Consumer<? super java.util.Map.Entry<java.lang.CharSequence, java.lang.Object>>) e -> {
+          final CharSequence k = e.getKey();
+          final Object v = e.getValue();
+          if (null != e)
+            com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+          if (v instanceof MonitoredItem) {
+            returnValue.put(k, ((MonitoredItem) v).getMetrics());
+          } else if (v instanceof Supplier) {
+            returnValue.put(k, ((Supplier<?>) v).get());
+          } else {
+            returnValue.put(k, v);
+          }
+        }, com.simiacryptus.ref.lang.RefUtil.addRef(returnValue)));
+    if (null != temp_14_0001)
+      temp_14_0001.freeRef();
     return returnValue;
+  }
+
+  public static @SuppressWarnings("unused")
+  MonitoredObject[] addRefs(MonitoredObject[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRef)
+        .toArray((x) -> new MonitoredObject[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  MonitoredObject[][] addRefs(MonitoredObject[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRefs)
+        .toArray((x) -> new MonitoredObject[x][]);
   }
 
   @Nonnull
   public MonitoredObject addConst(final CharSequence key, final Object item) {
     items.put(key, item);
-    return this;
+    return this.addRef();
   }
 
   @Nonnull
   public MonitoredObject addField(final CharSequence key, final Supplier<Object> item) {
     items.put(key, item);
-    return this;
+    return this.addRef();
   }
 
   @Nonnull
   public MonitoredObject addObj(final CharSequence key, final MonitoredItem item) {
     items.put(key, item);
-    return this;
+    return this.addRef();
   }
 
   @Nonnull
   public MonitoredObject clearConstants() {
-    @Nonnull final RefHashSet<CharSequence> keys = new RefHashSet<>(
-        items.keySet());
+    @Nonnull final RefHashSet<CharSequence> keys = new RefHashSet<>(items.keySet());
     for (final CharSequence k : keys) {
       final Object v = items.get(k);
       if (v instanceof MonitoredObject) {
-        ((MonitoredObject) v).clearConstants();
+        com.simiacryptus.ref.lang.RefUtil.freeRef(((MonitoredObject) v).clearConstants());
       } else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
         items.remove(k);
       }
     }
-    return this;
+    keys.freeRef();
+    return this.addRef();
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+    if (null != items)
+      items.freeRef();
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  MonitoredObject addRef() {
+    return (MonitoredObject) super.addRef();
   }
 }

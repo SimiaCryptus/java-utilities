@@ -27,15 +27,37 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public @RefAware
-class AsyncListIterator<T>
-    extends RefIteratorBase<T> {
+class AsyncListIterator<T> extends RefIteratorBase<T> {
   private final RefList<T> queue;
   private final Thread thread;
   int index = -1;
 
   public AsyncListIterator(final RefList<T> queue, final Thread thread) {
     this.thread = thread;
-    this.queue = queue;
+    {
+      com.simiacryptus.ref.wrappers.RefList<T> temp_02_0001 = queue == null ? null : queue.addRef();
+      this.queue = temp_02_0001 == null ? null : temp_02_0001.addRef();
+      if (null != temp_02_0001)
+        temp_02_0001.freeRef();
+    }
+    if (null != queue)
+      queue.freeRef();
+  }
+
+  public static @SuppressWarnings("unused")
+  AsyncListIterator[] addRefs(AsyncListIterator[] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRef)
+        .toArray((x) -> new AsyncListIterator[x]);
+  }
+
+  public static @SuppressWarnings("unused")
+  AsyncListIterator[][] addRefs(AsyncListIterator[][] array) {
+    if (array == null)
+      return null;
+    return java.util.Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRefs)
+        .toArray((x) -> new AsyncListIterator[x][]);
   }
 
   @Override
@@ -58,5 +80,17 @@ class AsyncListIterator<T>
     } catch (@Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public @SuppressWarnings("unused")
+  void _free() {
+    if (null != queue)
+      queue.freeRef();
+  }
+
+  public @Override
+  @SuppressWarnings("unused")
+  AsyncListIterator<T> addRef() {
+    return (AsyncListIterator<T>) super.addRef();
   }
 }

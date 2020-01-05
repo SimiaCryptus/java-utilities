@@ -40,23 +40,20 @@ public @RefAware
 class JsonUtil {
 
   public static ObjectMapper getMapper() {
-    ObjectMapper enable = new ObjectMapper()
+    return new ObjectMapper()
         //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
         .enable(SerializationFeature.INDENT_OUTPUT);
-    return enable;
   }
 
   public static double[] getDoubleArray(@Nonnull final JsonArray array) {
-    return RefIntStream.range(0, array.size())
-        .mapToDouble(i -> array.get(i).getAsDouble()).toArray();
+    return RefIntStream.range(0, array.size()).mapToDouble(i -> array.get(i).getAsDouble()).toArray();
   }
 
   @Nullable
   public static int[] getIntArray(@Nullable final JsonArray array) {
     if (null == array)
       return null;
-    return RefIntStream.range(0, array.size()).map(i -> array.get(i).getAsInt())
-        .toArray();
+    return RefIntStream.range(0, array.size()).map(i -> array.get(i).getAsInt()).toArray();
   }
 
   @Nonnull
