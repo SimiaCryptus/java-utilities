@@ -26,6 +26,7 @@ import com.simiacryptus.ref.wrappers.RefConsumer;
 import com.simiacryptus.ref.wrappers.RefHashSet;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -43,7 +44,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
     super();
     this.maxItems = maxItems;
     {
-      com.simiacryptus.ref.wrappers.RefHashSet<T> temp_01_0001 = new RefHashSet<>(this.maxItems);
+      RefHashSet<T> temp_01_0001 = new RefHashSet<>(this.maxItems);
       this.all = temp_01_0001 == null ? null : temp_01_0001.addRef();
       if (null != temp_01_0001)
         temp_01_0001.freeRef();
@@ -54,7 +55,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
   ResourcePool[] addRefs(ResourcePool[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef)
         .toArray((x) -> new ResourcePool[x]);
   }
 
@@ -62,7 +63,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
   ResourcePool[][] addRefs(ResourcePool[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRefs)
         .toArray((x) -> new ResourcePool[x][]);
   }
 

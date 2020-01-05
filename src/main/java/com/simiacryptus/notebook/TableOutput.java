@@ -20,6 +20,7 @@
 package com.simiacryptus.notebook;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.util.data.DoubleStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 public @RefAware
@@ -51,12 +53,12 @@ class TableOutput {
     schema.entrySet().stream().filter(x -> {
       boolean temp_04_0001 = Number.class.isAssignableFrom(x.getValue());
       if (null != x)
-        com.simiacryptus.ref.lang.RefUtil.freeRef(x);
+        RefUtil.freeRef(x);
       return temp_04_0001;
     }).map(col -> {
       final CharSequence key = col.getKey();
       if (null != col)
-        com.simiacryptus.ref.lang.RefUtil.freeRef(col);
+        RefUtil.freeRef(col);
       final DoubleStatistics stats = rows.stream().filter(x -> x.containsKey(key)).map(x -> (Number) x.get(key))
           .collect(DoubleStatistics.NUMBERS);
       @Nonnull final LinkedHashMap<CharSequence, Object> row = new LinkedHashMap<>();
@@ -170,11 +172,11 @@ class TableOutput {
           try {
             switch (e.getValue().getSimpleName()) {
               case "String":
-                return "%-" + rows.stream().mapToInt(com.simiacryptus.ref.lang.RefUtil.wrapInterface(
-                    (java.util.function.ToIntFunction<? super java.util.Map<java.lang.CharSequence, java.lang.Object>>) x -> {
+                return "%-" + rows.stream().mapToInt(RefUtil.wrapInterface(
+                    (ToIntFunction<? super Map<CharSequence, Object>>) x -> {
                       Object val = x.getOrDefault(e.getKey(), "");
                       return null == val ? 0 : val.toString().length();
-                    }, com.simiacryptus.ref.lang.RefUtil.addRef(e))).max().getAsInt() + "s";
+                    }, RefUtil.addRef(e))).max().getAsInt() + "s";
               case "Integer":
                 return "%6d";
               case "Double":
@@ -184,19 +186,19 @@ class TableOutput {
             }
           } finally {
             if (null != e)
-              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+              RefUtil.freeRef(e);
           }
         }).collect(Collectors.joining(" | "));
         printStream.println(schema.entrySet().stream().map(x -> {
-          java.lang.CharSequence temp_04_0002 = x.getKey();
+          CharSequence temp_04_0002 = x.getKey();
           if (null != x)
-            com.simiacryptus.ref.lang.RefUtil.freeRef(x);
+            RefUtil.freeRef(x);
           return temp_04_0002;
         }).collect(Collectors.joining(" | ")).trim());
         printStream.println(schema.entrySet().stream().map(x -> {
-          java.lang.CharSequence temp_04_0003 = x.getKey();
+          CharSequence temp_04_0003 = x.getKey();
           if (null != x)
-            com.simiacryptus.ref.lang.RefUtil.freeRef(x);
+            RefUtil.freeRef(x);
           return temp_04_0003;
         }).map(x -> {
           @Nonnull final char[] t = new char[x.length()];
@@ -205,9 +207,9 @@ class TableOutput {
         }).collect(Collectors.joining(" | ")).trim());
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(String.format(formatString, schema.entrySet().stream().map(e -> {
-            java.lang.Object temp_04_0004 = row.get(e.getKey());
+            Object temp_04_0004 = row.get(e.getKey());
             if (null != e)
-              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+              RefUtil.freeRef(e);
             return temp_04_0004;
           }).toArray()));
         }
@@ -230,7 +232,7 @@ class TableOutput {
     final List<Entry<CharSequence, Class<?>>> scalarCols = schema.entrySet().stream().filter(e -> {
       boolean temp_04_0005 = Number.class.isAssignableFrom(e.getValue());
       if (null != e)
-        com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+        RefUtil.freeRef(e);
       return temp_04_0005;
     }).collect(Collectors.toList());
     try (@Nonnull
@@ -241,7 +243,7 @@ class TableOutput {
           printStream.println(scalarCols.stream().map(e -> {
             double temp_04_0006 = ((Number) row.getOrDefault(e.getKey(), 0)).doubleValue();
             if (null != e)
-              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+              RefUtil.freeRef(e);
             return temp_04_0006;
           }).map(x -> x.toString()).collect(Collectors.joining("\t")));
         }
@@ -250,7 +252,7 @@ class TableOutput {
     final List<Entry<CharSequence, Class<?>>> metadataCols = schema.entrySet().stream().filter(e -> {
       boolean temp_04_0007 = String.class.isAssignableFrom(e.getValue());
       if (null != e)
-        com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+        RefUtil.freeRef(e);
       return temp_04_0007;
     }).collect(Collectors.toList());
     try (@Nonnull
@@ -259,17 +261,17 @@ class TableOutput {
            PrintStream printStream = new PrintStream(file)) {
         if (1 < metadataCols.size()) {
           printStream.println(metadataCols.stream().map(e -> {
-            java.lang.CharSequence temp_04_0008 = e.getKey();
+            CharSequence temp_04_0008 = e.getKey();
             if (null != e)
-              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+              RefUtil.freeRef(e);
             return temp_04_0008;
           }).collect(Collectors.joining("\t")));
         }
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(metadataCols.stream().map(e -> {
-            java.lang.CharSequence temp_04_0009 = ((CharSequence) row.getOrDefault(e.getKey(), ""));
+            CharSequence temp_04_0009 = ((CharSequence) row.getOrDefault(e.getKey(), ""));
             if (null != e)
-              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+              RefUtil.freeRef(e);
             return temp_04_0009;
           }).collect(Collectors.joining("\t")));
         }
@@ -278,7 +280,7 @@ class TableOutput {
     final List<Entry<CharSequence, Class<?>>> urlCols = schema.entrySet().stream().filter(e -> {
       boolean temp_04_0010 = URL.class.isAssignableFrom(e.getValue());
       if (null != e)
-        com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+        RefUtil.freeRef(e);
       return temp_04_0010;
     }).collect(Collectors.toList());
     try (@Nonnull
@@ -287,9 +289,9 @@ class TableOutput {
            PrintStream printStream = new PrintStream(file)) {
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(urlCols.stream().map(e -> {
-            java.lang.String temp_04_0011 = row.get(e.getKey()).toString();
+            String temp_04_0011 = row.get(e.getKey()).toString();
             if (null != e)
-              com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+              RefUtil.freeRef(e);
             return temp_04_0011;
           }).collect(Collectors.joining("\t")));
         }

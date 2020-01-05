@@ -20,11 +20,9 @@
 package com.simiacryptus.util.binary.bitset;
 
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefCollection;
-import com.simiacryptus.ref.wrappers.RefMaps;
+import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.ref.wrappers.RefMaps.EntryTransformer;
-import com.simiacryptus.ref.wrappers.RefNavigableMap;
-import com.simiacryptus.ref.wrappers.RefTreeMap;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -32,6 +30,8 @@ import com.simiacryptus.util.binary.codes.Gaussian;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -80,7 +80,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
   CountTreeBitsCollection[] addRefs(CountTreeBitsCollection[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRef)
         .toArray((x) -> new CountTreeBitsCollection[x]);
   }
 
@@ -88,7 +88,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
   CountTreeBitsCollection[][] addRefs(CountTreeBitsCollection[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRefs)
         .toArray((x) -> new CountTreeBitsCollection[x][]);
   }
 
@@ -103,7 +103,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
 
   @Override
   public void read(final BitInputStream in) throws IOException {
-    com.simiacryptus.ref.wrappers.RefMap<com.simiacryptus.util.binary.Bits, java.lang.Integer> temp_13_0001 = this
+    RefMap<Bits, Integer> temp_13_0001 = this
         .getMap();
     temp_13_0001.clear();
     if (null != temp_13_0001)
@@ -115,7 +115,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
   }
 
   public void read(final BitInputStream in, final int size) throws IOException {
-    com.simiacryptus.ref.wrappers.RefMap<com.simiacryptus.util.binary.Bits, java.lang.Integer> temp_13_0002 = this
+    RefMap<Bits, Integer> temp_13_0002 = this
         .getMap();
     temp_13_0002.clear();
     if (null != temp_13_0002)
@@ -150,13 +150,13 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
   @Override
   public void write(final BitOutputStream out) throws IOException {
     final RefTreeMap<Bits, Long> sums = this.computeSums();
-    java.util.Map.Entry<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0003 = sums.lastEntry();
+    Map.Entry<Bits, Long> temp_13_0003 = sums.lastEntry();
     final long value = 0 == sums.size() ? 0 : temp_13_0003.getValue();
     if (null != temp_13_0003)
-      com.simiacryptus.ref.lang.RefUtil.freeRef(temp_13_0003);
+      RefUtil.freeRef(temp_13_0003);
     out.writeVarLong(value);
     if (0 < value) {
-      this.write(out, Bits.NULL, com.simiacryptus.ref.lang.RefUtil.addRef(sums));
+      this.write(out, Bits.NULL, RefUtil.addRef(sums));
     }
     if (null != sums)
       sums.freeRef();
@@ -164,17 +164,17 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
 
   public void write(final BitOutputStream out, final int size) throws IOException {
     final RefTreeMap<Bits, Long> sums = this.computeSums();
-    java.util.Map.Entry<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0004 = sums.lastEntry();
+    Map.Entry<Bits, Long> temp_13_0004 = sums.lastEntry();
     final long value = 0 == sums.size() ? 0 : temp_13_0004.getValue();
     if (null != temp_13_0004)
-      com.simiacryptus.ref.lang.RefUtil.freeRef(temp_13_0004);
+      RefUtil.freeRef(temp_13_0004);
     if (value != size) {
       if (null != sums)
         sums.freeRef();
       throw new RuntimeException();
     }
     if (0 < value) {
-      this.write(out, Bits.NULL, com.simiacryptus.ref.lang.RefUtil.addRef(sums));
+      this.write(out, Bits.NULL, RefUtil.addRef(sums));
     }
     if (null != sums)
       sums.freeRef();
@@ -331,19 +331,19 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
       remainder.freeRef();
     final int firstEntryCount = this.map.get(firstEntry.getKey()).get();
     final long baseCount = firstEntry.getValue() - firstEntryCount;
-    java.util.Map.Entry<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0005 = sums.lastEntry();
+    Map.Entry<Bits, Long> temp_13_0005 = sums.lastEntry();
     final long endCount = temp_13_0005.getValue();
     if (null != temp_13_0005)
-      com.simiacryptus.ref.lang.RefUtil.freeRef(temp_13_0005);
+      RefUtil.freeRef(temp_13_0005);
     final long size = endCount - baseCount;
 
     final long terminals = firstEntry.getKey().equals(currentCode) ? firstEntryCount : 0;
     if (null != firstEntry)
-      com.simiacryptus.ref.lang.RefUtil.freeRef(firstEntry);
-    java.util.Map.Entry<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0006 = zeroMap.lastEntry();
+      RefUtil.freeRef(firstEntry);
+    Map.Entry<Bits, Long> temp_13_0006 = zeroMap.lastEntry();
     final long zeroCount = 0 == zeroMap.size() ? 0 : temp_13_0006.getValue() - baseCount - terminals;
     if (null != temp_13_0006)
-      com.simiacryptus.ref.lang.RefUtil.freeRef(temp_13_0006);
+      RefUtil.freeRef(temp_13_0006);
     final long oneCount = size - terminals - zeroCount;
 
     final EntryTransformer<Bits, Long, Long> transformer = new EntryTransformer<Bits, Long, Long>() {
@@ -352,20 +352,20 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
         return (long) CountTreeBitsCollection.this.map.get(key).get();
       }
     };
-    com.simiacryptus.ref.wrappers.RefMap<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0007 = RefMaps
-        .transformEntries(com.simiacryptus.ref.lang.RefUtil.addRef(sums), transformer);
+    RefMap<Bits, Long> temp_13_0007 = RefMaps
+        .transformEntries(RefUtil.addRef(sums), transformer);
     assert size == this.sum(temp_13_0007.values());
     if (null != temp_13_0007)
       temp_13_0007.freeRef();
     if (null != sums)
       sums.freeRef();
-    com.simiacryptus.ref.wrappers.RefMap<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0008 = RefMaps
-        .transformEntries(com.simiacryptus.ref.lang.RefUtil.addRef(zeroMap), transformer);
+    RefMap<Bits, Long> temp_13_0008 = RefMaps
+        .transformEntries(RefUtil.addRef(zeroMap), transformer);
     assert zeroCount == this.sum(temp_13_0008.values());
     if (null != temp_13_0008)
       temp_13_0008.freeRef();
-    com.simiacryptus.ref.wrappers.RefMap<com.simiacryptus.util.binary.Bits, java.lang.Long> temp_13_0009 = RefMaps
-        .transformEntries(com.simiacryptus.ref.lang.RefUtil.addRef(oneMap), transformer);
+    RefMap<Bits, Long> temp_13_0009 = RefMaps
+        .transformEntries(RefUtil.addRef(oneMap), transformer);
     assert oneCount == this.sum(temp_13_0009.values());
 
     if (null != temp_13_0009)
@@ -377,12 +377,12 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
     }
     this.writeBranchCounts(branchCounts, out);
     if (0 < zeroCount) {
-      this.write(out, currentCode.concatenate(Bits.ZERO), com.simiacryptus.ref.lang.RefUtil.addRef(zeroMap));
+      this.write(out, currentCode.concatenate(Bits.ZERO), RefUtil.addRef(zeroMap));
     }
     if (null != zeroMap)
       zeroMap.freeRef();
     if (0 < oneCount) {
-      this.write(out, currentCode.concatenate(Bits.ONE), com.simiacryptus.ref.lang.RefUtil.addRef(oneMap));
+      this.write(out, currentCode.concatenate(Bits.ONE), RefUtil.addRef(oneMap));
     }
     if (null != oneMap)
       oneMap.freeRef();

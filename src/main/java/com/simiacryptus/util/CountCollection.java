@@ -20,6 +20,7 @@
 package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.RefArrayList;
 import com.simiacryptus.ref.wrappers.RefList;
@@ -27,6 +28,7 @@ import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefMaps;
 import com.simiacryptus.ref.wrappers.RefMaps.EntryTransformer;
 
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,8 +40,8 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
   public CountCollection(final C collection) {
     super();
     {
-      C temp_00_0001 = com.simiacryptus.ref.lang.RefUtil.addRef(collection);
-      this.map = com.simiacryptus.ref.lang.RefUtil.addRef(temp_00_0001);
+      C temp_00_0001 = RefUtil.addRef(collection);
+      this.map = RefUtil.addRef(temp_00_0001);
       if (null != temp_00_0001)
         temp_00_0001.freeRef();
     }
@@ -58,7 +60,7 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
   }
 
   public RefMap<T, Integer> getMap() {
-    return RefMaps.transformEntries(com.simiacryptus.ref.lang.RefUtil.addRef(this.map),
+    return RefMaps.transformEntries(RefUtil.addRef(this.map),
         new EntryTransformer<T, AtomicInteger, Integer>() {
           @Override
           public Integer transformEntry(final T key, final AtomicInteger value) {
@@ -71,7 +73,7 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
   CountCollection[] addRefs(CountCollection[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRef)
         .toArray((x) -> new CountCollection[x]);
   }
 
@@ -79,7 +81,7 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
   CountCollection[][] addRefs(CountCollection[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRefs)
         .toArray((x) -> new CountCollection[x][]);
   }
 

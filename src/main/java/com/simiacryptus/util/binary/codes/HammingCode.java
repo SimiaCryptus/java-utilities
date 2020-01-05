@@ -20,6 +20,7 @@
 package com.simiacryptus.util.binary.codes;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefCollection;
 import com.simiacryptus.ref.wrappers.RefTreeSet;
 import com.simiacryptus.util.binary.BitInputStream;
@@ -108,7 +109,7 @@ class HammingCode<T extends Comparable<T>> {
     in.read(entry.getKey().bitLength);
     T temp_05_0001 = entry.getValue();
     if (null != entry)
-      com.simiacryptus.ref.lang.RefUtil.freeRef(entry);
+      RefUtil.freeRef(entry);
     return temp_05_0001;
   }
 
@@ -196,7 +197,7 @@ class HammingCode<T extends Comparable<T>> {
     HammingCodeCollection[] addRefs(HammingCodeCollection[] array) {
       if (array == null)
         return null;
-      return java.util.Arrays.stream(array).filter((x) -> x != null).map(HammingCodeCollection::addRef)
+      return Arrays.stream(array).filter((x) -> x != null).map(HammingCodeCollection::addRef)
           .toArray((x) -> new HammingCodeCollection[x]);
     }
 
@@ -205,12 +206,12 @@ class HammingCode<T extends Comparable<T>> {
       final Entry<Bits, T> code = parent.decode(bits);
       if (null == code) {
         if (null != code)
-          com.simiacryptus.ref.lang.RefUtil.freeRef(code);
+          RefUtil.freeRef(code);
         return CodeType.Prefix;
       }
       assert bits.equals(code.getKey());
       if (null != code)
-        com.simiacryptus.ref.lang.RefUtil.freeRef(code);
+        RefUtil.freeRef(code);
       return CodeType.Terminal;
     }
 

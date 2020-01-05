@@ -244,8 +244,8 @@ class Util {
   }
 
   public static String mkString(@Nonnull final CharSequence separator, final CharSequence... strs) {
-    com.simiacryptus.ref.wrappers.RefList<java.lang.CharSequence> temp_09_0006 = RefArrays.asList(strs);
-    java.lang.String temp_09_0005 = temp_09_0006.stream().collect(RefCollectors.joining(separator));
+    RefList<CharSequence> temp_09_0006 = RefArrays.asList(strs);
+    String temp_09_0005 = temp_09_0006.stream().collect(RefCollectors.joining(separator));
     if (null != temp_09_0006)
       temp_09_0006.freeRef();
     return temp_09_0005;
@@ -322,25 +322,25 @@ class Util {
   }
 
   public static <T> RefStream<T> toIterator(@Nonnull final RefIteratorBase<T> iterator) {
-    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0001 = RefStreamSupport
+    RefStream<T> temp_09_0001 = RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, 1, Spliterator.ORDERED), false);
     return temp_09_0001;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator) {
-    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0002 = Util.toStream(iterator == null ? null : iterator, 0);
+    RefStream<T> temp_09_0002 = Util.toStream(iterator == null ? null : iterator, 0);
     return temp_09_0002;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size) {
-    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size,
+    RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size,
         false);
     return temp_09_0003;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size,
                                           final boolean parallel) {
-    com.simiacryptus.ref.wrappers.RefStream<T> temp_09_0004 = RefStreamSupport
+    RefStream<T> temp_09_0004 = RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);
     return temp_09_0004;
   }

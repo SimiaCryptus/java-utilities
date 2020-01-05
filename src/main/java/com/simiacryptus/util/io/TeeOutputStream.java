@@ -21,6 +21,7 @@ package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -50,7 +51,7 @@ class TeeOutputStream extends OutputStream {
 
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
-    com.simiacryptus.ref.wrappers.RefList<java.io.OutputStream> temp_11_0001 = RefArrays.asList(secondaries);
+    RefList<OutputStream> temp_11_0001 = RefArrays.asList(secondaries);
     branches.addAll(temp_11_0001);
     if (null != temp_11_0001)
       temp_11_0001.freeRef();

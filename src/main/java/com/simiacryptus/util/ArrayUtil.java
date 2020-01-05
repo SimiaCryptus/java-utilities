@@ -20,11 +20,13 @@
 package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.IntFunction;
 
 public @RefAware
 class ArrayUtil {
@@ -35,7 +37,7 @@ class ArrayUtil {
   }
 
   public static RefList<double[]> add(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0001 = ArrayUtil.op(a == null ? null : a,
+    RefList<double[]> temp_08_0001 = ArrayUtil.op(a == null ? null : a,
         b == null ? null : b, (x, y) -> x + y);
     return temp_08_0001;
   }
@@ -58,7 +60,7 @@ class ArrayUtil {
   }
 
   public static RefList<double[]> minus(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0003 = ArrayUtil.op(a == null ? null : a,
+    RefList<double[]> temp_08_0003 = ArrayUtil.op(a == null ? null : a,
         b == null ? null : b, (x, y) -> x - y);
     return temp_08_0003;
   }
@@ -75,12 +77,12 @@ class ArrayUtil {
 
   @Nonnull
   public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, final double b) {
-    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0004 = ArrayUtil.op(a == null ? null : a, x -> x * b);
+    RefList<double[]> temp_08_0004 = ArrayUtil.op(a == null ? null : a, x -> x * b);
     return temp_08_0004;
   }
 
   public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0005 = ArrayUtil.op(a == null ? null : a,
+    RefList<double[]> temp_08_0005 = ArrayUtil.op(a == null ? null : a,
         b == null ? null : b, (x, y) -> x * y);
     return temp_08_0005;
   }
@@ -122,8 +124,8 @@ class ArrayUtil {
   public static RefList<double[]> op(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b,
                                      @Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
-    com.simiacryptus.ref.wrappers.RefList<double[]> temp_08_0006 = RefIntStream.range(0, a.size()).parallel().mapToObj(
-        com.simiacryptus.ref.lang.RefUtil.wrapInterface((java.util.function.IntFunction<? extends double[]>) i -> {
+    RefList<double[]> temp_08_0006 = RefIntStream.range(0, a.size()).parallel().mapToObj(
+        RefUtil.wrapInterface((IntFunction<? extends double[]>) i -> {
           assert a.get(i).length == b.get(i).length;
           @Nonnull final double[] c = new double[a.get(i).length];
           for (int j = 0; j < a.get(i).length; j++) {

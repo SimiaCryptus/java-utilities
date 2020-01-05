@@ -20,12 +20,17 @@
 package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.RefHashMap;
 import com.simiacryptus.ref.wrappers.RefHashSet;
 import com.simiacryptus.ref.wrappers.RefMap;
+import com.simiacryptus.ref.wrappers.RefSet;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public @RefAware
@@ -37,14 +42,14 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
   @Override
   public RefMap<CharSequence, Object> getMetrics() {
     @Nonnull final RefHashMap<CharSequence, Object> returnValue = new RefHashMap<>();
-    com.simiacryptus.ref.wrappers.RefSet<java.util.Map.Entry<java.lang.CharSequence, java.lang.Object>> temp_14_0001 = items
+    RefSet<Map.Entry<CharSequence, Object>> temp_14_0001 = items
         .entrySet();
-    temp_14_0001.stream().parallel().forEach(com.simiacryptus.ref.lang.RefUtil.wrapInterface(
-        (java.util.function.Consumer<? super java.util.Map.Entry<java.lang.CharSequence, java.lang.Object>>) e -> {
+    temp_14_0001.stream().parallel().forEach(RefUtil.wrapInterface(
+        (Consumer<? super Map.Entry<CharSequence, Object>>) e -> {
           final CharSequence k = e.getKey();
           final Object v = e.getValue();
           if (null != e)
-            com.simiacryptus.ref.lang.RefUtil.freeRef(e);
+            RefUtil.freeRef(e);
           if (v instanceof MonitoredItem) {
             returnValue.put(k, ((MonitoredItem) v).getMetrics());
           } else if (v instanceof Supplier) {
@@ -52,7 +57,7 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
           } else {
             returnValue.put(k, v);
           }
-        }, com.simiacryptus.ref.lang.RefUtil.addRef(returnValue)));
+        }, RefUtil.addRef(returnValue)));
     if (null != temp_14_0001)
       temp_14_0001.freeRef();
     return returnValue;
@@ -62,7 +67,7 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
   MonitoredObject[] addRefs(MonitoredObject[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRef)
         .toArray((x) -> new MonitoredObject[x]);
   }
 
@@ -70,7 +75,7 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
   MonitoredObject[][] addRefs(MonitoredObject[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRefs)
         .toArray((x) -> new MonitoredObject[x][]);
   }
 
@@ -98,7 +103,7 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
     for (final CharSequence k : keys) {
       final Object v = items.get(k);
       if (v instanceof MonitoredObject) {
-        com.simiacryptus.ref.lang.RefUtil.freeRef(((MonitoredObject) v).clearConstants());
+        RefUtil.freeRef(((MonitoredObject) v).clearConstants());
       } else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
         items.remove(k);
       }

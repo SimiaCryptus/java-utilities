@@ -27,6 +27,7 @@ import com.simiacryptus.ref.wrappers.RefConsumer;
 import com.simiacryptus.ref.wrappers.RefList;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -42,14 +43,14 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
   public StaticResourcePool(@Nonnull final RefList<T> items) {
     super();
     {
-      com.simiacryptus.ref.wrappers.RefList<T> temp_03_0001 = RefCollections
+      RefList<T> temp_03_0001 = RefCollections
           .unmodifiableList(new RefArrayList<>(items == null ? null : items.addRef()));
       this.all = temp_03_0001 == null ? null : temp_03_0001.addRef();
       if (null != temp_03_0001)
         temp_03_0001.freeRef();
     }
     items.freeRef();
-    com.simiacryptus.ref.wrappers.RefList<T> temp_03_0002 = getAll();
+    RefList<T> temp_03_0002 = getAll();
     pool.addAll(temp_03_0002);
     if (null != temp_03_0002)
       temp_03_0002.freeRef();
@@ -64,7 +65,7 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
   StaticResourcePool[] addRefs(StaticResourcePool[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRef)
         .toArray((x) -> new StaticResourcePool[x]);
   }
 
@@ -72,7 +73,7 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
   StaticResourcePool[][] addRefs(StaticResourcePool[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRefs)
         .toArray((x) -> new StaticResourcePool[x][]);
   }
 
@@ -105,7 +106,7 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
   }
 
   public int size() {
-    com.simiacryptus.ref.wrappers.RefList<T> temp_03_0004 = getAll();
+    RefList<T> temp_03_0004 = getAll();
     int temp_03_0003 = temp_03_0004.size();
     if (null != temp_03_0004)
       temp_03_0004.freeRef();

@@ -25,6 +25,7 @@ import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Spliterator;
 
 public abstract @RefAware
@@ -37,7 +38,7 @@ class DataLoader<T> extends ReferenceCountingBase {
   DataLoader[] addRefs(DataLoader[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef)
         .toArray((x) -> new DataLoader[x]);
   }
 
@@ -45,7 +46,7 @@ class DataLoader<T> extends ReferenceCountingBase {
   DataLoader[][] addRefs(DataLoader[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs)
         .toArray((x) -> new DataLoader[x][]);
   }
 
@@ -84,7 +85,7 @@ class DataLoader<T> extends ReferenceCountingBase {
       }
     }
     @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
-    com.simiacryptus.ref.wrappers.RefStream<T> temp_06_0001 = RefStreamSupport.stream(
+    RefStream<T> temp_06_0001 = RefStreamSupport.stream(
         RefSpliterators.spliteratorUnknownSize(iterator == null ? null : iterator.addRef(), Spliterator.DISTINCT),
         false).filter(x -> x != null);
     if (null != iterator)

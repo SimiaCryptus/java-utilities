@@ -208,8 +208,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Override
   public String toString() {
-    com.simiacryptus.ref.wrappers.RefMap<java.lang.CharSequence, java.lang.Object> temp_10_0002 = getMetrics();
-    java.lang.String temp_10_0001 = temp_10_0002.toString();
+    RefMap<CharSequence, Object> temp_10_0002 = getMetrics();
+    String temp_10_0001 = temp_10_0002.toString();
     if (null != temp_10_0002)
       temp_10_0002.freeRef();
     return temp_10_0001;

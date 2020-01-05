@@ -27,6 +27,7 @@ import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract @RefAware
@@ -52,7 +53,7 @@ class BitsCollection<C extends RefMap<Bits, AtomicInteger>> extends CountCollect
   BitsCollection[] addRefs(BitsCollection[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRef)
         .toArray((x) -> new BitsCollection[x]);
   }
 
@@ -60,7 +61,7 @@ class BitsCollection<C extends RefMap<Bits, AtomicInteger>> extends CountCollect
   BitsCollection[][] addRefs(BitsCollection[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRefs)
         .toArray((x) -> new BitsCollection[x][]);
   }
 

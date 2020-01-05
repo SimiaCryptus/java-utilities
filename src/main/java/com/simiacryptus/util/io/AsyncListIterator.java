@@ -25,6 +25,7 @@ import com.simiacryptus.ref.wrappers.RefList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 public @RefAware
 class AsyncListIterator<T> extends RefIteratorBase<T> {
@@ -35,7 +36,7 @@ class AsyncListIterator<T> extends RefIteratorBase<T> {
   public AsyncListIterator(final RefList<T> queue, final Thread thread) {
     this.thread = thread;
     {
-      com.simiacryptus.ref.wrappers.RefList<T> temp_02_0001 = queue == null ? null : queue.addRef();
+      RefList<T> temp_02_0001 = queue == null ? null : queue.addRef();
       this.queue = temp_02_0001 == null ? null : temp_02_0001.addRef();
       if (null != temp_02_0001)
         temp_02_0001.freeRef();
@@ -48,7 +49,7 @@ class AsyncListIterator<T> extends RefIteratorBase<T> {
   AsyncListIterator[] addRefs(AsyncListIterator[] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRef)
+    return Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRef)
         .toArray((x) -> new AsyncListIterator[x]);
   }
 
@@ -56,7 +57,7 @@ class AsyncListIterator<T> extends RefIteratorBase<T> {
   AsyncListIterator[][] addRefs(AsyncListIterator[][] array) {
     if (array == null)
       return null;
-    return java.util.Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRefs)
+    return Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRefs)
         .toArray((x) -> new AsyncListIterator[x][]);
   }
 
