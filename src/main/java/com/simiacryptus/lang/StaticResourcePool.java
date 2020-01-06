@@ -21,10 +21,7 @@ package com.simiacryptus.lang;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
-import com.simiacryptus.ref.wrappers.RefArrayList;
-import com.simiacryptus.ref.wrappers.RefCollections;
-import com.simiacryptus.ref.wrappers.RefConsumer;
-import com.simiacryptus.ref.wrappers.RefList;
+import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -38,7 +35,7 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
 
   @Nonnull
   private final RefList<T> all;
-  private final LinkedBlockingQueue<T> pool = new LinkedBlockingQueue<>();
+  private final RefLinkedBlockingQueue<T> pool = new RefLinkedBlockingQueue<>();
 
   public StaticResourcePool(@Nonnull final RefList<T> items) {
     super();

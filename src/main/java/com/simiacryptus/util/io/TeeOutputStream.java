@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -51,10 +52,7 @@ class TeeOutputStream extends OutputStream {
 
   public TeeOutputStream(final OutputStream primary, final OutputStream... secondaries) {
     this(primary, false);
-    RefList<OutputStream> temp_11_0001 = RefArrays.asList(secondaries);
-    branches.addAll(temp_11_0001);
-    if (null != temp_11_0001)
-      temp_11_0001.freeRef();
+    branches.addAll(Arrays.asList(secondaries));
   }
 
   public boolean isChainCloses() {
@@ -110,7 +108,7 @@ class TeeOutputStream extends OutputStream {
     }).start();
     onClose.set(() -> {
       outTee.branches.remove(outAsync);
-      System.err.println("END HTTP Session");
+      com.simiacryptus.ref.wrappers.RefSystem.err.println("END HTTP Session");
     });
     return in;
   }

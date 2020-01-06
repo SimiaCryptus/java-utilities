@@ -21,6 +21,7 @@ package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -28,7 +29,7 @@ import java.io.PrintStream;
 public @RefAware
 class LOG {
 
-  private static final long startTime = System.nanoTime();
+  private static final long startTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
 
   public static void d(final String msg, final Object... args) {
     LOG.preprocessArgs(args);
@@ -51,7 +52,7 @@ class LOG {
   }
 
   private static void log(final Severity debug, final String msg, final Object[] args) {
-    final String formatted = String.format(msg, args);
+    final String formatted = RefString.format(msg, args);
     final StackTraceElement caller = RefArrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
       Class<?> clazz;
       try {
@@ -63,10 +64,10 @@ class LOG {
         return false;
       return clazz != LOG.class;
     }).findFirst().get();
-    final double time = (System.nanoTime() - LOG.startTime) / 1000000000.;
-    final String line = String.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
+    final double time = (com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - LOG.startTime) / 1000000000.;
+    final String line = RefString.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
         formatted.replaceAll("\n", "\n\t"));
-    System.out.println(line);
+    com.simiacryptus.ref.wrappers.RefSystem.out.println(line);
   }
 
   private static void preprocessArgs(final Object... args) {
@@ -92,12 +93,12 @@ class LOG {
   }
 
   private static CharSequence toString(final double[] point) {
-    final StringBuffer sb = new StringBuffer();
+    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
     for (final double v : point) {
       if (0 < sb.length()) {
         sb.append(", ");
       }
-      sb.append(String.format("%.3f", v));
+      sb.append(RefString.format("%.3f", v));
     }
     return "[" + sb + "]";
   }

@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public @RefAware
@@ -35,8 +36,8 @@ class PercentileStatistics extends ScalarStatistics {
   private final List<double[]> values = new ArrayList<>();
 
   @Override
-  public RefMap<CharSequence, Object> getMetrics() {
-    final RefMap<CharSequence, Object> map = super.getMetrics().addRef();
+  public Map<CharSequence, Object> getMetrics() {
+    final Map<CharSequence, Object> map = super.getMetrics();
     map.put("tp50", getPercentile(0.5));
     map.put("tp75", getPercentile(0.75));
     map.put("tp90", getPercentile(0.9));

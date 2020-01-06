@@ -24,6 +24,7 @@ import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.RefArrayList;
 import com.simiacryptus.ref.wrappers.RefConsumer;
 import com.simiacryptus.ref.wrappers.RefHashSet;
+import com.simiacryptus.ref.wrappers.RefLinkedBlockingQueue;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -38,7 +39,7 @@ class ResourcePool<T> extends ReferenceCountingBase {
   private final RefHashSet<T> all;
   private final ThreadLocal<T> currentValue = new ThreadLocal<>();
   private final int maxItems;
-  private final LinkedBlockingQueue<T> pool = new LinkedBlockingQueue<>();
+  private final RefLinkedBlockingQueue<T> pool = new RefLinkedBlockingQueue<>();
 
   public ResourcePool(final int maxItems) {
     super();

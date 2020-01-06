@@ -21,6 +21,7 @@ package com.simiacryptus.util.data;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefString;
 
 import javax.annotation.Nonnull;
 import java.util.DoubleSummaryStatistics;
@@ -85,7 +86,7 @@ class DoubleStatistics extends DoubleSummaryStatistics {
   }
 
   public CharSequence toString(final double scale) {
-    return String.format("%.4e +- %.4e [%.4e - %.4e] (%d#)", getAverage() * scale, getStandardDeviation() * scale,
+    return RefString.format("%.4e +- %.4e [%.4e - %.4e] (%d#)", getAverage() * scale, getStandardDeviation() * scale,
         getMin() * scale, getMax() * scale, getCount());
   }
 

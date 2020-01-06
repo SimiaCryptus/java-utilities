@@ -30,7 +30,7 @@ class FastRandom {
   private long z;
 
   public FastRandom() {
-    this(System.nanoTime());
+    this(com.simiacryptus.ref.wrappers.RefSystem.nanoTime());
   }
 
   public FastRandom(final long seed) {

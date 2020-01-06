@@ -64,7 +64,7 @@ class Interval {
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer("Interval{");
+    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder("Interval{");
     sb.append("start=").append(start);
     sb.append(", length=").append(length);
     sb.append(", max=").append(max);

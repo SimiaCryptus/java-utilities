@@ -32,8 +32,7 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware
-class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
+public @RefAware class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
 
   protected final C map;
 
@@ -60,25 +59,23 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
   }
 
   public RefMap<T, Integer> getMap() {
-    return RefMaps.transformEntries(RefUtil.addRef(this.map),
-        new EntryTransformer<T, AtomicInteger, Integer>() {
-          @Override
-          public Integer transformEntry(final T key, final AtomicInteger value) {
-            return value.get();
-          }
-        });
+    return RefMaps.transformEntries(RefUtil.addRef(this.map), new EntryTransformer<T, AtomicInteger, Integer>() {
+      @Override
+      public Integer transformEntry(final @com.simiacryptus.ref.lang.RefAware T key,
+          final @com.simiacryptus.ref.lang.RefAware AtomicInteger value) {
+        return value.get();
+      }
+    });
   }
 
-  public static @SuppressWarnings("unused")
-  CountCollection[] addRefs(CountCollection[] array) {
+  public static @SuppressWarnings("unused") CountCollection[] addRefs(CountCollection[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRef)
         .toArray((x) -> new CountCollection[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  CountCollection[][] addRefs(CountCollection[][] array) {
+  public static @SuppressWarnings("unused") CountCollection[][] addRefs(CountCollection[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRefs)
@@ -93,15 +90,12 @@ class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCo
     return this.getCounter(bits).addAndGet(count);
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
     if (null != map)
       map.freeRef();
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  CountCollection<T, C> addRef() {
+  public @Override @SuppressWarnings("unused") CountCollection<T, C> addRef() {
     return (CountCollection<T, C>) super.addRef();
   }
 

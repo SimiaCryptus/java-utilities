@@ -35,8 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware
-class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInteger>> {
+public @RefAware class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInteger>> {
 
   public static boolean SERIALIZATION_CHECKS = false;
   private boolean useBinomials = true;
@@ -76,16 +75,14 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
     return null == value ? defaultValue : value;
   }
 
-  public static @SuppressWarnings("unused")
-  CountTreeBitsCollection[] addRefs(CountTreeBitsCollection[] array) {
+  public static @SuppressWarnings("unused") CountTreeBitsCollection[] addRefs(CountTreeBitsCollection[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRef)
         .toArray((x) -> new CountTreeBitsCollection[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  CountTreeBitsCollection[][] addRefs(CountTreeBitsCollection[][] array) {
+  public static @SuppressWarnings("unused") CountTreeBitsCollection[][] addRefs(CountTreeBitsCollection[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRefs)
@@ -103,8 +100,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
 
   @Override
   public void read(final BitInputStream in) throws IOException {
-    RefMap<Bits, Integer> temp_13_0001 = this
-        .getMap();
+    RefMap<Bits, Integer> temp_13_0001 = this.getMap();
     temp_13_0001.clear();
     if (null != temp_13_0001)
       temp_13_0001.freeRef();
@@ -115,8 +111,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
   }
 
   public void read(final BitInputStream in, final int size) throws IOException {
-    RefMap<Bits, Integer> temp_13_0002 = this
-        .getMap();
+    RefMap<Bits, Integer> temp_13_0002 = this.getMap();
     temp_13_0002.clear();
     if (null != temp_13_0002)
       temp_13_0002.freeRef();
@@ -125,7 +120,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
     }
   }
 
-  public long sum(final RefCollection<Long> values) {
+  public long sum(final @RefAware RefCollection<Long> values) {
     long total = 0;
     for (final Long v : values) {
       total += v;
@@ -180,13 +175,10 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
       sums.freeRef();
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  CountTreeBitsCollection addRef() {
+  public @Override @SuppressWarnings("unused") CountTreeBitsCollection addRef() {
     return (CountTreeBitsCollection) super.addRef();
   }
 
@@ -319,8 +311,8 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
     }
   }
 
-  private void write(final BitOutputStream out, final Bits currentCode, final RefNavigableMap<Bits, Long> sums)
-      throws IOException {
+  private void write(final BitOutputStream out, final Bits currentCode,
+      final @RefAware RefNavigableMap<Bits, Long> sums) throws IOException {
     final Entry<Bits, Long> firstEntry = sums.firstEntry();
     final RefNavigableMap<Bits, Long> remainder = sums.tailMap(currentCode, false);
     final Bits splitCode = currentCode.concatenate(Bits.ONE);
@@ -348,24 +340,22 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
 
     final EntryTransformer<Bits, Long, Long> transformer = new EntryTransformer<Bits, Long, Long>() {
       @Override
-      public Long transformEntry(final Bits key, final Long value) {
+      public Long transformEntry(final @com.simiacryptus.ref.lang.RefAware Bits key,
+          final @com.simiacryptus.ref.lang.RefAware Long value) {
         return (long) CountTreeBitsCollection.this.map.get(key).get();
       }
     };
-    RefMap<Bits, Long> temp_13_0007 = RefMaps
-        .transformEntries(RefUtil.addRef(sums), transformer);
+    RefMap<Bits, Long> temp_13_0007 = RefMaps.transformEntries(RefUtil.addRef(sums), transformer);
     assert size == this.sum(temp_13_0007.values());
     if (null != temp_13_0007)
       temp_13_0007.freeRef();
     if (null != sums)
       sums.freeRef();
-    RefMap<Bits, Long> temp_13_0008 = RefMaps
-        .transformEntries(RefUtil.addRef(zeroMap), transformer);
+    RefMap<Bits, Long> temp_13_0008 = RefMaps.transformEntries(RefUtil.addRef(zeroMap), transformer);
     assert zeroCount == this.sum(temp_13_0008.values());
     if (null != temp_13_0008)
       temp_13_0008.freeRef();
-    RefMap<Bits, Long> temp_13_0009 = RefMaps
-        .transformEntries(RefUtil.addRef(oneMap), transformer);
+    RefMap<Bits, Long> temp_13_0009 = RefMaps.transformEntries(RefUtil.addRef(oneMap), transformer);
     assert oneCount == this.sum(temp_13_0009.values());
 
     if (null != temp_13_0009)
@@ -395,8 +385,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
     StartTree, EndTree, BeforeCount, AfterCount, BeforeTerminal, AfterTerminal
   }
 
-  public static @RefAware
-  class BranchCounts {
+  public static @RefAware class BranchCounts {
     public Bits path;
     public long size;
     public long terminals;
@@ -409,7 +398,7 @@ class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInte
     }
 
     public BranchCounts(final Bits path, final long size, final long terminals, final long zeroCount,
-                        final long oneCount) {
+        final long oneCount) {
       this.path = path;
       this.size = size;
       this.terminals = terminals;

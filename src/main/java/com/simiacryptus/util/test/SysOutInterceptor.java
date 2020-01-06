@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public @RefAware
 class SysOutInterceptor extends PrintStream {
 
-  public static final PrintStream ORIGINAL_OUT = System.out;
+  public static final PrintStream ORIGINAL_OUT = com.simiacryptus.ref.wrappers.RefSystem.out;
   public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
   private static final Logger log = LoggerFactory.getLogger(SysOutInterceptor.class);
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
@@ -119,7 +119,7 @@ class SysOutInterceptor extends PrintStream {
       if (null != stdout) {
         stdout.setOutputStream(this);
       }
-      System.setOut(this);
+      com.simiacryptus.ref.wrappers.RefSystem.setOut(this);
     }
     return this;
   }

@@ -21,6 +21,7 @@ package com.simiacryptus.util.binary;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefString;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,7 +54,7 @@ class BitInputStream {
     final long expectedLong = expect.ordinal();
     if (checkBits.toLong() != expectedLong) {
       final Bits expectedBits = new Bits(expectedLong, 8);
-      throw new IOException(String.format("Check for %s failed: %s != %s", expect, checkBits, expectedBits));
+      throw new IOException(RefString.format("Check for %s failed: %s != %s", expect, checkBits, expectedBits));
     }
   }
 
@@ -61,7 +62,7 @@ class BitInputStream {
     int size = Math.min(availible(), bits.bitLength);
     Bits read = read(size);
     if (!bits.range(0, size).equals(read)) {
-      throw new RuntimeException(String.format("%s is not expected %s", read, bits));
+      throw new RuntimeException(RefString.format("%s is not expected %s", read, bits));
     }
   }
 

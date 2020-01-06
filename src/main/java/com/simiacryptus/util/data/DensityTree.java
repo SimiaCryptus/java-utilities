@@ -24,6 +24,7 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefComparator;
 import com.simiacryptus.ref.wrappers.RefIntStream;
 import com.simiacryptus.ref.wrappers.RefStream;
+import com.simiacryptus.ref.wrappers.RefString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -134,7 +135,7 @@ class DensityTree {
     @Nonnull
     public String toString() {
       return "[" + RefIntStream.range(0, min.length).mapToObj(d -> {
-        return String.format("%s: %s - %s", columnNames[d], min[d], max[d]);
+        return RefString.format("%s: %s - %s", columnNames[d], min[d], max[d]);
       }).reduce((a, b) -> a + "; " + b).get() + "]";
     }
 
@@ -146,7 +147,7 @@ class DensityTree {
     private final double value;
 
     public OrthoRule(int dim, double value) {
-      super(String.format("%s < %s", columnNames[dim], value));
+      super(RefString.format("%s < %s", columnNames[dim], value));
       this.dim = dim;
       this.value = value;
     }
@@ -253,7 +254,7 @@ class DensityTree {
 
     public String code() {
       if (null != rule) {
-        return String.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}", dataInfo(), rule, rule.fitness,
+        return RefString.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}", dataInfo(), rule, rule.fitness,
             left.code().replaceAll("\n", "\n  "), right.code().replaceAll("\n", "\n  "));
       } else {
         return "// " + dataInfo();
@@ -318,7 +319,7 @@ class DensityTree {
     }
 
     private CharSequence dataInfo() {
-      return String.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
+      return RefString.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }
   }
 }

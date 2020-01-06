@@ -21,6 +21,7 @@ package com.simiacryptus.notebook;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.data.DoubleStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ class TableOutput {
           final Class<?> cellType = value.getClass();
           Class<?> colType = schema.getOrDefault(propKey, cellType);
           if (!colType.isAssignableFrom(cellType)) {
-            logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, colType, cellType));
+            logger.warn(RefString.format("Schema mismatch for %s (%s != %s)", propKey, colType, cellType));
           }
           schema.putIfAbsent(propKey, cellType);
         }
@@ -115,7 +116,7 @@ class TableOutput {
         }).collect(Collectors.joining(","));
         printStream.println(keys.stream().collect(Collectors.joining(",")).trim());
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
+          printStream.println(RefString.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
         }
       }
       return buffer.toString();
@@ -152,7 +153,7 @@ class TableOutput {
         printStream.print("</tr>");
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.print("<tr>");
-          printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
+          printStream.println(RefString.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
           printStream.print("</tr>");
         }
         printStream.print("</table>");
@@ -206,7 +207,7 @@ class TableOutput {
           return new String(t);
         }).collect(Collectors.joining(" | ")).trim());
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(String.format(formatString, schema.entrySet().stream().map(e -> {
+          printStream.println(RefString.format(formatString, schema.entrySet().stream().map(e -> {
             Object temp_04_0004 = row.get(e.getKey());
             if (null != e)
               RefUtil.freeRef(e);

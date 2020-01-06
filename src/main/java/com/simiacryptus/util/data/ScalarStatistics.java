@@ -29,6 +29,8 @@ import com.simiacryptus.util.MonitoredItem;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("serial")
 public @RefAware
@@ -72,8 +74,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
   }
 
   @Override
-  public RefMap<CharSequence, Object> getMetrics() {
-    @Nonnull final RefHashMap<CharSequence, Object> map = new RefHashMap<>();
+  public Map<CharSequence, Object> getMetrics() {
+    @Nonnull final HashMap<CharSequence, Object> map = new HashMap<>();
     map.put("count", sum0);
     map.put("sum", sum1);
     map.put("negative", negatives);
@@ -208,10 +210,7 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Override
   public String toString() {
-    RefMap<CharSequence, Object> temp_10_0002 = getMetrics();
-    String temp_10_0001 = temp_10_0002.toString();
-    if (null != temp_10_0002)
-      temp_10_0002.freeRef();
-    return temp_10_0001;
+    Map<CharSequence, Object> temp_10_0002 = getMetrics();
+    return temp_10_0002.toString();
   }
 }

@@ -42,7 +42,7 @@ class SerialArrayList<U> {
     int cursor = 0;
     for (int i = 0; i < items.length; i++) {
       SerialArrayList<U> item = items[i];
-      System.arraycopy(item.buffer, 0, this.buffer, cursor, item.maxByte);
+      com.simiacryptus.ref.wrappers.RefSystem.arraycopy(item.buffer, 0, this.buffer, cursor, item.maxByte);
       cursor += item.maxByte;
     }
   }
@@ -142,7 +142,7 @@ class SerialArrayList<U> {
 
   public synchronized void putAll(SerialArrayList<U> data, int startIndex) {
     ensureCapacity((startIndex * unitSize) + data.maxByte);
-    System.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
+    com.simiacryptus.ref.wrappers.RefSystem.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
   }
 
   public SerialArrayList<U> copy() {

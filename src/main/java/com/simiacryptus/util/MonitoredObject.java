@@ -29,6 +29,7 @@ import com.simiacryptus.ref.wrappers.RefSet;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -40,10 +41,9 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
 
   @Nonnull
   @Override
-  public RefMap<CharSequence, Object> getMetrics() {
-    @Nonnull final RefHashMap<CharSequence, Object> returnValue = new RefHashMap<>();
-    RefSet<Map.Entry<CharSequence, Object>> temp_14_0001 = items
-        .entrySet();
+  public Map<CharSequence, Object> getMetrics() {
+    @Nonnull final HashMap<CharSequence, Object> returnValue = new HashMap<>();
+    RefSet<Map.Entry<CharSequence, Object>> temp_14_0001 = items.entrySet();
     temp_14_0001.stream().parallel().forEach(RefUtil.wrapInterface(
         (Consumer<? super Map.Entry<CharSequence, Object>>) e -> {
           final CharSequence k = e.getKey();
@@ -92,7 +92,7 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
   }
 
   @Nonnull
-  public MonitoredObject addObj(final CharSequence key, final MonitoredItem item) {
+  public MonitoredObject addObj(final CharSequence key, @RefAware final MonitoredItem item) {
     items.put(key, item);
     return this.addRef();
   }

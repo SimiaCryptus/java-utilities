@@ -43,7 +43,7 @@ class LabeledObject<T> {
   @Nonnull
   @Override
   public String toString() {
-    @Nonnull final StringBuffer sb = new StringBuffer("LabeledObject{");
+    @Nonnull final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder("LabeledObject{");
     sb.append("data=").append(data);
     sb.append(", label='").append(label).append('\'');
     sb.append('}');

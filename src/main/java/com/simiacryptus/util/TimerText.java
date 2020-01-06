@@ -27,7 +27,7 @@ import java.util.TimeZone;
 
 public @RefAware
 class TimerText {
-  final long start = System.currentTimeMillis();
+  final long start = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis();
   private final SimpleDateFormat formatter;
 
   public TimerText() {
@@ -37,6 +37,6 @@ class TimerText {
 
   @Override
   public String toString() {
-    return formatter.format(new Date(System.currentTimeMillis() - start));
+    return formatter.format(new Date(com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis() - start));
   }
 }

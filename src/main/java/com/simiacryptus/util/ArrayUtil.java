@@ -28,8 +28,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntFunction;
 
-public @RefAware
-class ArrayUtil {
+public @RefAware class ArrayUtil {
 
   @Nonnull
   public static double[] add(@Nonnull final double[] a, @Nonnull final double[] b) {
@@ -37,8 +36,7 @@ class ArrayUtil {
   }
 
   public static RefList<double[]> add(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0001 = ArrayUtil.op(a == null ? null : a,
-        b == null ? null : b, (x, y) -> x + y);
+    RefList<double[]> temp_08_0001 = ArrayUtil.op(a == null ? null : a, b == null ? null : b, (x, y) -> x + y);
     return temp_08_0001;
   }
 
@@ -60,8 +58,7 @@ class ArrayUtil {
   }
 
   public static RefList<double[]> minus(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0003 = ArrayUtil.op(a == null ? null : a,
-        b == null ? null : b, (x, y) -> x - y);
+    RefList<double[]> temp_08_0003 = ArrayUtil.op(a == null ? null : a, b == null ? null : b, (x, y) -> x - y);
     return temp_08_0003;
   }
 
@@ -81,17 +78,18 @@ class ArrayUtil {
     return temp_08_0004;
   }
 
-  public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0005 = ArrayUtil.op(a == null ? null : a,
-        b == null ? null : b, (x, y) -> x * y);
+  public static RefList<double[]> multiply(@Nonnull final @RefAware RefList<double[]> a,
+      @Nonnull final @RefAware RefList<double[]> b) {
+    RefList<double[]> temp_08_0005 = ArrayUtil.op(a == null ? null : a, b == null ? null : b, (x, y) -> x * y);
     return temp_08_0005;
   }
 
   @Nonnull
   public static double[] op(@Nonnull final double[] a, @Nonnull final double[] b,
-                            @Nonnull final DoubleBinaryOperator fn) {
+      @Nonnull final DoubleBinaryOperator fn) {
     assert a.length == b.length;
-    @Nonnull final double[] c = new double[a.length];
+    @Nonnull
+    final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j], b[j]);
     }
@@ -100,7 +98,8 @@ class ArrayUtil {
 
   @Nonnull
   public static double[] op(@Nonnull final double[] a, @Nonnull final DoubleUnaryOperator fn) {
-    @Nonnull final double[] c = new double[a.length];
+    @Nonnull
+    final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j]);
     }
@@ -108,10 +107,13 @@ class ArrayUtil {
   }
 
   @Nonnull
-  public static RefList<double[]> op(@Nonnull final RefList<double[]> a, @Nonnull final DoubleUnaryOperator fn) {
-    @Nonnull final RefArrayList<double[]> list = new RefArrayList<>();
+  public static RefList<double[]> op(@Nonnull final @RefAware RefList<double[]> a,
+      @Nonnull final DoubleUnaryOperator fn) {
+    @Nonnull
+    final RefArrayList<double[]> list = new RefArrayList<>();
     for (int i = 0; i < a.size(); i++) {
-      @Nonnull final double[] c = new double[a.get(i).length];
+      @Nonnull
+      final double[] c = new double[a.get(i).length];
       for (int j = 0; j < a.get(i).length; j++) {
         c[j] = fn.applyAsDouble(a.get(i)[j]);
       }
@@ -121,13 +123,14 @@ class ArrayUtil {
     return list;
   }
 
-  public static RefList<double[]> op(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b,
-                                     @Nonnull final DoubleBinaryOperator fn) {
+  public static RefList<double[]> op(@Nonnull final @RefAware RefList<double[]> a,
+                                     @Nonnull final @RefAware RefList<double[]> b, @Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
-    RefList<double[]> temp_08_0006 = RefIntStream.range(0, a.size()).parallel().mapToObj(
-        RefUtil.wrapInterface((IntFunction<? extends double[]>) i -> {
+    RefList<double[]> temp_08_0006 = RefIntStream.range(0, a.size()).parallel()
+        .mapToObj(RefUtil.wrapInterface((IntFunction<? extends double[]>) i -> {
           assert a.get(i).length == b.get(i).length;
-          @Nonnull final double[] c = new double[a.get(i).length];
+          @Nonnull
+          final double[] c = new double[a.get(i).length];
           for (int j = 0; j < a.get(i).length; j++) {
             c[j] = fn.applyAsDouble(a.get(i)[j], b.get(i)[j]);
           }
@@ -150,7 +153,7 @@ class ArrayUtil {
     return ArrayUtil.op(a, (x) -> x + b);
   }
 
-  public static double sum(@Nonnull final RefList<double[]> a) {
+  public static double sum(@Nonnull final @RefAware RefList<double[]> a) {
     double temp_08_0007 = a.stream().parallel().mapToDouble(x -> RefArrays.stream(x).sum()).sum();
     a.freeRef();
     return temp_08_0007;

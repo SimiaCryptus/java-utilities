@@ -348,7 +348,7 @@ class Bits implements Comparable<Bits> {
   }
 
   public String toBitString() {
-    StringBuffer sb = new StringBuffer();
+    com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
     final int shift = this.bytes.length * 8 - this.bitLength;
     final byte[] shiftRight = shiftRight(this.bytes, shift);
     for (final byte b : shiftRight) {
@@ -362,7 +362,7 @@ class Bits implements Comparable<Bits> {
       return sb.substring(sb.length() - this.bitLength, sb.length());
     } else {
       final CharSequence n = sb.toString();
-      sb = new StringBuffer();
+      sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
       while (sb.length() + n.length() < this.bitLength) {
         sb.append("0");
       }
@@ -371,7 +371,7 @@ class Bits implements Comparable<Bits> {
   }
 
   public CharSequence toHexString() {
-    final StringBuffer sb = new StringBuffer();
+    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
     for (final byte b : this.bytes) {
       sb.append(Integer.toHexString(b & 0xFF));
     }

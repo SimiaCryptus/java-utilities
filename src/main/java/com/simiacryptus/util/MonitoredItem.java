@@ -20,9 +20,10 @@
 package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefMap;
+
+import java.util.Map;
 
 public @RefAware
 interface MonitoredItem {
-  RefMap<CharSequence, Object> getMetrics();
+  Map<CharSequence, Object> getMetrics();
 }

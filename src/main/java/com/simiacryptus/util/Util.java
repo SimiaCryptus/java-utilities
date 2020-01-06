@@ -58,11 +58,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 
-public @RefAware
-class Util {
+public @RefAware class Util {
 
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
-    public final Random r = new Random(System.nanoTime());
+    public final Random r = new Random(com.simiacryptus.ref.wrappers.RefSystem.nanoTime());
 
     @Override
     protected Random initialValue() {
@@ -88,17 +87,20 @@ class Util {
   }
 
   public static RefStream<byte[]> binaryStream(final String path, @Nonnull final String name, final int skip,
-                                               final int recordSize) throws IOException {
-    @Nonnull final File file = new File(path, name);
+      final int recordSize) throws IOException {
+    @Nonnull
+    final File file = new File(path, name);
     final byte[] fileData = IOUtils
         .toByteArray(new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)))));
-    @Nonnull final DataInputStream in = new DataInputStream(new ByteArrayInputStream(fileData));
+    @Nonnull
+    final DataInputStream in = new DataInputStream(new ByteArrayInputStream(fileData));
     in.skip(skip);
     return Util.toIterator(new BinaryChunkIterator(in, recordSize));
   }
 
   public static <F, T> Function<F, T> cache(@Nonnull final Function<F, T> inner) {
-    @Nonnull final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
+    @Nonnull
+    final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
       @Override
       public T load(final F key) {
         return inner.apply(key);
@@ -123,7 +125,7 @@ class Util {
 
   public static Supplier<InputStream> getStreamSupplier(URI url) {
     return () -> {
-      TrustManager[] trustManagers = {new X509TrustManager() {
+      TrustManager[] trustManagers = { new X509TrustManager() {
         public X509Certificate[] getAcceptedIssuers() {
           return new X509Certificate[0];
         }
@@ -133,7 +135,7 @@ class Util {
 
         public void checkServerTrusted(X509Certificate[] certs, String authType) {
         }
-      }};
+      } };
       try {
         SSLContext ctx = SSLContext.getInstance("TLS");
         ctx.init(null, trustManagers, null);
@@ -164,16 +166,17 @@ class Util {
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
     final File fileLoc = new File(file).getCanonicalFile().getAbsoluteFile();
     if (!fileLoc.exists()) {
-      log.info(String.format("Downloading %s to %s", url, fileLoc));
+      log.info(RefString.format("Downloading %s to %s", url, fileLoc));
       IOUtils.copy(get(url), new FileOutputStream(fileLoc));
-      log.info(String.format("Finished Download of %s to %s", url, fileLoc));
+      log.info(RefString.format("Finished Download of %s to %s", url, fileLoc));
     }
     return fileLoc;
   }
 
   public static InputStream get(@Nonnull String url)
       throws NoSuchAlgorithmException, KeyManagementException, IOException {
-    @Nonnull final TrustManager[] trustManagers = {new X509TrustManager() {
+    @Nonnull
+    final TrustManager[] trustManagers = { new X509TrustManager() {
       @Nonnull
       @Override
       public X509Certificate[] getAcceptedIssuers() {
@@ -187,13 +190,15 @@ class Util {
       @Override
       public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
       }
-    }};
-    @Nonnull final SSLContext ctx = SSLContext.getInstance("TLS");
+    } };
+    @Nonnull
+    final SSLContext ctx = SSLContext.getInstance("TLS");
     ctx.init(null, trustManagers, null);
     final SSLSocketFactory sslFactory = ctx.getSocketFactory();
     final URLConnection urlConnection = new URL(url).openConnection();
     if (urlConnection instanceof HttpsURLConnection) {
-      @Nonnull final HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
+      @Nonnull
+      final HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
       conn.setSSLSocketFactory(sslFactory);
       conn.setRequestMethod("GET");
     }
@@ -217,22 +222,22 @@ class Util {
   @Nonnull
   public static TemporalUnit cvt(@Nonnull final TimeUnit units) {
     switch (units) {
-      case DAYS:
-        return ChronoUnit.DAYS;
-      case HOURS:
-        return ChronoUnit.HOURS;
-      case MINUTES:
-        return ChronoUnit.MINUTES;
-      case SECONDS:
-        return ChronoUnit.SECONDS;
-      case NANOSECONDS:
-        return ChronoUnit.NANOS;
-      case MICROSECONDS:
-        return ChronoUnit.MICROS;
-      case MILLISECONDS:
-        return ChronoUnit.MILLIS;
-      default:
-        throw new IllegalArgumentException(units.toString());
+    case DAYS:
+      return ChronoUnit.DAYS;
+    case HOURS:
+      return ChronoUnit.HOURS;
+    case MINUTES:
+      return ChronoUnit.MINUTES;
+    case SECONDS:
+      return ChronoUnit.SECONDS;
+    case NANOSECONDS:
+      return ChronoUnit.NANOS;
+    case MICROSECONDS:
+      return ChronoUnit.MICROS;
+    case MILLISECONDS:
+      return ChronoUnit.MILLIS;
+    default:
+      throw new IllegalArgumentException(units.toString());
     }
   }
 
@@ -257,7 +262,8 @@ class Util {
 
   @Nonnull
   public static byte[] read(@Nonnull final DataInputStream i, final int s) throws IOException {
-    @Nonnull final byte[] b = new byte[s];
+    @Nonnull
+    final byte[] b = new byte[s];
     int pos = 0;
     while (b.length > pos) {
       final int read = i.read(b, pos, b.length - pos);
@@ -277,9 +283,11 @@ class Util {
     if (width == image.getWidth())
       return image;
     final int height = image.getHeight() * width / image.getWidth();
-    @Nonnull final BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    @Nonnull
+    final BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     final Graphics gfx = rerender.getGraphics();
-    @Nonnull final RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION,
+    @Nonnull
+    final RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION,
         RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     ((Graphics2D) gfx).setRenderingHints(hints);
     gfx.drawImage(image, 0, 0, rerender.getWidth(), rerender.getHeight(), null);
@@ -291,7 +299,8 @@ class Util {
       return null;
     try {
       Util.layout(component);
-      @Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(),
+      @Nonnull
+      final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(),
           BufferedImage.TYPE_INT_RGB);
       final Graphics2D g = img.createGraphics();
       g.setColor(component.getForeground());
@@ -308,7 +317,8 @@ class Util {
   }
 
   public static CharSequence toInlineImage(@Nonnull final LabeledObject<BufferedImage> img) {
-    @Nonnull final ByteArrayOutputStream b = new ByteArrayOutputStream();
+    @Nonnull
+    final ByteArrayOutputStream b = new ByteArrayOutputStream();
     try {
       ImageIO.write(img.data, "png", b);
     } catch (@Nonnull final RuntimeException e) {
@@ -332,14 +342,15 @@ class Util {
     return temp_09_0002;
   }
 
-  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size) {
-    RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size,
-        false);
+  public static <T> RefStream<T> toStream(
+      @Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
+    RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size, false);
     return temp_09_0003;
   }
 
-  public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator, final int size,
-                                          final boolean parallel) {
+  public static <T> RefStream<T> toStream(
+      @Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
+      final boolean parallel) {
     RefStream<T> temp_09_0004 = RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);
     return temp_09_0004;
@@ -351,7 +362,8 @@ class Util {
     while (index.length() < 8) {
       index = "0" + index;
     }
-    @Nonnull final String tempId = Util.jvmId.substring(0, Util.jvmId.length() - index.length()) + index;
+    @Nonnull
+    final String tempId = Util.jvmId.substring(0, Util.jvmId.length() - index.length()) + index;
     return UUID.fromString(tempId);
   }
 
@@ -382,7 +394,7 @@ class Util {
       Path path = file.getCanonicalFile().toPath();
       return basePath.relativize(path);
     } catch (IOException e) {
-      throw new RuntimeException(String.format("Base: %s; File: %s", baseFile, file), e);
+      throw new RuntimeException(RefString.format("Base: %s; File: %s", baseFile, file), e);
     }
   }
 
@@ -403,7 +415,7 @@ class Util {
     @Nonnull
     java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
     try (@Nonnull
-         PrintStream out = new PrintStream(buffer)) {
+    PrintStream out = new PrintStream(buffer)) {
       fn.accept(out);
     }
     return new String(buffer.toByteArray(), Charset.forName("UTF-8"));

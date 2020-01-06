@@ -21,6 +21,7 @@ package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefHashMap;
+import com.simiacryptus.ref.wrappers.RefString;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +39,8 @@ class LocalAppSettings {
 
   public final Map<String, String> properties = new HashMap<>();
 
-  public LocalAppSettings(RefHashMap<String, String> properties) {
+  public LocalAppSettings(HashMap<String, String> properties) {
     this.properties.putAll(properties);
-    if (null != properties)
-      properties.freeRef();
   }
 
   public static RefHashMap<String, String> read() {
@@ -57,7 +56,7 @@ class LocalAppSettings {
       try {
         settings = JsonUtil.getMapper()
             .readValue(new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")), RefHashMap.class);
-        settings.forEach((k, v) -> logger.info(String.format("Loaded %s = %s from %s", k, v, file)));
+        settings.forEach((k, v) -> logger.info(RefString.format("Loaded %s = %s from %s", k, v, file)));
       } catch (IOException e) {
         throw new RuntimeException(e);
       }

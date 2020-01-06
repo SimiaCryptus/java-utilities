@@ -26,6 +26,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefIntStream;
 import org.apache.commons.io.FileUtils;
@@ -74,15 +75,18 @@ class JsonUtil {
     return array;
   }
 
-  public static CharSequence toJson(final Object obj) {
-    return toJson(obj, getMapper());
+  public static CharSequence toJson(@RefAware final Object obj) {
+    final CharSequence json = toJson(obj, getMapper());
+    RefUtil.freeRef(obj);
+    return json;
   }
 
   @Nonnull
-  public static CharSequence toJson(final Object obj, final ObjectMapper objectMapper) {
+  public static CharSequence toJson(@RefAware final Object obj, final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try {
       objectMapper.writeValue(outputStream, obj);
+      RefUtil.freeRef(obj);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

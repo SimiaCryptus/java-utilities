@@ -40,7 +40,7 @@ class TimedResult<T> {
   public static <T> TimedResult<T> time(@Nonnull final UncheckedSupplier<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
-    final long start = System.nanoTime();
+    final long start = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
     @Nullable
     T result = null;
     try {
@@ -50,7 +50,7 @@ class TimedResult<T> {
     } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    long wallClockTime = System.nanoTime() - start;
+    long wallClockTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - start;
     long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum()
         - priorGcMs;
     return new TimedResult<T>(result, wallClockTime, gcTime);
@@ -60,7 +60,7 @@ class TimedResult<T> {
       @Nonnull final UncheckedRunnable<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
-    final long start = System.nanoTime();
+    final long start = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
     try {
       fn.get();
     } catch (@Nonnull final RuntimeException e) {
@@ -68,7 +68,7 @@ class TimedResult<T> {
     } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    long wallClockTime = System.nanoTime() - start;
+    long wallClockTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - start;
     long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum()
         - priorGcMs;
     return new TimedResult<Void>(null, wallClockTime, gcTime);
