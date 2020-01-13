@@ -24,6 +24,5 @@ import com.simiacryptus.ref.lang.RefAware;
 import java.io.Serializable;
 import java.util.function.Function;
 
-public @RefAware
-interface SerializableFunction<T, U> extends Function<T, U>, Serializable {
+public interface SerializableFunction<T, U> extends Function<T, U>, Serializable {
 }

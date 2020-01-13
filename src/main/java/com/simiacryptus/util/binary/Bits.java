@@ -25,8 +25,7 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import java.util.Base64;
 import java.util.Random;
 
-public @RefAware
-class Bits implements Comparable<Bits> {
+public class Bits implements Comparable<Bits> {
   public static Bits ONE = new Bits(1, 1);
   public static Bits ZERO = new Bits(0, 1);
   public static Bits NULL = new Bits(0, 0);
@@ -180,9 +179,9 @@ class Bits implements Comparable<Bits> {
   }
 
   public static byte[] toBytes(final long data) {
-    return new byte[]{(byte) (data >> 56 & 0xFF), (byte) (data >> 48 & 0xFF), (byte) (data >> 40 & 0xFF),
+    return new byte[] { (byte) (data >> 56 & 0xFF), (byte) (data >> 48 & 0xFF), (byte) (data >> 40 & 0xFF),
         (byte) (data >> 32 & 0xFF), (byte) (data >> 24 & 0xFF), (byte) (data >> 16 & 0xFF), (byte) (data >> 8 & 0xFF),
-        (byte) (data & 0xFF)};
+        (byte) (data & 0xFF) };
   }
 
   public static byte[] trim(final byte[] bytes) {
@@ -191,7 +190,7 @@ class Bits implements Comparable<Bits> {
         return RefArrays.copyOfRange(bytes, i, bytes.length);
       }
     }
-    return new byte[]{};
+    return new byte[] {};
   }
 
   private static void shiftRight(final byte[] src, final int bits, final byte[] dst) {

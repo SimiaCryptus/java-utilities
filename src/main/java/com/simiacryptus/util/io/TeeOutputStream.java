@@ -20,8 +20,6 @@
 package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public @RefAware
-class TeeOutputStream extends OutputStream {
+public class TeeOutputStream extends OutputStream {
   public final List<OutputStream> branches = new ArrayList<>();
   public final OutputStream primary;
   @Nullable
@@ -68,7 +65,8 @@ class TeeOutputStream extends OutputStream {
   public void close() throws IOException {
     primary.close();
     if (isChainCloses())
-      for (@Nonnull final OutputStream branch : branches) {
+      for (@Nonnull
+      final OutputStream branch : branches) {
         branch.close();
       }
   }
@@ -76,17 +74,22 @@ class TeeOutputStream extends OutputStream {
   @Override
   public void flush() throws IOException {
     primary.flush();
-    for (@Nonnull final OutputStream branch : branches) {
+    for (@Nonnull
+    final OutputStream branch : branches) {
       branch.flush();
     }
   }
 
   @Nonnull
   public PipedInputStream newInputStream() throws IOException {
-    @Nonnull final TeeOutputStream outTee = this;
-    @Nonnull final AtomicReference<Runnable> onClose = new AtomicReference<>();
-    @Nonnull final PipedOutputStream outPipe = new PipedOutputStream();
-    @Nonnull final PipedInputStream in = new PipedInputStream() {
+    @Nonnull
+    final TeeOutputStream outTee = this;
+    @Nonnull
+    final AtomicReference<Runnable> onClose = new AtomicReference<>();
+    @Nonnull
+    final PipedOutputStream outPipe = new PipedOutputStream();
+    @Nonnull
+    final PipedInputStream in = new PipedInputStream() {
       @Override
       public void close() throws IOException {
         outPipe.close();
@@ -94,7 +97,8 @@ class TeeOutputStream extends OutputStream {
       }
     };
     outPipe.connect(in);
-    @Nonnull final OutputStream outAsync = new AsyncOutputStream(outPipe);
+    @Nonnull
+    final OutputStream outAsync = new AsyncOutputStream(outPipe);
     new Thread(() -> {
       try {
         if (null != heapBuffer) {
@@ -116,7 +120,8 @@ class TeeOutputStream extends OutputStream {
   @Override
   public synchronized void write(final byte[] b) throws IOException {
     primary.write(b);
-    for (@Nonnull final OutputStream branch : branches) {
+    for (@Nonnull
+    final OutputStream branch : branches) {
       branch.write(b);
     }
   }
@@ -124,7 +129,8 @@ class TeeOutputStream extends OutputStream {
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) throws IOException {
     primary.write(b, off, len);
-    for (@Nonnull final OutputStream branch : branches) {
+    for (@Nonnull
+    final OutputStream branch : branches) {
       branch.write(b, off, len);
     }
   }
@@ -132,7 +138,8 @@ class TeeOutputStream extends OutputStream {
   @Override
   public synchronized void write(final int b) throws IOException {
     primary.write(b);
-    for (@Nonnull final OutputStream branch : branches) {
+    for (@Nonnull
+    final OutputStream branch : branches) {
       branch.write(b);
     }
   }

@@ -28,12 +28,10 @@ import com.simiacryptus.ref.wrappers.RefLinkedBlockingQueue;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public abstract @RefAware
-class ResourcePool<T> extends ReferenceCountingBase {
+public abstract class ResourcePool<T> extends ReferenceCountingBase {
 
   @Nonnull
   private final RefHashSet<T> all;
@@ -44,24 +42,19 @@ class ResourcePool<T> extends ReferenceCountingBase {
   public ResourcePool(final int maxItems) {
     super();
     this.maxItems = maxItems;
-    {
-      RefHashSet<T> temp_01_0001 = new RefHashSet<>(this.maxItems);
-      this.all = temp_01_0001 == null ? null : temp_01_0001.addRef();
-      if (null != temp_01_0001)
-        temp_01_0001.freeRef();
-    }
+    RefHashSet<T> temp_01_0001 = new RefHashSet<>(this.maxItems);
+    this.all = temp_01_0001 == null ? null : temp_01_0001.addRef();
+    if (null != temp_01_0001)
+      temp_01_0001.freeRef();
   }
 
-  public static @SuppressWarnings("unused")
-  ResourcePool[] addRefs(ResourcePool[] array) {
+  public static @SuppressWarnings("unused") ResourcePool[] addRefs(ResourcePool[] array) {
     if (array == null)
       return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef)
-        .toArray((x) -> new ResourcePool[x]);
+    return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef).toArray((x) -> new ResourcePool[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  ResourcePool[][] addRefs(ResourcePool[][] array) {
+  public static @SuppressWarnings("unused") ResourcePool[][] addRefs(ResourcePool[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRefs)
@@ -150,14 +143,11 @@ class ResourcePool<T> extends ReferenceCountingBase {
     }
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
     all.freeRef();
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  ResourcePool<T> addRef() {
+  public @Override @SuppressWarnings("unused") ResourcePool<T> addRef() {
     return (ResourcePool<T>) super.addRef();
   }
 }

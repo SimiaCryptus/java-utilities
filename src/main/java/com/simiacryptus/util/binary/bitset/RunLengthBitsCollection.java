@@ -31,22 +31,19 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware
-class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, AtomicInteger>> {
+public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, AtomicInteger>> {
   public RunLengthBitsCollection(final int bitDepth) {
     super(bitDepth, new RefHashMap<Bits, AtomicInteger>());
   }
 
-  public static @SuppressWarnings("unused")
-  RunLengthBitsCollection[] addRefs(RunLengthBitsCollection[] array) {
+  public static @SuppressWarnings("unused") RunLengthBitsCollection[] addRefs(RunLengthBitsCollection[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRef)
         .toArray((x) -> new RunLengthBitsCollection[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  RunLengthBitsCollection[][] addRefs(RunLengthBitsCollection[][] array) {
+  public static @SuppressWarnings("unused") RunLengthBitsCollection[][] addRefs(RunLengthBitsCollection[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRefs)
@@ -75,13 +72,10 @@ class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, AtomicInte
     }
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  RunLengthBitsCollection addRef() {
+  public @Override @SuppressWarnings("unused") RunLengthBitsCollection addRef() {
     return (RunLengthBitsCollection) super.addRef();
   }
 

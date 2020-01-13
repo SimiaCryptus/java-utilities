@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInteger>> {
+public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInteger>> {
 
   public static boolean SERIALIZATION_CHECKS = false;
   private boolean useBinomials = true;
@@ -121,10 +121,7 @@ public @RefAware class CountTreeBitsCollection extends BitsCollection<RefTreeMap
   }
 
   public long sum(final @RefAware RefCollection<Long> values) {
-    long total = 0;
-    for (final Long v : values) {
-      total += v;
-    }
+    long total = values.stream().mapToLong(v -> v).sum();
     if (null != values)
       values.freeRef();
     return total;
@@ -340,8 +337,7 @@ public @RefAware class CountTreeBitsCollection extends BitsCollection<RefTreeMap
 
     final EntryTransformer<Bits, Long, Long> transformer = new EntryTransformer<Bits, Long, Long>() {
       @Override
-      public Long transformEntry(final @com.simiacryptus.ref.lang.RefAware Bits key,
-          final @com.simiacryptus.ref.lang.RefAware Long value) {
+      public Long transformEntry(final @com.simiacryptus.ref.lang.RefAware Bits key, final Long value) {
         return (long) CountTreeBitsCollection.this.map.get(key).get();
       }
     };
@@ -385,7 +381,7 @@ public @RefAware class CountTreeBitsCollection extends BitsCollection<RefTreeMap
     StartTree, EndTree, BeforeCount, AfterCount, BeforeTerminal, AfterTerminal
   }
 
-  public static @RefAware class BranchCounts {
+  public static class BranchCounts {
     public Bits path;
     public long size;
     public long terminals;

@@ -31,8 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public @RefAware
-class SysOutInterceptor extends PrintStream {
+public class SysOutInterceptor extends PrintStream {
 
   public static final PrintStream ORIGINAL_OUT = com.simiacryptus.ref.wrappers.RefSystem.out;
   public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
@@ -67,9 +66,10 @@ class SysOutInterceptor extends PrintStream {
       if (SysOutInterceptor.INSTANCE.isMonitoring.get())
         throw new IllegalStateException();
       PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
-      @Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
+      @Nonnull
+      final ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (@Nonnull
-           PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+      PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
         SysOutInterceptor.INSTANCE.threadHandler.set(ps);
         SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         fn.run();
@@ -91,9 +91,10 @@ class SysOutInterceptor extends PrintStream {
       if (SysOutInterceptor.INSTANCE.isMonitoring.get())
         throw new IllegalStateException();
       PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
-      @Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
+      @Nonnull
+      final ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (@Nonnull
-           PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+      PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
         SysOutInterceptor.INSTANCE.threadHandler.set(ps);
         SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         T result = fn.get();
@@ -150,8 +151,7 @@ class SysOutInterceptor extends PrintStream {
     return previous;
   }
 
-  public static @RefAware
-  class LoggedResult<T> {
+  public static class LoggedResult<T> {
     public final String log;
     public final T obj;
 

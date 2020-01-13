@@ -21,8 +21,7 @@ package com.simiacryptus.lang;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-public @RefAware
-interface UncheckedConsumer<T> {
+public interface UncheckedConsumer<T> {
 
   void accept(T obj) throws Exception;
 }

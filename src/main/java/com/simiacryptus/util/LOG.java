@@ -20,14 +20,14 @@
 package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefString;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-public @RefAware
-class LOG {
+public class LOG {
 
   private static final long startTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
 
@@ -53,7 +53,7 @@ class LOG {
 
   private static void log(final Severity debug, final String msg, final Object[] args) {
     final String formatted = RefString.format(msg, args);
-    final StackTraceElement caller = RefArrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
+    final StackTraceElement caller = RefUtil.get(RefArrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
       Class<?> clazz;
       try {
         clazz = Class.forName(stack.getClassName());
@@ -63,7 +63,7 @@ class LOG {
       if (clazz == Thread.class)
         return false;
       return clazz != LOG.class;
-    }).findFirst().get();
+    }).findFirst());
     final double time = (com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - LOG.startTime) / 1000000000.;
     final String line = RefString.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
         formatted.replaceAll("\n", "\n\t"));

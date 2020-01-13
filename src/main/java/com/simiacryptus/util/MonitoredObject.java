@@ -34,18 +34,18 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public @RefAware
-class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
+public class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
 
   private final RefMap<CharSequence, Object> items = new RefHashMap<>();
 
   @Nonnull
   @Override
   public Map<CharSequence, Object> getMetrics() {
-    @Nonnull final HashMap<CharSequence, Object> returnValue = new HashMap<>();
+    @Nonnull
+    final HashMap<CharSequence, Object> returnValue = new HashMap<>();
     RefSet<Map.Entry<CharSequence, Object>> temp_14_0001 = items.entrySet();
-    temp_14_0001.stream().parallel().forEach(RefUtil.wrapInterface(
-        (Consumer<? super Map.Entry<CharSequence, Object>>) e -> {
+    temp_14_0001.stream().parallel()
+        .forEach(RefUtil.wrapInterface((Consumer<? super Map.Entry<CharSequence, Object>>) e -> {
           final CharSequence k = e.getKey();
           final Object v = e.getValue();
           if (null != e)
@@ -63,16 +63,14 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
     return returnValue;
   }
 
-  public static @SuppressWarnings("unused")
-  MonitoredObject[] addRefs(MonitoredObject[] array) {
+  public static @SuppressWarnings("unused") MonitoredObject[] addRefs(MonitoredObject[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRef)
         .toArray((x) -> new MonitoredObject[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  MonitoredObject[][] addRefs(MonitoredObject[][] array) {
+  public static @SuppressWarnings("unused") MonitoredObject[][] addRefs(MonitoredObject[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRefs)
@@ -99,7 +97,8 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
 
   @Nonnull
   public MonitoredObject clearConstants() {
-    @Nonnull final RefHashSet<CharSequence> keys = new RefHashSet<>(items.keySet());
+    @Nonnull
+    final RefHashSet<CharSequence> keys = new RefHashSet<>(items.keySet());
     for (final CharSequence k : keys) {
       final Object v = items.get(k);
       if (v instanceof MonitoredObject) {
@@ -112,15 +111,12 @@ class MonitoredObject extends ReferenceCountingBase implements MonitoredItem {
     return this.addRef();
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
     if (null != items)
       items.freeRef();
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  MonitoredObject addRef() {
+  public @Override @SuppressWarnings("unused") MonitoredObject addRef() {
     return (MonitoredObject) super.addRef();
   }
 }

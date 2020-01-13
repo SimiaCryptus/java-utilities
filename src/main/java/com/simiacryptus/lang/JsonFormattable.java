@@ -23,8 +23,7 @@ import com.simiacryptus.ref.lang.RefAware;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public @RefAware
-interface JsonFormattable {
+public interface JsonFormattable {
 
   JSONObject toJson() throws JSONException;
 

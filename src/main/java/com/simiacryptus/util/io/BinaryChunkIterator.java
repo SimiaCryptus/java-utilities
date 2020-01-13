@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Spliterator;
 
-public final @RefAware class BinaryChunkIterator extends RefIteratorBase<byte[]> {
+public final class BinaryChunkIterator extends RefIteratorBase<byte[]> {
 
   private final DataInputStream in;
   private final int recordSize;
@@ -50,14 +50,11 @@ public final @RefAware class BinaryChunkIterator extends RefIteratorBase<byte[]>
     return temp_07_0002;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
-    RefStream<T> temp_07_0003 = BinaryChunkIterator.toStream(iterator == null ? null : iterator, size, false);
-    return temp_07_0003;
+  public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
+    return BinaryChunkIterator.toStream(iterator == null ? null : iterator, size, false);
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
+  public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
       final boolean parallel) {
     RefStream<T> temp_07_0004 = RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);

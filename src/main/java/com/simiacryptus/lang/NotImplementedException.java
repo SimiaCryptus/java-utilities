@@ -21,8 +21,7 @@ package com.simiacryptus.lang;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-public @RefAware
-class NotImplementedException extends RuntimeException {
+public class NotImplementedException extends RuntimeException {
 
   // Show a warning whenever this is referenced - We shoud implement it!
   @Deprecated

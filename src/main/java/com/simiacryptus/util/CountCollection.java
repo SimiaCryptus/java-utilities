@@ -32,18 +32,16 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public @RefAware class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
+public class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends ReferenceCountingBase {
 
   protected final C map;
 
   public CountCollection(final C collection) {
     super();
-    {
-      C temp_00_0001 = RefUtil.addRef(collection);
-      this.map = RefUtil.addRef(temp_00_0001);
-      if (null != temp_00_0001)
-        temp_00_0001.freeRef();
-    }
+    C temp_00_0001 = RefUtil.addRef(collection);
+    this.map = RefUtil.addRef(temp_00_0001);
+    if (null != temp_00_0001)
+      temp_00_0001.freeRef();
     if (null != collection)
       collection.freeRef();
   }
@@ -62,8 +60,11 @@ public @RefAware class CountCollection<T, C extends RefMap<T, AtomicInteger>> ex
     return RefMaps.transformEntries(RefUtil.addRef(this.map), new EntryTransformer<T, AtomicInteger, Integer>() {
       @Override
       public Integer transformEntry(final @com.simiacryptus.ref.lang.RefAware T key,
-          final @com.simiacryptus.ref.lang.RefAware AtomicInteger value) {
-        return value.get();
+          @RefAware final AtomicInteger value) {
+        RefUtil.freeRef(key);
+        int i = value.get();
+        RefUtil.freeRef(value);
+        return i;
       }
     });
   }

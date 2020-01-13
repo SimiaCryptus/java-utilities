@@ -23,12 +23,14 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.io.TeeInputStream;
 import com.simiacryptus.util.test.LabeledObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +60,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.zip.GZIPInputStream;
 
-public @RefAware class Util {
+public class Util {
 
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
     public final Random r = new Random(com.simiacryptus.ref.wrappers.RefSystem.nanoTime());
@@ -342,14 +344,12 @@ public @RefAware class Util {
     return temp_09_0002;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
+  public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
     RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size, false);
     return temp_09_0003;
   }
 
-  public static <T> RefStream<T> toStream(
-      @Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
+  public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
       final boolean parallel) {
     RefStream<T> temp_09_0004 = RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);
@@ -479,4 +479,5 @@ public @RefAware class Util {
       throw new RuntimeException(e1);
     }
   }
+
 }

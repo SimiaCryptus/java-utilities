@@ -25,8 +25,7 @@ import com.simiacryptus.ref.wrappers.RefWeakReference;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public @RefAware
-class SupplierWeakCache<T> implements Supplier<T> {
+public class SupplierWeakCache<T> implements Supplier<T> {
   private final Supplier<T> fn;
   @Nullable
   private RefWeakReference<T> ptr;

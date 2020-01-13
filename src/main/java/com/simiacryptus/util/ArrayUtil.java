@@ -28,7 +28,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntFunction;
 
-public @RefAware class ArrayUtil {
+public class ArrayUtil {
 
   @Nonnull
   public static double[] add(@Nonnull final double[] a, @Nonnull final double[] b) {
@@ -124,9 +124,9 @@ public @RefAware class ArrayUtil {
   }
 
   public static RefList<double[]> op(@Nonnull final @RefAware RefList<double[]> a,
-                                     @Nonnull final @RefAware RefList<double[]> b, @Nonnull final DoubleBinaryOperator fn) {
+      @Nonnull final @RefAware RefList<double[]> b, @Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
-    RefList<double[]> temp_08_0006 = RefIntStream.range(0, a.size()).parallel()
+    return RefIntStream.range(0, a.size()).parallel()
         .mapToObj(RefUtil.wrapInterface((IntFunction<? extends double[]>) i -> {
           assert a.get(i).length == b.get(i).length;
           @Nonnull
@@ -136,7 +136,6 @@ public @RefAware class ArrayUtil {
           }
           return c;
         }, a == null ? null : a, b == null ? null : b)).collect(RefCollectors.toList());
-    return temp_08_0006;
   }
 
   @Nonnull

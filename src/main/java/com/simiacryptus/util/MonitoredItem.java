@@ -23,7 +23,6 @@ import com.simiacryptus.ref.lang.RefAware;
 
 import java.util.Map;
 
-public @RefAware
-interface MonitoredItem {
+public interface MonitoredItem {
   Map<CharSequence, Object> getMetrics();
 }

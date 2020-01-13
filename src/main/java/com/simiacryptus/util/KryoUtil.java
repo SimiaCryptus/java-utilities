@@ -30,8 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-public @RefAware
-class KryoUtil {
+public class KryoUtil {
 
   private static final ThreadLocal<Kryo> threadKryo = new ThreadLocal<Kryo>() {
 

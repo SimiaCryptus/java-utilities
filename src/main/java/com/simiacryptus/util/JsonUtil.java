@@ -26,6 +26,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefIntStream;
@@ -37,8 +38,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
-public @RefAware
-class JsonUtil {
+public class JsonUtil {
 
   public static ObjectMapper getMapper() {
     return new ObjectMapper()
@@ -59,7 +59,8 @@ class JsonUtil {
 
   @Nonnull
   public static JsonArray getJson(@Nonnull final double[] kernelDims) {
-    @Nonnull final JsonArray array = new JsonArray();
+    @Nonnull
+    final JsonArray array = new JsonArray();
     for (final double k : kernelDims) {
       array.add(new JsonPrimitive(k));
     }
@@ -68,7 +69,8 @@ class JsonUtil {
 
   @Nonnull
   public static JsonArray getJson(@Nonnull final int[] kernelDims) {
-    @Nonnull final JsonArray array = new JsonArray();
+    @Nonnull
+    final JsonArray array = new JsonArray();
     for (final int k : kernelDims) {
       array.add(new JsonPrimitive(k));
     }
@@ -76,12 +78,11 @@ class JsonUtil {
   }
 
   public static CharSequence toJson(@RefAware final Object obj) {
-    final CharSequence json = toJson(obj, getMapper());
-    RefUtil.freeRef(obj);
-    return json;
+    return toJson(obj, getMapper());
   }
 
   @Nonnull
+  @RefIgnore
   public static CharSequence toJson(@RefAware final Object obj, final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try {

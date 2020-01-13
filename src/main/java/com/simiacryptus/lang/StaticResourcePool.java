@@ -25,13 +25,11 @@ import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public @RefAware
-class StaticResourcePool<T> extends ReferenceCountingBase {
+public class StaticResourcePool<T> extends ReferenceCountingBase {
 
   @Nonnull
   private final RefList<T> all;
@@ -39,13 +37,11 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
 
   public StaticResourcePool(@Nonnull final RefList<T> items) {
     super();
-    {
-      RefList<T> temp_03_0001 = RefCollections
-          .unmodifiableList(new RefArrayList<>(items == null ? null : items.addRef()));
-      this.all = temp_03_0001 == null ? null : temp_03_0001.addRef();
-      if (null != temp_03_0001)
-        temp_03_0001.freeRef();
-    }
+    RefList<T> temp_03_0001 = RefCollections
+        .unmodifiableList(new RefArrayList<>(items == null ? null : items.addRef()));
+    this.all = temp_03_0001 == null ? null : temp_03_0001.addRef();
+    if (null != temp_03_0001)
+      temp_03_0001.freeRef();
     items.freeRef();
     RefList<T> temp_03_0002 = getAll();
     pool.addAll(temp_03_0002);
@@ -58,16 +54,14 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
     return all == null ? null : all.addRef();
   }
 
-  public static @SuppressWarnings("unused")
-  StaticResourcePool[] addRefs(StaticResourcePool[] array) {
+  public static @SuppressWarnings("unused") StaticResourcePool[] addRefs(StaticResourcePool[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRef)
         .toArray((x) -> new StaticResourcePool[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  StaticResourcePool[][] addRefs(StaticResourcePool[][] array) {
+  public static @SuppressWarnings("unused") StaticResourcePool[][] addRefs(StaticResourcePool[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRefs)
@@ -110,14 +104,11 @@ class StaticResourcePool<T> extends ReferenceCountingBase {
     return temp_03_0003;
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
     all.freeRef();
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  StaticResourcePool<T> addRef() {
+  public @Override @SuppressWarnings("unused") StaticResourcePool<T> addRef() {
     return (StaticResourcePool<T>) super.addRef();
   }
 

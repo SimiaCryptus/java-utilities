@@ -25,8 +25,7 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public @RefAware
-class IntArray {
+public class IntArray {
 
   public final int[] data;
 
@@ -41,7 +40,8 @@ class IntArray {
     if (o == null || getClass() != o.getClass())
       return false;
 
-    @Nonnull final IntArray intArray = (IntArray) o;
+    @Nonnull
+    final IntArray intArray = (IntArray) o;
 
     return RefArrays.equals(data, intArray.data);
   }

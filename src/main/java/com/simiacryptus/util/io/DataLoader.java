@@ -28,26 +28,21 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Spliterator;
 
-public abstract @RefAware
-class DataLoader<T> extends ReferenceCountingBase {
+public abstract class DataLoader<T> extends ReferenceCountingBase {
   private final RefList<T> queue = RefCollections.synchronizedList(new RefArrayList<>());
   @Nullable
   private volatile Thread thread;
 
-  public static @SuppressWarnings("unused")
-  DataLoader[] addRefs(DataLoader[] array) {
+  public static @SuppressWarnings("unused") DataLoader[] addRefs(DataLoader[] array) {
     if (array == null)
       return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef)
-        .toArray((x) -> new DataLoader[x]);
+    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef).toArray((x) -> new DataLoader[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  DataLoader[][] addRefs(DataLoader[][] array) {
+  public static @SuppressWarnings("unused") DataLoader[][] addRefs(DataLoader[][] array) {
     if (array == null)
       return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs)
-        .toArray((x) -> new DataLoader[x][]);
+    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs).toArray((x) -> new DataLoader[x][]);
   }
 
   public void clear() throws InterruptedException {
@@ -84,7 +79,8 @@ class DataLoader<T> extends ReferenceCountingBase {
         }
       }
     }
-    @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
+    @Nullable
+    final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
     RefStream<T> temp_06_0001 = RefStreamSupport.stream(
         RefSpliterators.spliteratorUnknownSize(iterator == null ? null : iterator.addRef(), Spliterator.DISTINCT),
         false).filter(x -> x != null);
@@ -93,15 +89,12 @@ class DataLoader<T> extends ReferenceCountingBase {
     return temp_06_0001;
   }
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
     if (null != queue)
       queue.freeRef();
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  DataLoader<T> addRef() {
+  public @Override @SuppressWarnings("unused") DataLoader<T> addRef() {
     return (DataLoader<T>) super.addRef();
   }
 

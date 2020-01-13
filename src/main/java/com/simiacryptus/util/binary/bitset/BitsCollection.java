@@ -30,35 +30,28 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract @RefAware
-class BitsCollection<C extends RefMap<Bits, AtomicInteger>> extends CountCollection<Bits, C> {
+public abstract class BitsCollection<C extends RefMap<Bits, AtomicInteger>> extends CountCollection<Bits, C> {
 
   public final Integer bitDepth;
 
   public BitsCollection(final C collection) {
     super(collection);
-    if (null != collection)
-      collection.freeRef();
     this.bitDepth = null;
   }
 
   public BitsCollection(final int bitDepth, final C collection) {
     super(collection);
-    if (null != collection)
-      collection.freeRef();
     this.bitDepth = bitDepth;
   }
 
-  public static @SuppressWarnings("unused")
-  BitsCollection[] addRefs(BitsCollection[] array) {
+  public static @SuppressWarnings("unused") BitsCollection[] addRefs(BitsCollection[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRef)
         .toArray((x) -> new BitsCollection[x]);
   }
 
-  public static @SuppressWarnings("unused")
-  BitsCollection[][] addRefs(BitsCollection[][] array) {
+  public static @SuppressWarnings("unused") BitsCollection[][] addRefs(BitsCollection[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRefs)
@@ -82,13 +75,10 @@ class BitsCollection<C extends RefMap<Bits, AtomicInteger>> extends CountCollect
 
   public abstract void write(BitOutputStream out) throws IOException;
 
-  public @SuppressWarnings("unused")
-  void _free() {
+  public @SuppressWarnings("unused") void _free() {
   }
 
-  public @Override
-  @SuppressWarnings("unused")
-  BitsCollection<C> addRef() {
+  public @Override @SuppressWarnings("unused") BitsCollection<C> addRef() {
     return (BitsCollection<C>) super.addRef();
   }
 

@@ -24,8 +24,7 @@ import com.simiacryptus.ref.lang.RefAware;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public @RefAware
-interface SerialType<T> {
+public interface SerialType<T> {
   int getSize();
 
   default SerialArrayList<T> newList() {

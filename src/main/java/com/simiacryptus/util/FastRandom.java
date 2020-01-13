@@ -21,8 +21,7 @@ package com.simiacryptus.util;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-public @RefAware
-class FastRandom {
+public class FastRandom {
   public static final FastRandom INSTANCE = new FastRandom();
   private final long t;
   private long x;

@@ -21,7 +21,6 @@ package com.simiacryptus.util.data;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,8 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public @RefAware
-class PercentileStatistics extends ScalarStatistics {
+public class PercentileStatistics extends ScalarStatistics {
 
   private final List<double[]> values = new ArrayList<>();
 

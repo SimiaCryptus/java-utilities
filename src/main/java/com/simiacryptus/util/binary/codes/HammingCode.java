@@ -31,8 +31,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
-public @RefAware
-class HammingCode<T extends Comparable<T>> {
+public class HammingCode<T extends Comparable<T>> {
   protected final TreeMap<Bits, T> forwardIndex = new TreeMap<Bits, T>();
   protected final HashMap<T, Bits> reverseIndex = new HashMap<T, Bits>();
   protected final HashMap<T, Integer> weights = new HashMap<T, Integer>();
@@ -41,10 +40,10 @@ class HammingCode<T extends Comparable<T>> {
   public HammingCode(final RefCollection<HammingSymbol<T>> symbols) {
     if (0 < symbols.size()) {
       final RefTreeSet<SubCode<T>> assemblySet = new RefTreeSet<SubCode<T>>();
-      for (final HammingSymbol<T> s : symbols) {
-        this.weights.put(s.key, s.count);
-        assemblySet.add(new SubCode<T>(s.count, s.key));
-      }
+      symbols.forEach(symbol -> {
+        this.weights.put(symbol.key, symbol.count);
+        assemblySet.add(new SubCode<>(symbol.count, symbol.key));
+      });
       while (assemblySet.size() > 1) {
         final SubCode<T> zero = assemblySet.pollFirst();
         final SubCode<T> one = assemblySet.pollFirst();
@@ -173,8 +172,7 @@ class HammingCode<T extends Comparable<T>> {
     return 0;
   }
 
-  public static @RefAware
-  class HammingCodeCollection<T extends Comparable<T>> extends CountTreeBitsCollection {
+  public static class HammingCodeCollection<T extends Comparable<T>> extends CountTreeBitsCollection {
 
     private final HammingCode<T> parent;
 
@@ -193,8 +191,7 @@ class HammingCode<T extends Comparable<T>> {
       this.parent = parent;
     }
 
-    public static @SuppressWarnings("unused")
-    HammingCodeCollection[] addRefs(HammingCodeCollection[] array) {
+    public static @SuppressWarnings("unused") HammingCodeCollection[] addRefs(HammingCodeCollection[] array) {
       if (array == null)
         return null;
       return Arrays.stream(array).filter((x) -> x != null).map(HammingCodeCollection::addRef)
@@ -215,19 +212,15 @@ class HammingCode<T extends Comparable<T>> {
       return CodeType.Terminal;
     }
 
-    public @SuppressWarnings("unused")
-    void _free() {
+    public @SuppressWarnings("unused") void _free() {
     }
 
-    public @Override
-    @SuppressWarnings("unused")
-    HammingCodeCollection<T> addRef() {
+    public @Override @SuppressWarnings("unused") HammingCodeCollection<T> addRef() {
       return (HammingCodeCollection<T>) super.addRef();
     }
   }
 
-  private static @RefAware
-  class SubCode<X extends Comparable<X>> implements Comparable<SubCode<X>> {
+  private static class SubCode<X extends Comparable<X>> implements Comparable<SubCode<X>> {
     final long count;
     final TreeMap<Bits, X> codes;
     final TreeMap<X, Bits> index;

@@ -20,17 +20,13 @@
 package com.simiacryptus.util.data;
 
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefComparator;
-import com.simiacryptus.ref.wrappers.RefIntStream;
-import com.simiacryptus.ref.wrappers.RefStream;
-import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public @RefAware
-class DensityTree {
+public class DensityTree {
 
   private final CharSequence[] columnNames;
   private double minSplitFract = 0.05;
@@ -90,18 +86,15 @@ class DensityTree {
   public Bounds getBounds(@Nonnull double[][] points) {
     int dim = points[0].length;
     double[] max = RefIntStream.range(0, dim).mapToDouble(d -> {
-      return RefArrays.stream(points).mapToDouble(pt -> pt[d])
-          .filter(x -> Double.isFinite(x)).max().orElse(Double.NaN);
+      return RefArrays.stream(points).mapToDouble(pt -> pt[d]).filter(x -> Double.isFinite(x)).max().orElse(Double.NaN);
     }).toArray();
     double[] min = RefIntStream.range(0, dim).mapToDouble(d -> {
-      return RefArrays.stream(points).mapToDouble(pt -> pt[d])
-          .filter(x -> Double.isFinite(x)).min().orElse(Double.NaN);
+      return RefArrays.stream(points).mapToDouble(pt -> pt[d]).filter(x -> Double.isFinite(x)).min().orElse(Double.NaN);
     }).toArray();
     return new Bounds(max, min);
   }
 
-  public @RefAware
-  class Bounds {
+  public class Bounds {
     @Nonnull
     public final double[] max;
     @Nonnull
@@ -111,8 +104,7 @@ class DensityTree {
       this.max = max;
       this.min = min;
       assert (max.length == min.length);
-      assert (RefIntStream.range(0, max.length).filter(i -> Double.isFinite(max[i]))
-          .allMatch(i -> max[i] >= min[i]));
+      assert (RefIntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
     }
 
     public double getVolume() {
@@ -134,15 +126,14 @@ class DensityTree {
 
     @Nonnull
     public String toString() {
-      return "[" + RefIntStream.range(0, min.length).mapToObj(d -> {
+      return "[" + RefUtil.get(RefIntStream.range(0, min.length).mapToObj(d -> {
         return RefString.format("%s: %s - %s", columnNames[d], min[d], max[d]);
-      }).reduce((a, b) -> a + "; " + b).get() + "]";
+      }).reduce((a, b) -> a + "; " + b)) + "]";
     }
 
   }
 
-  public @RefAware
-  class OrthoRule extends Rule {
+  public class OrthoRule extends Rule {
     private final int dim;
     private final double value;
 
@@ -158,8 +149,7 @@ class DensityTree {
     }
   }
 
-  public abstract @RefAware
-  class Rule {
+  public abstract class Rule {
     public final String name;
     public double fitness;
 
@@ -175,8 +165,7 @@ class DensityTree {
     }
   }
 
-  public @RefAware
-  class Node {
+  public class Node {
     @Nonnull
     public final double[][] points;
     @Nonnull
@@ -254,8 +243,8 @@ class DensityTree {
 
     public String code() {
       if (null != rule) {
-        return RefString.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}", dataInfo(), rule, rule.fitness,
-            left.code().replaceAll("\n", "\n  "), right.code().replaceAll("\n", "\n  "));
+        return RefString.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}", dataInfo(), rule,
+            rule.fitness, left.code().replaceAll("\n", "\n  "), right.code().replaceAll("\n", "\n  "));
       } else {
         return "// " + dataInfo();
       }
@@ -266,15 +255,12 @@ class DensityTree {
         return;
       if (maxDepth <= depth)
         return;
-      this.rule = RefIntStream.range(0, points[0].length).mapToObj(x -> x)
-          .flatMap(dim -> split_ortho(dim)).filter(x -> Double.isFinite(x.fitness))
-          .max(RefComparator.comparing(x -> x.fitness)).orElse(null);
+      this.rule = RefIntStream.range(0, points[0].length).mapToObj(x -> x).flatMap(dim -> split_ortho(dim))
+          .filter(x -> Double.isFinite(x.fitness)).max(RefComparator.comparing(x -> x.fitness)).orElse(null);
       if (null == this.rule)
         return;
-      double[][] leftPts = RefArrays.stream(this.points).filter(pt -> rule.eval(pt))
-          .toArray(i -> new double[i][]);
-      double[][] rightPts = RefArrays.stream(this.points).filter(pt -> !rule.eval(pt))
-          .toArray(i -> new double[i][]);
+      double[][] leftPts = RefArrays.stream(this.points).filter(pt -> rule.eval(pt)).toArray(i -> new double[i][]);
+      double[][] rightPts = RefArrays.stream(this.points).filter(pt -> !rule.eval(pt)).toArray(i -> new double[i][]);
       assert (leftPts.length + rightPts.length == this.points.length);
       if (rightPts.length == 0 || leftPts.length == 0)
         return;
@@ -283,8 +269,7 @@ class DensityTree {
     }
 
     public RefStream<Rule> split_ortho(int dim) {
-      double[][] sortedPoints = RefArrays.stream(points)
-          .filter(pt -> Double.isFinite(pt[dim]))
+      double[][] sortedPoints = RefArrays.stream(points).filter(pt -> Double.isFinite(pt[dim]))
           .sorted(RefComparator.comparing(pt -> pt[dim])).toArray(i -> new double[i][]);
       if (0 == sortedPoints.length)
         return RefStream.empty();
@@ -293,8 +278,8 @@ class DensityTree {
       Bounds[] left = new Bounds[sortedPoints.length];
       @Nonnull
       Bounds[] right = new Bounds[sortedPoints.length];
-      left[0] = getBounds(new double[][]{sortedPoints[0]});
-      right[sortedPoints.length - 1] = getBounds(new double[][]{sortedPoints[sortedPoints.length - 1]});
+      left[0] = getBounds(new double[][] { sortedPoints[0] });
+      right[sortedPoints.length - 1] = getBounds(new double[][] { sortedPoints[sortedPoints.length - 1] });
       for (int i = 1; i < sortedPoints.length; i++) {
         left[i] = left[i - 1].union(sortedPoints[i]);
         right[(sortedPoints.length - 1) - i] = right[((sortedPoints.length - 1) - (i - 1))]

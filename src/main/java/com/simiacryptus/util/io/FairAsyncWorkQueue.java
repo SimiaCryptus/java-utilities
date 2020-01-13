@@ -27,8 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public @RefAware
-class FairAsyncWorkQueue implements Runnable {
+public class FairAsyncWorkQueue implements Runnable {
   private final AtomicBoolean isRunning = new AtomicBoolean(false);
   private final ExecutorService pool = Executors
       .newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).build());

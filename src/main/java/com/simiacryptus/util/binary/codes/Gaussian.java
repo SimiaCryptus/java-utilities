@@ -25,8 +25,7 @@ import com.simiacryptus.util.binary.BitOutputStream;
 
 import java.io.IOException;
 
-public @RefAware
-class Gaussian {
+public class Gaussian {
 
   public static final double LOG2 = Math.log(2);
   public final double mean;

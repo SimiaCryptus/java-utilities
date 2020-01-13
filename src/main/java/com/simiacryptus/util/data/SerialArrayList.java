@@ -25,10 +25,10 @@ import com.simiacryptus.ref.wrappers.RefCollection;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-public @RefAware
-class SerialArrayList<U> {
+public class SerialArrayList<U> {
   public final int unitSize;
   private final SerialType<U> factory;
   private byte[] buffer;
@@ -51,9 +51,8 @@ class SerialArrayList<U> {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.size() * unitSize];
-    int i = 0;
-    for (U x : items)
-      set(i++, x);
+    AtomicInteger i = new AtomicInteger();
+    items.forEach(x -> set(i.getAndIncrement(), x));
     if (null != items)
       items.freeRef();
   }
@@ -87,7 +86,7 @@ class SerialArrayList<U> {
   }
 
   public synchronized void clear() {
-    buffer = new byte[]{};
+    buffer = new byte[] {};
     maxByte = 0;
   }
 

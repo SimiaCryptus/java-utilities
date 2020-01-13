@@ -23,8 +23,7 @@ import com.simiacryptus.ref.lang.RefAware;
 
 import java.util.function.Supplier;
 
-public @RefAware
-class CachedSupplier<T> implements Supplier<T> {
+public class CachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   private volatile T cached;

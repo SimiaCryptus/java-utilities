@@ -27,10 +27,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public @RefAware
-class BitOutputStream implements AutoCloseable {
+public class BitOutputStream implements AutoCloseable {
 
-  static final int varLongDepths[] = {6, 14, 30, 62};
+  static final int varLongDepths[] = { 6, 14, 30, 62 };
   private final OutputStream inner;
 
   private Bits remainder = Bits.NULL;
@@ -129,7 +128,7 @@ class BitOutputStream implements AutoCloseable {
   public void writeVarShort(final short value, int optimal) throws IOException {
     if (value < 0)
       throw new IllegalArgumentException();
-    int[] varShortDepths = {optimal, 16};
+    int[] varShortDepths = { optimal, 16 };
     final int bitLength = new Bits(value).bitLength;
     int type = RefArrays.binarySearch(varShortDepths, bitLength);
     if (type < 0) {

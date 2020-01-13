@@ -32,8 +32,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
-public @RefAware
-class LocalAppSettings {
+public class LocalAppSettings {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalAppSettings.class);
 

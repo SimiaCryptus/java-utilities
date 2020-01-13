@@ -27,18 +27,15 @@ import javax.annotation.Nonnull;
 import java.util.DoubleSummaryStatistics;
 import java.util.stream.Collector;
 
-public @RefAware
-class DoubleStatistics extends DoubleSummaryStatistics {
+public class DoubleStatistics extends DoubleSummaryStatistics {
 
   @Nonnull
-  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector
-      .of(DoubleStatistics::new, DoubleStatistics::accept,
-          DoubleStatistics::combine, d -> d);
+  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.of(DoubleStatistics::new,
+      DoubleStatistics::accept, DoubleStatistics::combine, d -> d);
 
   @Nonnull
-  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector
-      .of(DoubleStatistics::new, (a, n) -> a.accept(n.doubleValue()),
-          DoubleStatistics::combine, d -> d);
+  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.of(DoubleStatistics::new,
+      (a, n) -> a.accept(n.doubleValue()), DoubleStatistics::combine, d -> d);
 
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
   private double sumOfSquare = 0.0d;
@@ -71,8 +68,7 @@ class DoubleStatistics extends DoubleSummaryStatistics {
   }
 
   @Nonnull
-  public DoubleStatistics combine(
-      @Nonnull final DoubleStatistics other) {
+  public DoubleStatistics combine(@Nonnull final DoubleStatistics other) {
     super.combine(other);
     simpleSumOfSquare += other.simpleSumOfSquare;
     sumOfSquareWithCompensation(other.sumOfSquare);

@@ -23,6 +23,5 @@ import com.simiacryptus.ref.lang.RefAware;
 
 import java.io.Serializable;
 
-public @RefAware
-interface SerializableRunnable extends Runnable, Serializable {
+public interface SerializableRunnable extends Runnable, Serializable {
 }

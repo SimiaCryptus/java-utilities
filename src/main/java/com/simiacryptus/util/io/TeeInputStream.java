@@ -25,8 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public @RefAware
-class TeeInputStream extends InputStream {
+public class TeeInputStream extends InputStream {
 
   private final OutputStream cache;
   private final InputStream inputStream;

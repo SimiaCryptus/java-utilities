@@ -21,8 +21,7 @@ package com.simiacryptus.util.binary;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-public @RefAware
-class Interval {
+public class Interval {
   public final long start;
   public final long max;
   public final long length;
@@ -64,7 +63,8 @@ class Interval {
 
   @Override
   public String toString() {
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder("Interval{");
+    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(
+        "Interval{");
     sb.append("start=").append(start);
     sb.append(", length=").append(length);
     sb.append(", max=").append(max);

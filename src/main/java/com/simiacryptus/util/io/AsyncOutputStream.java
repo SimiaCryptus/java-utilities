@@ -27,8 +27,7 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public @RefAware
-class AsyncOutputStream extends FilterOutputStream {
+public class AsyncOutputStream extends FilterOutputStream {
 
   private final FairAsyncWorkQueue queue = new FairAsyncWorkQueue();
 
@@ -60,7 +59,8 @@ class AsyncOutputStream extends FilterOutputStream {
 
   @Override
   public synchronized void write(final byte[] b, final int off, final int len) {
-    @Nonnull final byte[] _b = RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
+    @Nonnull
+    final byte[] _b = RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
     queue.submit(() -> {
       try {
         out.write(_b);

@@ -27,8 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public @RefAware
-class BitInputStream {
+public class BitInputStream {
 
   private final InputStream inner;
   private Bits remainder = new Bits(0);
@@ -94,8 +93,7 @@ class BitInputStream {
       final byte[] buffer = new byte[bytes];
       int bytesRead = this.inner.read(buffer);
       if (bytesRead > 0) {
-        this.remainder = this.remainder
-            .concatenate(new Bits(RefArrays.copyOf(buffer, bytesRead)));
+        this.remainder = this.remainder.concatenate(new Bits(RefArrays.copyOf(buffer, bytesRead)));
       }
     }
     return this.remainder;
@@ -144,7 +142,7 @@ class BitInputStream {
   }
 
   public short readVarShort(int optimal) throws IOException {
-    int[] varShortDepths = {optimal, 16};
+    int[] varShortDepths = { optimal, 16 };
     final int type = (int) this.read(1).toLong();
     return (short) this.read(varShortDepths[type]).toLong();
   }

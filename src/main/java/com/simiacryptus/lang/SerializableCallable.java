@@ -24,6 +24,5 @@ import com.simiacryptus.ref.lang.RefAware;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
-public @RefAware
-interface SerializableCallable<T> extends Callable<T>, Serializable {
+public interface SerializableCallable<T> extends Callable<T>, Serializable {
 }

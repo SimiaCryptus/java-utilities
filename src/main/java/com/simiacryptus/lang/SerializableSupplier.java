@@ -24,6 +24,5 @@ import com.simiacryptus.ref.lang.RefAware;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
-public @RefAware
-interface SerializableSupplier<T> extends Supplier<T>, Serializable {
+public interface SerializableSupplier<T> extends Supplier<T>, Serializable {
 }

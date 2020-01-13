@@ -40,15 +40,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
-public @RefAware
-class GifSequenceWriter {
+public class GifSequenceWriter {
 
   protected ImageWriter gifWriter;
   protected ImageWriteParam imageWriteParam;
   protected IIOMetadata imageMetaData;
 
   public GifSequenceWriter(ImageOutputStream outputStream, int imageType, int timeBetweenFramesMS,
-                           boolean loopContinuously) throws IOException {
+      boolean loopContinuously) throws IOException {
 
     gifWriter = getWriter("gif");
     imageWriteParam = gifWriter.getDefaultWriteParam();
@@ -75,7 +74,7 @@ class GifSequenceWriter {
     child.setAttribute("authenticationCode", "2.0");
 
     int loop = loopContinuously ? 0 : 1;
-    child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF)});
+    child.setUserObject(new byte[] { 0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF) });
     appEntensionsNode.appendChild(child);
     imageMetaData.setFromTree(metaFormatName, root);
     gifWriter.setOutput(outputStream);
@@ -83,20 +82,20 @@ class GifSequenceWriter {
   }
 
   public static void write(File gif, int timeBetweenFramesMS, boolean loopContinuously,
-                           @Nonnull BufferedImage... images) throws IOException {
+      @Nonnull BufferedImage... images) throws IOException {
     @Nonnull
     ImageOutputStream output = new FileImageOutputStream(gif);
     write(output, timeBetweenFramesMS, loopContinuously, images);
   }
 
   public static void write(ImageOutputStream output, int timeBetweenFramesMS, boolean loopContinuously,
-                           @Nonnull BufferedImage... images) throws IOException {
+      @Nonnull BufferedImage... images) throws IOException {
     try {
       @Nonnull
       GifSequenceWriter writer = new GifSequenceWriter(output, images[0].getType(), timeBetweenFramesMS,
           loopContinuously);
       for (@Nonnull
-          BufferedImage image : images) {
+      BufferedImage image : images) {
         writer.writeToSequence(image);
       }
       writer.close();

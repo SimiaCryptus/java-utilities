@@ -22,8 +22,6 @@ package com.simiacryptus.util.data;
 import com.google.gson.JsonObject;
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefHashMap;
-import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.util.MonitoredItem;
 
 import javax.annotation.Nonnull;
@@ -33,8 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public @RefAware
-class ScalarStatistics implements MonitoredItem, Serializable {
+public class ScalarStatistics implements MonitoredItem, Serializable {
   private static final double zeroTol = 1e-20;
   private volatile double max = -Double.POSITIVE_INFINITY;
   private volatile double min = Double.POSITIVE_INFINITY;
@@ -52,7 +49,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public JsonObject getJson() {
-    @Nonnull final JsonObject json = new JsonObject();
+    @Nonnull
+    final JsonObject json = new JsonObject();
     json.addProperty("min", min);
     json.addProperty("max", max);
     json.addProperty("negatives", negatives);
@@ -75,7 +73,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Override
   public Map<CharSequence, Object> getMetrics() {
-    @Nonnull final HashMap<CharSequence, Object> map = new HashMap<>();
+    @Nonnull
+    final HashMap<CharSequence, Object> map = new HashMap<>();
     map.put("count", sum0);
     map.put("sum", sum1);
     map.put("negative", negatives);
@@ -95,7 +94,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public static ScalarStatistics stats(@Nonnull final double[] data) {
-    @Nonnull final ScalarStatistics statistics = new PercentileStatistics();
+    @Nonnull
+    final ScalarStatistics statistics = new PercentileStatistics();
     RefArrays.stream(data).forEach(statistics::add);
     return statistics;
   }
@@ -160,7 +160,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public final synchronized ScalarStatistics add(@Nonnull final ScalarStatistics right) {
-    @Nonnull final ScalarStatistics sum = new ScalarStatistics();
+    @Nonnull
+    final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 += right.sum0;
     sum.sum1 += sum1;
@@ -198,7 +199,8 @@ class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public final synchronized ScalarStatistics subtract(@Nonnull final ScalarStatistics right) {
-    @Nonnull final ScalarStatistics sum = new ScalarStatistics();
+    @Nonnull
+    final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 -= right.sum0;
     sum.sum1 += sum1;

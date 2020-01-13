@@ -25,8 +25,7 @@ import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;
 
-public @RefAware
-class SoftCachedSupplier<T> implements Supplier<T> {
+public class SoftCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   @Nullable

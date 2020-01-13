@@ -26,8 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-public @RefAware
-class WeakCachedSupplier<T> implements Supplier<T> {
+public class WeakCachedSupplier<T> implements Supplier<T> {
 
   private final Supplier<T> fn;
   @Nullable

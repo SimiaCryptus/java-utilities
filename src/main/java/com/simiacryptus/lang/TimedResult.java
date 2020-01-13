@@ -25,8 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.management.ManagementFactory;
 
-public @RefAware
-class TimedResult<T> {
+public class TimedResult<T> {
   public final T result;
   public final long timeNanos;
   public final long gcMs;
@@ -56,8 +55,7 @@ class TimedResult<T> {
     return new TimedResult<T>(result, wallClockTime, gcTime);
   }
 
-  public static <T> TimedResult<Void> time(
-      @Nonnull final UncheckedRunnable<T> fn) {
+  public static <T> TimedResult<Void> time(@Nonnull final UncheckedRunnable<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
     final long start = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();

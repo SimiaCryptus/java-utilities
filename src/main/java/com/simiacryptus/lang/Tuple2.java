@@ -23,8 +23,7 @@ import com.simiacryptus.ref.lang.RefAware;
 
 import java.io.Serializable;
 
-public @RefAware
-class Tuple2<A, B> implements Serializable {
+public class Tuple2<A, B> implements Serializable {
   public final A _1;
   public final B _2;
 

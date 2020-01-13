@@ -24,7 +24,5 @@ import com.simiacryptus.ref.wrappers.RefConsumer;
 
 import java.io.Serializable;
 
-public @RefAware
-interface SerializableConsumer<T>
-    extends RefConsumer<T>, Serializable {
+public interface SerializableConsumer<T> extends RefConsumer<T>, Serializable {
 }

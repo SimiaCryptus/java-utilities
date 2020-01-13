@@ -35,8 +35,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
 
-public @RefAware
-class IOUtil {
+public class IOUtil {
   private static final ObjectMapper objectMapper = JsonUtil.getMapper();
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
     @Override
