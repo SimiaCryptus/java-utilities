@@ -19,14 +19,16 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefSystem;
 
+import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 public class TimerText {
-  final long start = com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis();
+  final long start = RefSystem.currentTimeMillis();
+  @Nonnull
   private final SimpleDateFormat formatter;
 
   public TimerText() {
@@ -34,8 +36,9 @@ public class TimerText {
     formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
   }
 
+  @Nonnull
   @Override
   public String toString() {
-    return formatter.format(new Date(com.simiacryptus.ref.wrappers.RefSystem.currentTimeMillis() - start));
+    return formatter.format(new Date(RefSystem.currentTimeMillis() - start));
   }
 }

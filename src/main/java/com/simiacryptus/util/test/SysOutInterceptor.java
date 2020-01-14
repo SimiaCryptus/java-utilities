@@ -21,7 +21,7 @@ package com.simiacryptus.util.test;
 
 import ch.qos.logback.core.ConsoleAppender;
 import com.simiacryptus.lang.UncheckedSupplier;
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.io.TeeOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +33,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SysOutInterceptor extends PrintStream {
 
-  public static final PrintStream ORIGINAL_OUT = com.simiacryptus.ref.wrappers.RefSystem.out;
+  public static final PrintStream ORIGINAL_OUT = RefSystem.out;
   public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
   private static final Logger log = LoggerFactory.getLogger(SysOutInterceptor.class);
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
+    @Nonnull
     @Override
     protected Boolean initialValue() {
       return false;
@@ -61,15 +62,15 @@ public class SysOutInterceptor extends PrintStream {
     return (PrintStream) out;
   }
 
+  @Nonnull
   public static LoggedResult<Void> withOutput(@Nonnull final Runnable fn) {
     try {
       if (SysOutInterceptor.INSTANCE.isMonitoring.get())
         throw new IllegalStateException();
       PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
-      @Nonnull
-      final ByteArrayOutputStream buff = new ByteArrayOutputStream();
+      @Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (@Nonnull
-      PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+           PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
         SysOutInterceptor.INSTANCE.threadHandler.set(ps);
         SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         fn.run();
@@ -86,15 +87,15 @@ public class SysOutInterceptor extends PrintStream {
     }
   }
 
+  @Nonnull
   public static <T> LoggedResult<T> withOutput(@Nonnull final UncheckedSupplier<T> fn) {
     try {
       if (SysOutInterceptor.INSTANCE.isMonitoring.get())
         throw new IllegalStateException();
       PrintStream prev = SysOutInterceptor.INSTANCE.threadHandler.get();
-      @Nonnull
-      final ByteArrayOutputStream buff = new ByteArrayOutputStream();
+      @Nonnull final ByteArrayOutputStream buff = new ByteArrayOutputStream();
       try (@Nonnull
-      PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
+           PrintStream ps = new PrintStream(new TeeOutputStream(buff, prev))) {
         SysOutInterceptor.INSTANCE.threadHandler.set(ps);
         SysOutInterceptor.INSTANCE.isMonitoring.set(true);
         T result = fn.get();
@@ -120,7 +121,7 @@ public class SysOutInterceptor extends PrintStream {
       if (null != stdout) {
         stdout.setOutputStream(this);
       }
-      com.simiacryptus.ref.wrappers.RefSystem.setOut(this);
+      RefSystem.setOut(this);
     }
     return this;
   }
@@ -135,7 +136,7 @@ public class SysOutInterceptor extends PrintStream {
   }
 
   @Override
-  public void write(byte[] b) {
+  public void write(@Nonnull byte[] b) {
     currentHandler().print(new String(b));
   }
 

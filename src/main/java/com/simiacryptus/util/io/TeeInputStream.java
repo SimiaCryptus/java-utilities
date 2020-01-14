@@ -19,8 +19,7 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.lang.RefAware;
-
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,7 +53,7 @@ public class TeeInputStream extends InputStream {
   }
 
   @Override
-  public int read(final byte[] b) throws IOException {
+  public int read(@Nonnull final byte[] b) throws IOException {
     final int read = inputStream.read(b);
     if (read > 0) {
       cache.write(b);
@@ -63,7 +62,7 @@ public class TeeInputStream extends InputStream {
   }
 
   @Override
-  public int read(final byte[] b, final int off, final int len) throws IOException {
+  public int read(@Nonnull final byte[] b, final int off, final int len) throws IOException {
     final int read = inputStream.read(b, off, len);
     if (read > 0) {
       cache.write(b, off, read);

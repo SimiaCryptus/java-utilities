@@ -19,35 +19,40 @@
 
 package com.simiacryptus.util.data;
 
-import com.simiacryptus.ref.lang.RefAware;
-
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public interface SerialType<T> {
   int getSize();
 
+  @Nonnull
   default SerialArrayList<T> newList() {
     return new SerialArrayList<T>(this);
   }
 
+  @Nonnull
   default SerialArrayList<T> newList(int size) {
     return new SerialArrayList<T>(this, size);
   }
 
+  @Nonnull
   default SerialArrayList<T> newList(T... items) {
     return new SerialArrayList<T>(this, items);
   }
 
+  @Nonnull
   T read(ByteBuffer input) throws IOException;
 
-  default T read(byte[] input) throws IOException {
+  @Nonnull
+  default T read(@Nonnull byte[] input) throws IOException {
     assert (input.length == getSize());
     return read(ByteBuffer.wrap(input));
   }
 
   void write(ByteBuffer output, T value) throws IOException;
 
+  @Nonnull
   default byte[] write(T value) throws IOException {
     byte[] buffer = new byte[getSize()];
     write(ByteBuffer.wrap(buffer), value);

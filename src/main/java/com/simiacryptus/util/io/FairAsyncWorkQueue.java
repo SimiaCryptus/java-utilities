@@ -20,7 +20,6 @@
 package com.simiacryptus.util.io;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.simiacryptus.ref.lang.RefAware;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

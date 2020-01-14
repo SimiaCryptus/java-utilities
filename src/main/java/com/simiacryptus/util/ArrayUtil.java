@@ -36,7 +36,7 @@ public class ArrayUtil {
   }
 
   public static RefList<double[]> add(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0001 = ArrayUtil.op(a == null ? null : a, b == null ? null : b, (x, y) -> x + y);
+    RefList<double[]> temp_08_0001 = ArrayUtil.op(a, b, (x, y) -> x + y);
     return temp_08_0001;
   }
 
@@ -45,7 +45,7 @@ public class ArrayUtil {
   }
 
   public static double dot(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    double temp_08_0002 = ArrayUtil.sum(ArrayUtil.multiply(a == null ? null : a, b == null ? null : b));
+    double temp_08_0002 = ArrayUtil.sum(ArrayUtil.multiply(a, b));
     return temp_08_0002;
   }
 
@@ -58,7 +58,7 @@ public class ArrayUtil {
   }
 
   public static RefList<double[]> minus(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0003 = ArrayUtil.op(a == null ? null : a, b == null ? null : b, (x, y) -> x - y);
+    RefList<double[]> temp_08_0003 = ArrayUtil.op(a, b, (x, y) -> x - y);
     return temp_08_0003;
   }
 
@@ -74,22 +74,21 @@ public class ArrayUtil {
 
   @Nonnull
   public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, final double b) {
-    RefList<double[]> temp_08_0004 = ArrayUtil.op(a == null ? null : a, x -> x * b);
+    RefList<double[]> temp_08_0004 = ArrayUtil.op(a, x -> x * b);
     return temp_08_0004;
   }
 
   public static RefList<double[]> multiply(@Nonnull final @RefAware RefList<double[]> a,
-      @Nonnull final @RefAware RefList<double[]> b) {
-    RefList<double[]> temp_08_0005 = ArrayUtil.op(a == null ? null : a, b == null ? null : b, (x, y) -> x * y);
+                                           @Nonnull final @RefAware RefList<double[]> b) {
+    RefList<double[]> temp_08_0005 = ArrayUtil.op(a, b, (x, y) -> x * y);
     return temp_08_0005;
   }
 
   @Nonnull
   public static double[] op(@Nonnull final double[] a, @Nonnull final double[] b,
-      @Nonnull final DoubleBinaryOperator fn) {
+                            @Nonnull final DoubleBinaryOperator fn) {
     assert a.length == b.length;
-    @Nonnull
-    final double[] c = new double[a.length];
+    @Nonnull final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j], b[j]);
     }
@@ -98,8 +97,7 @@ public class ArrayUtil {
 
   @Nonnull
   public static double[] op(@Nonnull final double[] a, @Nonnull final DoubleUnaryOperator fn) {
-    @Nonnull
-    final double[] c = new double[a.length];
+    @Nonnull final double[] c = new double[a.length];
     for (int j = 0; j < a.length; j++) {
       c[j] = fn.applyAsDouble(a[j]);
     }
@@ -108,12 +106,10 @@ public class ArrayUtil {
 
   @Nonnull
   public static RefList<double[]> op(@Nonnull final @RefAware RefList<double[]> a,
-      @Nonnull final DoubleUnaryOperator fn) {
-    @Nonnull
-    final RefArrayList<double[]> list = new RefArrayList<>();
+                                     @Nonnull final DoubleUnaryOperator fn) {
+    @Nonnull final RefArrayList<double[]> list = new RefArrayList<>();
     for (int i = 0; i < a.size(); i++) {
-      @Nonnull
-      final double[] c = new double[a.get(i).length];
+      @Nonnull final double[] c = new double[a.get(i).length];
       for (int j = 0; j < a.get(i).length; j++) {
         c[j] = fn.applyAsDouble(a.get(i)[j]);
       }
@@ -124,18 +120,17 @@ public class ArrayUtil {
   }
 
   public static RefList<double[]> op(@Nonnull final @RefAware RefList<double[]> a,
-      @Nonnull final @RefAware RefList<double[]> b, @Nonnull final DoubleBinaryOperator fn) {
+                                     @Nonnull final @RefAware RefList<double[]> b, @Nonnull final DoubleBinaryOperator fn) {
     assert a.size() == b.size();
     return RefIntStream.range(0, a.size()).parallel()
         .mapToObj(RefUtil.wrapInterface((IntFunction<? extends double[]>) i -> {
           assert a.get(i).length == b.get(i).length;
-          @Nonnull
-          final double[] c = new double[a.get(i).length];
+          @Nonnull final double[] c = new double[a.get(i).length];
           for (int j = 0; j < a.get(i).length; j++) {
             c[j] = fn.applyAsDouble(a.get(i)[j], b.get(i)[j]);
           }
           return c;
-        }, a == null ? null : a, b == null ? null : b)).collect(RefCollectors.toList());
+        }, a, b)).collect(RefCollectors.toList());
   }
 
   @Nonnull

@@ -19,7 +19,6 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefConsumer;
 
 import java.io.Serializable;

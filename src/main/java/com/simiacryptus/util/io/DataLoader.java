@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.*;
 
@@ -33,13 +32,17 @@ public abstract class DataLoader<T> extends ReferenceCountingBase {
   @Nullable
   private volatile Thread thread;
 
-  public static @SuppressWarnings("unused") DataLoader[] addRefs(DataLoader[] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  DataLoader[] addRefs(@Nullable DataLoader[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef).toArray((x) -> new DataLoader[x]);
   }
 
-  public static @SuppressWarnings("unused") DataLoader[][] addRefs(DataLoader[][] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  DataLoader[][] addRefs(@Nullable DataLoader[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs).toArray((x) -> new DataLoader[x][]);
@@ -69,6 +72,7 @@ public abstract class DataLoader<T> extends ReferenceCountingBase {
     }
   }
 
+  @Nonnull
   public RefStream<T> stream() {
     if (thread == null) {
       synchronized (this) {
@@ -79,22 +83,24 @@ public abstract class DataLoader<T> extends ReferenceCountingBase {
         }
       }
     }
-    @Nullable
-    final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
+    @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
     RefStream<T> temp_06_0001 = RefStreamSupport.stream(
-        RefSpliterators.spliteratorUnknownSize(iterator == null ? null : iterator.addRef(), Spliterator.DISTINCT),
+        RefSpliterators.spliteratorUnknownSize(iterator.addRef(), Spliterator.DISTINCT),
         false).filter(x -> x != null);
-    if (null != iterator)
-      iterator.freeRef();
+    iterator.freeRef();
     return temp_06_0001;
   }
 
-  public @SuppressWarnings("unused") void _free() {
+  public @SuppressWarnings("unused")
+  void _free() {
     if (null != queue)
       queue.freeRef();
   }
 
-  public @Override @SuppressWarnings("unused") DataLoader<T> addRef() {
+  @Nonnull
+  public @Override
+  @SuppressWarnings("unused")
+  DataLoader<T> addRef() {
     return (DataLoader<T>) super.addRef();
   }
 

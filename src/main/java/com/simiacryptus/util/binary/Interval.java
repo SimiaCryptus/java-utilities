@@ -19,7 +19,9 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
+
+import javax.annotation.Nonnull;
 
 public class Interval {
   public final long start;
@@ -45,6 +47,7 @@ public class Interval {
     return start + length;
   }
 
+  @Nonnull
   public Bits toBits() {
     int peekBits = (int) Math.ceil(Math.log(max) / Math.log(2)) + 4;
     Bits startBits = Bits.divide(start, max, peekBits).padRight(peekBits);
@@ -63,7 +66,7 @@ public class Interval {
 
   @Override
   public String toString() {
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(
+    final RefStringBuilder sb = new RefStringBuilder(
         "Interval{");
     sb.append("start=").append(start);
     sb.append(", length=").append(length);

@@ -19,13 +19,15 @@
 
 package com.simiacryptus.util.binary.bitset;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefHashMap;
+import com.simiacryptus.ref.wrappers.RefHashSet;
 import com.simiacryptus.ref.wrappers.RefList;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -36,14 +38,18 @@ public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, Ato
     super(bitDepth, new RefHashMap<Bits, AtomicInteger>());
   }
 
-  public static @SuppressWarnings("unused") RunLengthBitsCollection[] addRefs(RunLengthBitsCollection[] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  RunLengthBitsCollection[] addRefs(@Nullable RunLengthBitsCollection[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRef)
         .toArray((x) -> new RunLengthBitsCollection[x]);
   }
 
-  public static @SuppressWarnings("unused") RunLengthBitsCollection[][] addRefs(RunLengthBitsCollection[][] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  RunLengthBitsCollection[][] addRefs(@Nullable RunLengthBitsCollection[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRefs)
@@ -51,31 +57,38 @@ public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, Ato
   }
 
   @Override
-  public void read(final BitInputStream in) throws IOException {
+  public void read(@Nonnull final BitInputStream in) throws IOException {
     final int size = (int) in.read(32).toLong();
     for (int i = 0; i < size; i++) {
       final Bits bits = in.read(this.bitDepth);
       final int count = (int) in.read(32).toLong();
+      assert this.map != null;
       this.map.put(bits, new AtomicInteger(count));
     }
   }
 
   @Override
-  public void write(final BitOutputStream out) throws IOException {
+  public void write(@Nonnull final BitOutputStream out) throws IOException {
     RefList<Bits> temp_12_0001 = this.getList();
     out.write(new Bits(temp_12_0001.size(), 32));
-    if (null != temp_12_0001)
-      temp_12_0001.freeRef();
-    for (final Entry<Bits, AtomicInteger> e : this.map.entrySet()) {
+    temp_12_0001.freeRef();
+    assert this.map != null;
+    RefHashSet<Entry<Bits, AtomicInteger>> entries = this.map.entrySet();
+    for (final Entry<Bits, AtomicInteger> e : entries) {
       out.write(e.getKey());
       out.write(new Bits(e.getValue().get(), 32));
     }
+    entries.freeRef();
   }
 
-  public @SuppressWarnings("unused") void _free() {
+  public @SuppressWarnings("unused")
+  void _free() {
   }
 
-  public @Override @SuppressWarnings("unused") RunLengthBitsCollection addRef() {
+  @Nonnull
+  public @Override
+  @SuppressWarnings("unused")
+  RunLengthBitsCollection addRef() {
     return (RunLengthBitsCollection) super.addRef();
   }
 

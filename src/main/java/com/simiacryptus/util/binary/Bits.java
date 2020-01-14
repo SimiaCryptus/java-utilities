@@ -19,24 +19,30 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Base64;
 import java.util.Random;
 
 public class Bits implements Comparable<Bits> {
+  @Nonnull
   public static Bits ONE = new Bits(1, 1);
+  @Nonnull
   public static Bits ZERO = new Bits(0, 1);
+  @Nonnull
   public static Bits NULL = new Bits(0, 0);
   public final int bitLength;
+  @Nonnull
   private final byte[] bytes;
 
-  public Bits(final byte... data) {
+  public Bits(@Nonnull final byte... data) {
     this(data, data.length * 8);
   }
 
-  public Bits(final byte[] data, final int length) {
+  public Bits(@Nonnull final byte[] data, final int length) {
     super();
     if (0 > length) {
       throw new IllegalArgumentException();
@@ -81,7 +87,7 @@ public class Bits implements Comparable<Bits> {
     assert value == this.toLong();
   }
 
-  public Bits(final Random random, final int length) {
+  public Bits(@Nonnull final Random random, final int length) {
     this.bitLength = length;
     this.bytes = new byte[(int) Math.ceil(length / 8.)];
     random.nextBytes(this.bytes);
@@ -89,10 +95,12 @@ public class Bits implements Comparable<Bits> {
     this.bytes[this.bytes.length - 1] &= 0xFF << excessBits;
   }
 
+  @Nonnull
   public byte[] getBytes() {
     return RefArrays.copyOf(this.bytes, this.bytes.length);
   }
 
+  @Nonnull
   public static Bits divide(long numerator, long denominator, long maxBits) {
     if (maxBits <= 0)
       return NULL;
@@ -107,7 +115,7 @@ public class Bits implements Comparable<Bits> {
     }
   }
 
-  public static int dataCompare(final Bits left, final Bits right) {
+  public static int dataCompare(@Nonnull final Bits left, @Nonnull final Bits right) {
     for (int i = 0; i < left.bytes.length; i++) {
       if (right.bytes.length <= i) {
         return 1;
@@ -143,7 +151,8 @@ public class Bits implements Comparable<Bits> {
     throw new RuntimeException();
   }
 
-  public static byte[] padLeftBytes(final byte[] src, final int bytes) {
+  @Nonnull
+  public static byte[] padLeftBytes(@Nonnull final byte[] src, final int bytes) {
     final byte[] dst = new byte[bytes];
     for (int i = 1; i <= src.length; i++) {
       dst[dst.length - i] = src[src.length - i];
@@ -151,13 +160,14 @@ public class Bits implements Comparable<Bits> {
     return dst;
   }
 
-  public static byte[] shiftLeft(final byte[] src, final int bits) {
+  @Nonnull
+  public static byte[] shiftLeft(@Nonnull final byte[] src, final int bits) {
     final byte[] dst = new byte[src.length];
     shiftLeft(src, bits, dst);
     return dst;
   }
 
-  public static void shiftLeft(final byte[] src, final int bits, final byte[] dst) {
+  public static void shiftLeft(@Nonnull final byte[] src, final int bits, @Nonnull final byte[] dst) {
     final int bitPart = bits % 8;
     final int bytePart = bits / 8;
     for (int i = 0; i < dst.length; i++) {
@@ -172,28 +182,31 @@ public class Bits implements Comparable<Bits> {
     }
   }
 
-  public static byte[] shiftRight(final byte[] src, final int bits) {
+  @Nonnull
+  public static byte[] shiftRight(@Nonnull final byte[] src, final int bits) {
     final byte[] dst = new byte[src.length];
     shiftRight(src, bits, dst);
     return dst;
   }
 
+  @Nonnull
   public static byte[] toBytes(final long data) {
-    return new byte[] { (byte) (data >> 56 & 0xFF), (byte) (data >> 48 & 0xFF), (byte) (data >> 40 & 0xFF),
+    return new byte[]{(byte) (data >> 56 & 0xFF), (byte) (data >> 48 & 0xFF), (byte) (data >> 40 & 0xFF),
         (byte) (data >> 32 & 0xFF), (byte) (data >> 24 & 0xFF), (byte) (data >> 16 & 0xFF), (byte) (data >> 8 & 0xFF),
-        (byte) (data & 0xFF) };
+        (byte) (data & 0xFF)};
   }
 
-  public static byte[] trim(final byte[] bytes) {
+  @Nonnull
+  public static byte[] trim(@Nonnull final byte[] bytes) {
     for (int i = 0; i < bytes.length; i++) {
       if (bytes[i] != 0) {
         return RefArrays.copyOfRange(bytes, i, bytes.length);
       }
     }
-    return new byte[] {};
+    return new byte[]{};
   }
 
-  private static void shiftRight(final byte[] src, final int bits, final byte[] dst) {
+  private static void shiftRight(@Nonnull final byte[] src, final int bits, @Nonnull final byte[] dst) {
     final int bitPart = bits % 8;
     final int bytePart = bits / 8;
     for (int i = 0; i < dst.length; i++) {
@@ -208,7 +221,8 @@ public class Bits implements Comparable<Bits> {
     }
   }
 
-  public Bits bitwiseAnd(final Bits right) {
+  @Nonnull
+  public Bits bitwiseAnd(@Nonnull final Bits right) {
     final int lengthDifference = this.bitLength - right.bitLength;
     if (lengthDifference < 0) {
       return this.concatenate(new Bits(0l, -lengthDifference)).bitwiseAnd(right);
@@ -226,7 +240,8 @@ public class Bits implements Comparable<Bits> {
     return returnValue;
   }
 
-  public Bits bitwiseOr(final Bits right) {
+  @Nonnull
+  public Bits bitwiseOr(@Nonnull final Bits right) {
     final int lengthDifference = this.bitLength - right.bitLength;
     if (lengthDifference < 0) {
       return this.concatenate(new Bits(0l, -lengthDifference)).bitwiseOr(right);
@@ -244,7 +259,8 @@ public class Bits implements Comparable<Bits> {
     return returnValue;
   }
 
-  public Bits bitwiseXor(final Bits right) {
+  @Nonnull
+  public Bits bitwiseXor(@Nonnull final Bits right) {
     final int lengthDifference = this.bitLength - right.bitLength;
     if (lengthDifference < 0) {
       return this.concatenate(new Bits(0l, -lengthDifference)).bitwiseXor(right);
@@ -263,11 +279,12 @@ public class Bits implements Comparable<Bits> {
   }
 
   @Override
-  public int compareTo(final Bits arg0) {
+  public int compareTo(@Nonnull final Bits arg0) {
     return dataCompare(this, arg0);
   }
 
-  public Bits concatenate(final Bits right) {
+  @Nonnull
+  public Bits concatenate(@Nonnull final Bits right) {
     final int newBitLength = this.bitLength + right.bitLength;
     final int newByteLength = (int) Math.ceil(newBitLength / 8.);
     final Bits result = new Bits(new byte[newByteLength], newBitLength);
@@ -277,7 +294,7 @@ public class Bits implements Comparable<Bits> {
   }
 
   @Override
-  public boolean equals(final Object obj) {
+  public boolean equals(@Nullable final Object obj) {
     if (this == obj) {
       return true;
     }
@@ -303,10 +320,12 @@ public class Bits implements Comparable<Bits> {
     return result;
   }
 
+  @Nonnull
   public Bits leftShift(final int bits) {
     return this.concatenate(new Bits(0l, bits));
   }
 
+  @Nullable
   public Bits next() {
     if (!this.toBitString().contains("0")) {
       return null;
@@ -314,10 +333,12 @@ public class Bits implements Comparable<Bits> {
     return new Bits(this.toLong() + 1, this.bitLength);
   }
 
+  @Nonnull
   public Bits range(final int start) {
     return this.range(start, this.bitLength - start);
   }
 
+  @Nonnull
   public Bits range(final int start, final int length) {
     if (0 == length) {
       return Bits.NULL;
@@ -338,7 +359,7 @@ public class Bits implements Comparable<Bits> {
     return returnValue;
   }
 
-  public boolean startsWith(final Bits key) {
+  public boolean startsWith(@Nonnull final Bits key) {
     if (key.bitLength > this.bitLength) {
       return false;
     }
@@ -347,7 +368,7 @@ public class Bits implements Comparable<Bits> {
   }
 
   public String toBitString() {
-    com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+    RefStringBuilder sb = new RefStringBuilder();
     final int shift = this.bytes.length * 8 - this.bitLength;
     final byte[] shiftRight = shiftRight(this.bytes, shift);
     for (final byte b : shiftRight) {
@@ -361,7 +382,7 @@ public class Bits implements Comparable<Bits> {
       return sb.substring(sb.length() - this.bitLength, sb.length());
     } else {
       final CharSequence n = sb.toString();
-      sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+      sb = new RefStringBuilder();
       while (sb.length() + n.length() < this.bitLength) {
         sb.append("0");
       }
@@ -370,7 +391,7 @@ public class Bits implements Comparable<Bits> {
   }
 
   public CharSequence toHexString() {
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+    final RefStringBuilder sb = new RefStringBuilder();
     for (final byte b : this.bytes) {
       sb.append(Integer.toHexString(b & 0xFF));
     }
@@ -397,12 +418,14 @@ public class Bits implements Comparable<Bits> {
     return this.toBitString();
   }
 
+  @Nonnull
   public Bits padRight(long targetLength) {
     if (bitLength >= targetLength)
       return this;
     return this.concatenate(ZERO).padRight(targetLength);
   }
 
+  @Nonnull
   public Bits padLeft(int targetLength) {
     if (bitLength >= targetLength)
       return this;

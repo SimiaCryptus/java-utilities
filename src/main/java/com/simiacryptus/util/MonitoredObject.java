@@ -28,6 +28,7 @@ import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.ref.wrappers.RefSet;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,15 +42,13 @@ public class MonitoredObject extends ReferenceCountingBase implements MonitoredI
   @Nonnull
   @Override
   public Map<CharSequence, Object> getMetrics() {
-    @Nonnull
-    final HashMap<CharSequence, Object> returnValue = new HashMap<>();
+    @Nonnull final HashMap<CharSequence, Object> returnValue = new HashMap<>();
     RefSet<Map.Entry<CharSequence, Object>> temp_14_0001 = items.entrySet();
     temp_14_0001.stream().parallel()
         .forEach(RefUtil.wrapInterface((Consumer<? super Map.Entry<CharSequence, Object>>) e -> {
           final CharSequence k = e.getKey();
           final Object v = e.getValue();
-          if (null != e)
-            RefUtil.freeRef(e);
+          RefUtil.freeRef(e);
           if (v instanceof MonitoredItem) {
             returnValue.put(k, ((MonitoredItem) v).getMetrics());
           } else if (v instanceof Supplier) {
@@ -58,19 +57,22 @@ public class MonitoredObject extends ReferenceCountingBase implements MonitoredI
             returnValue.put(k, v);
           }
         }, RefUtil.addRef(returnValue)));
-    if (null != temp_14_0001)
-      temp_14_0001.freeRef();
+    temp_14_0001.freeRef();
     return returnValue;
   }
 
-  public static @SuppressWarnings("unused") MonitoredObject[] addRefs(MonitoredObject[] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  MonitoredObject[] addRefs(@Nullable MonitoredObject[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRef)
         .toArray((x) -> new MonitoredObject[x]);
   }
 
-  public static @SuppressWarnings("unused") MonitoredObject[][] addRefs(MonitoredObject[][] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  MonitoredObject[][] addRefs(@Nullable MonitoredObject[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRefs)
@@ -97,8 +99,7 @@ public class MonitoredObject extends ReferenceCountingBase implements MonitoredI
 
   @Nonnull
   public MonitoredObject clearConstants() {
-    @Nonnull
-    final RefHashSet<CharSequence> keys = new RefHashSet<>(items.keySet());
+    @Nonnull final RefHashSet<CharSequence> keys = new RefHashSet<>(items.keySet());
     for (final CharSequence k : keys) {
       final Object v = items.get(k);
       if (v instanceof MonitoredObject) {
@@ -111,12 +112,15 @@ public class MonitoredObject extends ReferenceCountingBase implements MonitoredI
     return this.addRef();
   }
 
-  public @SuppressWarnings("unused") void _free() {
-    if (null != items)
-      items.freeRef();
+  public @SuppressWarnings("unused")
+  void _free() {
+    items.freeRef();
   }
 
-  public @Override @SuppressWarnings("unused") MonitoredObject addRef() {
+  @Nonnull
+  public @Override
+  @SuppressWarnings("unused")
+  MonitoredObject addRef() {
     return (MonitoredObject) super.addRef();
   }
 }

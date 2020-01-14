@@ -20,15 +20,13 @@
 package com.simiacryptus.lang;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
-import com.simiacryptus.ref.wrappers.RefArrayList;
-import com.simiacryptus.ref.wrappers.RefConsumer;
-import com.simiacryptus.ref.wrappers.RefHashSet;
-import com.simiacryptus.ref.wrappers.RefLinkedBlockingQueue;
+import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public abstract class ResourcePool<T> extends ReferenceCountingBase {
@@ -43,18 +41,21 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     super();
     this.maxItems = maxItems;
     RefHashSet<T> temp_01_0001 = new RefHashSet<>(this.maxItems);
-    this.all = temp_01_0001 == null ? null : temp_01_0001.addRef();
-    if (null != temp_01_0001)
-      temp_01_0001.freeRef();
+    this.all = temp_01_0001.addRef();
+    temp_01_0001.freeRef();
   }
 
-  public static @SuppressWarnings("unused") ResourcePool[] addRefs(ResourcePool[] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  ResourcePool[] addRefs(@Nullable ResourcePool[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef).toArray((x) -> new ResourcePool[x]);
   }
 
-  public static @SuppressWarnings("unused") ResourcePool[][] addRefs(ResourcePool[][] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  ResourcePool[][] addRefs(@Nullable ResourcePool[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRefs)
@@ -67,14 +68,13 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     return get(x -> true);
   }
 
-  public T get(Predicate<T> filter) {
+  public T get(@Nonnull Predicate<T> filter) {
     RefArrayList<T> sampled = new RefArrayList<>();
     try {
       T poll = this.pool.poll();
       while (null != poll) {
         if (filter.test(poll)) {
-          if (null != sampled)
-            sampled.freeRef();
+          sampled.freeRef();
           return poll;
         } else {
           sampled.add(poll);
@@ -83,8 +83,7 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     } finally {
       pool.addAll(sampled);
     }
-    if (null != sampled)
-      sampled.freeRef();
+    sampled.freeRef();
     synchronized (this.all) {
       if (this.all.size() < this.maxItems) {
         T poll = create();
@@ -103,31 +102,37 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     return all.size();
   }
 
-  public <U> U apply(@Nonnull final Function<T, U> f) {
+  @Nonnull
+  public <U> U apply(@Nonnull @RefAware final RefFunction<T, U> f) {
     return apply(f, x -> true);
   }
 
-  public void apply(@Nonnull final RefConsumer<T> f) {
+  public void apply(@Nonnull @RefAware final RefConsumer<T> f) {
     apply(f, x -> true);
   }
 
-  public <U> U apply(@Nonnull final Function<T, U> f, final Predicate<T> filter) {
+  @Nonnull
+  public <U> U apply(@Nonnull @RefAware final RefFunction<T, U> f, @Nonnull final Predicate<T> filter) {
     final T prior = currentValue.get();
-    if (null != prior) {
-      return f.apply(prior);
-    } else {
-      final T poll = get(filter);
-      try {
-        currentValue.set(poll);
-        return f.apply(poll);
-      } finally {
-        this.pool.add(poll);
-        currentValue.remove();
+    try {
+      if (null != prior) {
+        return f.apply(prior);
+      } else {
+        final T poll = get(filter);
+        try {
+          currentValue.set(poll);
+          return f.apply(poll);
+        } finally {
+          this.pool.add(poll);
+          currentValue.remove();
+        }
       }
+    } finally {
+      RefUtil.freeRef(f);
     }
   }
 
-  public void apply(@Nonnull final RefConsumer<T> f, final Predicate<T> filter) {
+  public void apply(@Nonnull final RefConsumer<T> f, @Nonnull final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);
@@ -143,11 +148,16 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     }
   }
 
-  public @SuppressWarnings("unused") void _free() {
+  public @SuppressWarnings("unused")
+  void _free() {
     all.freeRef();
+    pool.freeRef();
   }
 
-  public @Override @SuppressWarnings("unused") ResourcePool<T> addRef() {
+  @Nonnull
+  public @Override
+  @SuppressWarnings("unused")
+  ResourcePool<T> addRef() {
     return (ResourcePool<T>) super.addRef();
   }
 }

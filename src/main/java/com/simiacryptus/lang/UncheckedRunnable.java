@@ -19,8 +19,6 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 public interface UncheckedRunnable<T> {
 
   void get() throws Exception;

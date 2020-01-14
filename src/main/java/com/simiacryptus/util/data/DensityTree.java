@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.data;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 
@@ -230,19 +229,25 @@ public class DensityTree {
       if (null == rule) {
         return 0;
       } else if (rule.eval(pt)) {
+        assert left != null;
         return 1 + 2 * left.predict(pt);
       } else {
+        assert right != null;
         return 0 + 2 * right.predict(pt);
       }
     }
 
+    @Nonnull
     @Override
     public String toString() {
       return code();
     }
 
+    @Nonnull
     public String code() {
       if (null != rule) {
+        assert right != null;
+        assert left != null;
         return RefString.format("// %s\nif(%s) { // Fitness %s\n  %s\n} else {\n  %s\n}", dataInfo(), rule,
             rule.fitness, left.code().replaceAll("\n", "\n  "), right.code().replaceAll("\n", "\n  "));
       } else {
@@ -268,9 +273,10 @@ public class DensityTree {
       this.right = new Node(rightPts, depth + 1);
     }
 
+    @Nonnull
     public RefStream<Rule> split_ortho(int dim) {
       double[][] sortedPoints = RefArrays.stream(points).filter(pt -> Double.isFinite(pt[dim]))
-          .sorted(RefComparator.comparing(pt -> pt[dim])).toArray(i -> new double[i][]);
+          .sorted(RefComparator.comparingDouble(pt -> pt[dim])).toArray(i -> new double[i][]);
       if (0 == sortedPoints.length)
         return RefStream.empty();
       final int minSize = (int) Math.max(sortedPoints.length * minSplitFract, 1);
@@ -278,8 +284,8 @@ public class DensityTree {
       Bounds[] left = new Bounds[sortedPoints.length];
       @Nonnull
       Bounds[] right = new Bounds[sortedPoints.length];
-      left[0] = getBounds(new double[][] { sortedPoints[0] });
-      right[sortedPoints.length - 1] = getBounds(new double[][] { sortedPoints[sortedPoints.length - 1] });
+      left[0] = getBounds(new double[][]{sortedPoints[0]});
+      right[sortedPoints.length - 1] = getBounds(new double[][]{sortedPoints[sortedPoints.length - 1]});
       for (int i = 1; i < sortedPoints.length; i++) {
         left[i] = left[i - 1].union(sortedPoints[i]);
         right[(sortedPoints.length - 1) - i] = right[((sortedPoints.length - 1) - (i - 1))]
@@ -303,6 +309,7 @@ public class DensityTree {
       }).filter(i -> null != i && i.fitness > minFitness);
     }
 
+    @Nonnull
     private CharSequence dataInfo() {
       return RefString.format("Count: %s Volume: %s Region: %s", points.length, bounds.getVolume(), bounds);
     }

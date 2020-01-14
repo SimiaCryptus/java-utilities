@@ -23,14 +23,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.io.TeeInputStream;
 import com.simiacryptus.util.test.LabeledObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +61,9 @@ import java.util.zip.GZIPInputStream;
 public class Util {
 
   public static final ThreadLocal<Random> R = new ThreadLocal<Random>() {
-    public final Random r = new Random(com.simiacryptus.ref.wrappers.RefSystem.nanoTime());
+    public final Random r = new Random(RefSystem.nanoTime());
 
+    @Nonnull
     @Override
     protected Random initialValue() {
       return new Random(r.nextLong());
@@ -78,6 +77,7 @@ public class Util {
     return toString(getStackTrace(4));
   }
 
+  @Nonnull
   public static StackTraceElement[] getStackTrace() {
     return getStackTrace(4);
   }
@@ -89,20 +89,17 @@ public class Util {
   }
 
   public static RefStream<byte[]> binaryStream(final String path, @Nonnull final String name, final int skip,
-      final int recordSize) throws IOException {
-    @Nonnull
-    final File file = new File(path, name);
+                                               final int recordSize) throws IOException {
+    @Nonnull final File file = new File(path, name);
     final byte[] fileData = IOUtils
         .toByteArray(new BufferedInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(file)))));
-    @Nonnull
-    final DataInputStream in = new DataInputStream(new ByteArrayInputStream(fileData));
+    @Nonnull final DataInputStream in = new DataInputStream(new ByteArrayInputStream(fileData));
     in.skip(skip);
     return Util.toIterator(new BinaryChunkIterator(in, recordSize));
   }
 
   public static <F, T> Function<F, T> cache(@Nonnull final Function<F, T> inner) {
-    @Nonnull
-    final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
+    @Nonnull final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
       @Override
       public T load(final F key) {
         return inner.apply(key);
@@ -111,11 +108,13 @@ public class Util {
     return cache::getUnchecked;
   }
 
-  public static InputStream cacheLocal(String file, URI url) throws IOException {
+  @Nonnull
+  public static InputStream cacheLocal(@Nonnull String file, @Nonnull URI url) throws IOException {
     return cacheLocal(file, getStreamSupplier(url));
   }
 
-  public static InputStream cacheLocal(String file, Supplier<InputStream> fn) throws FileNotFoundException {
+  @Nonnull
+  public static InputStream cacheLocal(@Nonnull String file, @Nonnull Supplier<InputStream> fn) throws FileNotFoundException {
     File f = new File(file);
     if (f.exists()) {
       return new FileInputStream(f);
@@ -125,9 +124,11 @@ public class Util {
     }
   }
 
-  public static Supplier<InputStream> getStreamSupplier(URI url) {
+  @Nonnull
+  public static Supplier<InputStream> getStreamSupplier(@Nonnull URI url) {
     return () -> {
-      TrustManager[] trustManagers = { new X509TrustManager() {
+      TrustManager[] trustManagers = {new X509TrustManager() {
+        @Nonnull
         public X509Certificate[] getAcceptedIssuers() {
           return new X509Certificate[0];
         }
@@ -137,7 +138,7 @@ public class Util {
 
         public void checkServerTrusted(X509Certificate[] certs, String authType) {
         }
-      } };
+      }};
       try {
         SSLContext ctx = SSLContext.getInstance("TLS");
         ctx.init(null, trustManagers, null);
@@ -149,12 +150,13 @@ public class Util {
           conn.setRequestMethod("GET");
         }
         return urlConnection.getInputStream();
-      } catch (KeyManagementException | NoSuchAlgorithmException | IOException e) {
+      } catch (@Nonnull KeyManagementException | NoSuchAlgorithmException | IOException e) {
         throw new RuntimeException(e);
       }
     };
   }
 
+  @Nonnull
   public static InputStream cacheStream(@Nonnull final String url, @Nonnull final String file)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
     if (new File(file).exists()) {
@@ -164,6 +166,7 @@ public class Util {
     }
   }
 
+  @Nonnull
   public static File cacheFile(@Nonnull final String url, @Nonnull final String file)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
     final File fileLoc = new File(file).getCanonicalFile().getAbsoluteFile();
@@ -177,8 +180,7 @@ public class Util {
 
   public static InputStream get(@Nonnull String url)
       throws NoSuchAlgorithmException, KeyManagementException, IOException {
-    @Nonnull
-    final TrustManager[] trustManagers = { new X509TrustManager() {
+    @Nonnull final TrustManager[] trustManagers = {new X509TrustManager() {
       @Nonnull
       @Override
       public X509Certificate[] getAcceptedIssuers() {
@@ -192,31 +194,32 @@ public class Util {
       @Override
       public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
       }
-    } };
-    @Nonnull
-    final SSLContext ctx = SSLContext.getInstance("TLS");
+    }};
+    @Nonnull final SSLContext ctx = SSLContext.getInstance("TLS");
     ctx.init(null, trustManagers, null);
     final SSLSocketFactory sslFactory = ctx.getSocketFactory();
     final URLConnection urlConnection = new URL(url).openConnection();
     if (urlConnection instanceof HttpsURLConnection) {
-      @Nonnull
-      final HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
+      @Nonnull final HttpsURLConnection conn = (HttpsURLConnection) urlConnection;
       conn.setSSLSocketFactory(sslFactory);
       conn.setRequestMethod("GET");
     }
     return urlConnection.getInputStream();
   }
 
+  @Nonnull
   public static InputStream cacheStream(@Nonnull final URI url)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return Util.cacheStream(url.toString(), new File(url.getPath()).getName());
   }
 
+  @Nonnull
   public static File cacheFile(@Nonnull final URI url)
       throws IOException, NoSuchAlgorithmException, KeyManagementException {
     return Util.cacheFile(url.toString(), new File(url.getPath()).getName());
   }
 
+  @Nonnull
   public static CharSequence[] currentStack() {
     return RefStream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
   }
@@ -224,22 +227,22 @@ public class Util {
   @Nonnull
   public static TemporalUnit cvt(@Nonnull final TimeUnit units) {
     switch (units) {
-    case DAYS:
-      return ChronoUnit.DAYS;
-    case HOURS:
-      return ChronoUnit.HOURS;
-    case MINUTES:
-      return ChronoUnit.MINUTES;
-    case SECONDS:
-      return ChronoUnit.SECONDS;
-    case NANOSECONDS:
-      return ChronoUnit.NANOS;
-    case MICROSECONDS:
-      return ChronoUnit.MICROS;
-    case MILLISECONDS:
-      return ChronoUnit.MILLIS;
-    default:
-      throw new IllegalArgumentException(units.toString());
+      case DAYS:
+        return ChronoUnit.DAYS;
+      case HOURS:
+        return ChronoUnit.HOURS;
+      case MINUTES:
+        return ChronoUnit.MINUTES;
+      case SECONDS:
+        return ChronoUnit.SECONDS;
+      case NANOSECONDS:
+        return ChronoUnit.NANOS;
+      case MICROSECONDS:
+        return ChronoUnit.MICROS;
+      case MILLISECONDS:
+        return ChronoUnit.MILLIS;
+      default:
+        throw new IllegalArgumentException(units.toString());
     }
   }
 
@@ -253,19 +256,18 @@ public class Util {
   public static String mkString(@Nonnull final CharSequence separator, final CharSequence... strs) {
     RefList<CharSequence> temp_09_0006 = RefArrays.asList(strs);
     String temp_09_0005 = temp_09_0006.stream().collect(RefCollectors.joining(separator));
-    if (null != temp_09_0006)
-      temp_09_0006.freeRef();
+    temp_09_0006.freeRef();
     return temp_09_0005;
   }
 
+  @Nonnull
   public static String pathTo(@Nonnull final File from, @Nonnull final File to) {
     return from.toPath().relativize(to.toPath()).toString().replaceAll("\\\\", "/");
   }
 
   @Nonnull
   public static byte[] read(@Nonnull final DataInputStream i, final int s) throws IOException {
-    @Nonnull
-    final byte[] b = new byte[s];
+    @Nonnull final byte[] b = new byte[s];
     int pos = 0;
     while (b.length > pos) {
       final int read = i.read(b, pos, b.length - pos);
@@ -280,29 +282,27 @@ public class Util {
   @Nullable
   public static BufferedImage maximumSize(@Nullable final BufferedImage image, int width) {
     if (null == image)
-      return image;
+      return null;
     width = Math.min(image.getWidth(), width);
     if (width == image.getWidth())
       return image;
     final int height = image.getHeight() * width / image.getWidth();
-    @Nonnull
-    final BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    @Nonnull final BufferedImage rerender = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     final Graphics gfx = rerender.getGraphics();
-    @Nonnull
-    final RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION,
+    @Nonnull final RenderingHints hints = new RenderingHints(RenderingHints.KEY_INTERPOLATION,
         RenderingHints.VALUE_INTERPOLATION_BICUBIC);
     ((Graphics2D) gfx).setRenderingHints(hints);
     gfx.drawImage(image, 0, 0, rerender.getWidth(), rerender.getHeight(), null);
     return rerender;
   }
 
-  public static BufferedImage toImage(final Component component) {
+  @Nullable
+  public static BufferedImage toImage(@Nullable final Component component) {
     if (null == component)
       return null;
     try {
       Util.layout(component);
-      @Nonnull
-      final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(),
+      @Nonnull final BufferedImage img = new BufferedImage(component.getWidth(), component.getHeight(),
           BufferedImage.TYPE_INT_RGB);
       final Graphics2D g = img.createGraphics();
       g.setColor(component.getForeground());
@@ -314,13 +314,14 @@ public class Util {
     }
   }
 
+  @Nonnull
   public static CharSequence toInlineImage(final BufferedImage img, final String alt) {
     return Util.toInlineImage(new LabeledObject<>(img, alt));
   }
 
+  @Nonnull
   public static CharSequence toInlineImage(@Nonnull final LabeledObject<BufferedImage> img) {
-    @Nonnull
-    final ByteArrayOutputStream b = new ByteArrayOutputStream();
+    @Nonnull final ByteArrayOutputStream b = new ByteArrayOutputStream();
     try {
       ImageIO.write(img.data, "png", b);
     } catch (@Nonnull final RuntimeException e) {
@@ -335,35 +336,35 @@ public class Util {
 
   public static <T> RefStream<T> toIterator(@Nonnull final RefIteratorBase<T> iterator) {
     RefStream<T> temp_09_0001 = RefStreamSupport
-        .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, 1, Spliterator.ORDERED), false);
+        .stream(RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
     return temp_09_0001;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator) {
-    RefStream<T> temp_09_0002 = Util.toStream(iterator == null ? null : iterator, 0);
+    RefStream<T> temp_09_0002 = Util.toStream(iterator, 0);
     return temp_09_0002;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
-    RefStream<T> temp_09_0003 = Util.toStream(iterator == null ? null : iterator, size, false);
+    RefStream<T> temp_09_0003 = Util.toStream(iterator, size, false);
     return temp_09_0003;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
-      final boolean parallel) {
+                                          final boolean parallel) {
     RefStream<T> temp_09_0004 = RefStreamSupport
-        .stream(RefSpliterators.spliterator(iterator == null ? null : iterator, size, Spliterator.ORDERED), parallel);
+        .stream(RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
     return temp_09_0004;
   }
 
+  @Nonnull
   public static UUID uuid() {
     @Nonnull
     String index = Integer.toHexString(Util.idcounter.incrementAndGet());
     while (index.length() < 8) {
       index = "0" + index;
     }
-    @Nonnull
-    final String tempId = Util.jvmId.substring(0, Util.jvmId.length() - index.length()) + index;
+    @Nonnull final String tempId = Util.jvmId.substring(0, Util.jvmId.length() - index.length()) + index;
     return UUID.fromString(tempId);
   }
 
@@ -376,19 +377,20 @@ public class Util {
   }
 
   @Nonnull
-  public static String dateStr(final String formatStr) {
+  public static String dateStr(@Nonnull final String formatStr) {
     return new SimpleDateFormat(formatStr).format(new Date());
   }
 
   @Nonnull
-  public static String stripPrefix(String str, final String prefix) {
+  public static String stripPrefix(@Nonnull String str, @Nonnull final String prefix) {
     while (str.startsWith(prefix)) {
       str = str.substring(prefix.length());
     }
     return str;
   }
 
-  public static Path pathToFile(final File baseFile, @Nonnull File file) {
+  @Nonnull
+  public static Path pathToFile(@Nonnull final File baseFile, @Nonnull File file) {
     try {
       Path basePath = baseFile.getCanonicalFile().toPath().getParent();
       Path path = file.getCanonicalFile().toPath();
@@ -399,7 +401,7 @@ public class Util {
   }
 
   @Nonnull
-  public static String toString(final Path path) {
+  public static String toString(@Nonnull final Path path) {
     return path.normalize().toString().replaceAll("\\\\", "/");
   }
 
@@ -411,32 +413,35 @@ public class Util {
     RefArrays.stream(runnables).forEach(Runnable::run);
   }
 
+  @Nonnull
   public static String toString(@Nonnull RefConsumer<PrintStream> fn) {
     @Nonnull
     java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
     try (@Nonnull
-    PrintStream out = new PrintStream(buffer)) {
+         PrintStream out = new PrintStream(buffer)) {
       fn.accept(out);
     }
     return new String(buffer.toByteArray(), Charset.forName("UTF-8"));
   }
 
-  public static String toString(final StackTraceElement[] stack) {
+  public static String toString(@Nonnull final StackTraceElement[] stack) {
     return toString(stack, "\n");
   }
 
-  public static String toString(final StackTraceElement[] stack, final CharSequence delimiter) {
+  public static String toString(@Nonnull final StackTraceElement[] stack, final CharSequence delimiter) {
     return RefArrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber())
         .reduce((a, b) -> a + delimiter + b).orElse("");
   }
 
+  @Nonnull
   public static StackTraceElement[] getStackTrace(final int skip) {
     return RefArrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
         .filter(x -> x.getClassName().startsWith("com.simiacryptus.")).limit(500)
         .toArray(i -> new StackTraceElement[i]);
   }
 
-  public static float[] getFloats(double[] doubles) {
+  @Nonnull
+  public static float[] getFloats(@Nonnull double[] doubles) {
     float[] floats = new float[doubles.length];
     for (int i = 0; i < doubles.length; i++) {
       floats[i] = (float) doubles[i];
@@ -444,7 +449,8 @@ public class Util {
     return floats;
   }
 
-  public static double[] getDoubles(float[] floats) {
+  @Nonnull
+  public static double[] getDoubles(@Nonnull float[] floats) {
     double[] doubles = new double[floats.length];
     for (int i = 0; i < floats.length; i++) {
       doubles[i] = floats[i];
@@ -452,7 +458,8 @@ public class Util {
     return doubles;
   }
 
-  public static long[] toLong(int[] ints) {
+  @Nonnull
+  public static long[] toLong(@Nonnull int[] ints) {
     long[] longs = new long[ints.length];
     for (int i = 0; i < ints.length; i++) {
       longs[i] = ints[i];
@@ -460,7 +467,8 @@ public class Util {
     return longs;
   }
 
-  public static int[] toInt(long[] longs) {
+  @Nonnull
+  public static int[] toInt(@Nonnull long[] longs) {
     int[] ints = new int[longs.length];
     for (int i = 0; i < ints.length; i++) {
       ints[i] = (int) longs[i];
@@ -468,7 +476,7 @@ public class Util {
     return ints;
   }
 
-  public static String toString(Throwable e) {
+  public static String toString(@Nonnull Throwable e) {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (PrintStream printStream = new PrintStream(out)) {
       e.printStackTrace(printStream);

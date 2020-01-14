@@ -19,28 +19,30 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
+import com.simiacryptus.ref.wrappers.RefSystem;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 public class LOG {
 
-  private static final long startTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
+  private static final long startTime = RefSystem.nanoTime();
 
-  public static void d(final String msg, final Object... args) {
+  public static void d(@Nonnull final String msg, final Object... args) {
     LOG.preprocessArgs(args);
     LOG.log(Severity.Debug, msg, args);
   }
 
-  public static void d(final Throwable e, final CharSequence msg, final Object... args) {
+  public static void d(@Nonnull final Throwable e, final CharSequence msg, final Object... args) {
     LOG.d(msg + "\n  " + LOG.toString(e).replace("\n", "\n  "), args);
   }
 
-  public static String toString(final Throwable e) {
+  public static String toString(@Nonnull final Throwable e) {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     final PrintStream s = new PrintStream(out);
     try {
@@ -51,26 +53,26 @@ public class LOG {
     return out.toString();
   }
 
-  private static void log(final Severity debug, final String msg, final Object[] args) {
+  private static void log(final Severity debug, @Nonnull final String msg, final Object[] args) {
     final String formatted = RefString.format(msg, args);
     final StackTraceElement caller = RefUtil.get(RefArrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
       Class<?> clazz;
       try {
         clazz = Class.forName(stack.getClassName());
-      } catch (final Exception e) {
+      } catch (@Nonnull final Exception e) {
         return true;
       }
       if (clazz == Thread.class)
         return false;
       return clazz != LOG.class;
     }).findFirst());
-    final double time = (com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - LOG.startTime) / 1000000000.;
+    final double time = (RefSystem.nanoTime() - LOG.startTime) / 1000000000.;
     final String line = RefString.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
         formatted.replaceAll("\n", "\n\t"));
-    com.simiacryptus.ref.wrappers.RefSystem.out.println(line);
+    RefSystem.out.println(line);
   }
 
-  private static void preprocessArgs(final Object... args) {
+  private static void preprocessArgs(@Nonnull final Object... args) {
     for (int i = 0; i < args.length; i++) {
       if (null == args[i]) {
         continue;
@@ -92,8 +94,9 @@ public class LOG {
     }
   }
 
-  private static CharSequence toString(final double[] point) {
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder();
+  @Nonnull
+  private static CharSequence toString(@Nonnull final double[] point) {
+    final RefStringBuilder sb = new RefStringBuilder();
     for (final double v : point) {
       if (0 < sb.length()) {
         sb.append(", ");

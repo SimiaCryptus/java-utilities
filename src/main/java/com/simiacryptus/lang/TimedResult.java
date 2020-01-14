@@ -19,7 +19,7 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefSystem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,10 +36,11 @@ public class TimedResult<T> {
     this.gcMs = gcMs;
   }
 
+  @Nonnull
   public static <T> TimedResult<T> time(@Nonnull final UncheckedSupplier<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
-    final long start = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
+    final long start = RefSystem.nanoTime();
     @Nullable
     T result = null;
     try {
@@ -49,16 +50,17 @@ public class TimedResult<T> {
     } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    long wallClockTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - start;
+    long wallClockTime = RefSystem.nanoTime() - start;
     long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum()
         - priorGcMs;
     return new TimedResult<T>(result, wallClockTime, gcTime);
   }
 
+  @Nonnull
   public static <T> TimedResult<Void> time(@Nonnull final UncheckedRunnable<T> fn) {
     long priorGcMs = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime())
         .sum();
-    final long start = com.simiacryptus.ref.wrappers.RefSystem.nanoTime();
+    final long start = RefSystem.nanoTime();
     try {
       fn.get();
     } catch (@Nonnull final RuntimeException e) {
@@ -66,7 +68,7 @@ public class TimedResult<T> {
     } catch (@Nonnull final Exception e) {
       throw new RuntimeException(e);
     }
-    long wallClockTime = com.simiacryptus.ref.wrappers.RefSystem.nanoTime() - start;
+    long wallClockTime = RefSystem.nanoTime() - start;
     long gcTime = ManagementFactory.getGarbageCollectorMXBeans().stream().mapToLong(x -> x.getCollectionTime()).sum()
         - priorGcMs;
     return new TimedResult<Void>(null, wallClockTime, gcTime);

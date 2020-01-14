@@ -19,8 +19,6 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 import java.io.Serializable;
 
 public class Tuple2<A, B> implements Serializable {

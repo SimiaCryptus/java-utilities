@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefSystem;
 
 public class FastRandom {
   public static final FastRandom INSTANCE = new FastRandom();
@@ -29,7 +29,7 @@ public class FastRandom {
   private long z;
 
   public FastRandom() {
-    this(com.simiacryptus.ref.wrappers.RefSystem.nanoTime());
+    this(RefSystem.nanoTime());
   }
 
   public FastRandom(final long seed) {

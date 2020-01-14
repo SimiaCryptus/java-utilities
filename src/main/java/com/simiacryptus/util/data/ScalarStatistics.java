@@ -20,7 +20,6 @@
 package com.simiacryptus.util.data;
 
 import com.google.gson.JsonObject;
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.util.MonitoredItem;
 
@@ -49,8 +48,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public JsonObject getJson() {
-    @Nonnull
-    final JsonObject json = new JsonObject();
+    @Nonnull final JsonObject json = new JsonObject();
     json.addProperty("min", min);
     json.addProperty("max", max);
     json.addProperty("negatives", negatives);
@@ -73,8 +71,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Override
   public Map<CharSequence, Object> getMetrics() {
-    @Nonnull
-    final HashMap<CharSequence, Object> map = new HashMap<>();
+    @Nonnull final HashMap<CharSequence, Object> map = new HashMap<>();
     map.put("count", sum0);
     map.put("sum", sum1);
     map.put("negative", negatives);
@@ -94,8 +91,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public static ScalarStatistics stats(@Nonnull final double[] data) {
-    @Nonnull
-    final ScalarStatistics statistics = new PercentileStatistics();
+    @Nonnull final ScalarStatistics statistics = new PercentileStatistics();
     RefArrays.stream(data).forEach(statistics::add);
     return statistics;
   }
@@ -160,8 +156,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public final synchronized ScalarStatistics add(@Nonnull final ScalarStatistics right) {
-    @Nonnull
-    final ScalarStatistics sum = new ScalarStatistics();
+    @Nonnull final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 += right.sum0;
     sum.sum1 += sum1;
@@ -199,8 +194,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Nonnull
   public final synchronized ScalarStatistics subtract(@Nonnull final ScalarStatistics right) {
-    @Nonnull
-    final ScalarStatistics sum = new ScalarStatistics();
+    @Nonnull final ScalarStatistics sum = new ScalarStatistics();
     sum.sum0 += sum0;
     sum.sum0 -= right.sum0;
     sum.sum1 += sum1;

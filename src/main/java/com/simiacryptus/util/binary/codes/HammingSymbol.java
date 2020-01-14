@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.binary.codes;
 
-import com.simiacryptus.ref.lang.RefAware;
+import javax.annotation.Nonnull;
 
 public class HammingSymbol<T extends Comparable<T>> implements Comparable<HammingSymbol<T>> {
 
@@ -32,7 +32,7 @@ public class HammingSymbol<T extends Comparable<T>> implements Comparable<Hammin
   }
 
   @Override
-  public int compareTo(final HammingSymbol<T> o) {
+  public int compareTo(@Nonnull final HammingSymbol<T> o) {
     return this.key.compareTo(o.key);
   }
 

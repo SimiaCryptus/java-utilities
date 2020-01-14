@@ -19,8 +19,6 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 public class NotImplementedException extends RuntimeException {
 
   // Show a warning whenever this is referenced - We shoud implement it!

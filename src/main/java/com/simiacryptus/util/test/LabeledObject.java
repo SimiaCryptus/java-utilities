@@ -19,7 +19,7 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.wrappers.RefStringBuilder;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
@@ -42,8 +42,7 @@ public class LabeledObject<T> {
   @Nonnull
   @Override
   public String toString() {
-    @Nonnull
-    final com.simiacryptus.ref.wrappers.RefStringBuilder sb = new com.simiacryptus.ref.wrappers.RefStringBuilder(
+    @Nonnull final RefStringBuilder sb = new RefStringBuilder(
         "LabeledObject{");
     sb.append("data=").append(data);
     sb.append(", label='").append(label).append('\'');

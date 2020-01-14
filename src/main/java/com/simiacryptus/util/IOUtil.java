@@ -24,11 +24,11 @@ import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,6 +38,7 @@ import java.nio.file.Files;
 public class IOUtil {
   private static final ObjectMapper objectMapper = JsonUtil.getMapper();
   private static final ThreadLocal<Kryo> kryo = new ThreadLocal<Kryo>() {
+    @Nonnull
     @Override
     protected Kryo initialValue() {
       Kryo kryo = new Kryo();
@@ -46,13 +47,14 @@ public class IOUtil {
     }
   };
   private static final ThreadLocal<byte[]> buffer = new ThreadLocal<byte[]>() {
+    @Nonnull
     @Override
     protected byte[] initialValue() {
       return new byte[8 * 1024 * 1024];
     }
   };
 
-  public static <T> void writeJson(T obj, File file) {
+  public static <T> void writeJson(T obj, @Nonnull File file) {
     StringWriter writer = new StringWriter();
     try {
       objectMapper.writeValue(writer, obj);
@@ -62,7 +64,7 @@ public class IOUtil {
     }
   }
 
-  public static <T> T readJson(File file) {
+  public static <T> T readJson(@Nonnull File file) {
     try {
       return objectMapper.readValue(new String(Files.readAllBytes(file.toPath())), new TypeReference<T>() {
       });
@@ -71,7 +73,7 @@ public class IOUtil {
     }
   }
 
-  public static <T> void writeKryo(T obj, OutputStream file) {
+  public static <T> void writeKryo(T obj, @Nonnull OutputStream file) {
     try {
       Output output = new Output(buffer.get());
       new KryoReflectionFactorySupport().writeClassAndObject(output, obj);
@@ -83,7 +85,7 @@ public class IOUtil {
     }
   }
 
-  public static void writeString(String obj, OutputStream file) {
+  public static void writeString(@Nonnull String obj, @Nonnull OutputStream file) {
     try {
       IOUtils.write(obj.getBytes("UTF-8"), file);
       file.close();
@@ -92,7 +94,8 @@ public class IOUtil {
     }
   }
 
-  public static <T> T readKryo(File file) {
+  @Nonnull
+  public static <T> T readKryo(@Nonnull File file) {
     try {
       byte[] bytes = Files.readAllBytes(file.toPath());
       Input input = new Input(buffer.get(), 0, bytes.length);

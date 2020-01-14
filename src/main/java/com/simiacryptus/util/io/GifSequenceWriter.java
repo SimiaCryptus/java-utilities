@@ -26,8 +26,6 @@ package com.simiacryptus.util.io;
 // http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
 // Commons, 171 Second Street, Suite 300, San Francisco, California, 94105, USA.
 
-import com.simiacryptus.ref.lang.RefAware;
-
 import javax.annotation.Nonnull;
 import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
@@ -47,7 +45,7 @@ public class GifSequenceWriter {
   protected IIOMetadata imageMetaData;
 
   public GifSequenceWriter(ImageOutputStream outputStream, int imageType, int timeBetweenFramesMS,
-      boolean loopContinuously) throws IOException {
+                           boolean loopContinuously) throws IOException {
 
     gifWriter = getWriter("gif");
     imageWriteParam = gifWriter.getDefaultWriteParam();
@@ -74,7 +72,7 @@ public class GifSequenceWriter {
     child.setAttribute("authenticationCode", "2.0");
 
     int loop = loopContinuously ? 0 : 1;
-    child.setUserObject(new byte[] { 0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF) });
+    child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF)});
     appEntensionsNode.appendChild(child);
     imageMetaData.setFromTree(metaFormatName, root);
     gifWriter.setOutput(outputStream);
@@ -82,20 +80,20 @@ public class GifSequenceWriter {
   }
 
   public static void write(File gif, int timeBetweenFramesMS, boolean loopContinuously,
-      @Nonnull BufferedImage... images) throws IOException {
+                           @Nonnull BufferedImage... images) throws IOException {
     @Nonnull
     ImageOutputStream output = new FileImageOutputStream(gif);
     write(output, timeBetweenFramesMS, loopContinuously, images);
   }
 
-  public static void write(ImageOutputStream output, int timeBetweenFramesMS, boolean loopContinuously,
-      @Nonnull BufferedImage... images) throws IOException {
+  public static void write(@Nonnull ImageOutputStream output, int timeBetweenFramesMS, boolean loopContinuously,
+                           @Nonnull BufferedImage... images) throws IOException {
     try {
       @Nonnull
       GifSequenceWriter writer = new GifSequenceWriter(output, images[0].getType(), timeBetweenFramesMS,
           loopContinuously);
       for (@Nonnull
-      BufferedImage image : images) {
+          BufferedImage image : images) {
         writer.writeToSequence(image);
       }
       writer.close();
@@ -114,7 +112,7 @@ public class GifSequenceWriter {
   }
 
   @Nonnull
-  private static IIOMetadataNode getNode(@Nonnull IIOMetadataNode rootNode, String nodeName) {
+  private static IIOMetadataNode getNode(@Nonnull IIOMetadataNode rootNode, @Nonnull String nodeName) {
     int nNodes = rootNode.getLength();
     for (int i = 0; i < nNodes; i++) {
       if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName) == 0) {

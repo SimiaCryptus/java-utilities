@@ -21,7 +21,6 @@ package com.simiacryptus.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
-import com.simiacryptus.ref.lang.RefAware;
 import de.javakaffee.kryoserializers.EnumMapSerializer;
 import de.javakaffee.kryoserializers.EnumSetSerializer;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
@@ -40,7 +39,7 @@ public class KryoUtil {
       return new KryoReflectionFactorySupport() {
 
         @Override
-        public Serializer<?> getDefaultSerializer(@SuppressWarnings("rawtypes") final Class clazz) {
+        public Serializer<?> getDefaultSerializer(@Nonnull @SuppressWarnings("rawtypes") final Class clazz) {
           if (EnumSet.class.isAssignableFrom(clazz)) {
             return new EnumSetSerializer();
           }

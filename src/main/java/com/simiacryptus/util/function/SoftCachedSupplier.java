@@ -19,8 +19,6 @@
 
 package com.simiacryptus.util.function;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.function.Supplier;

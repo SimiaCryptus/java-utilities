@@ -19,19 +19,21 @@
 
 package com.simiacryptus.util.binary.bitset;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.util.CountCollection;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BitsCollection<C extends RefMap<Bits, AtomicInteger>> extends CountCollection<Bits, C> {
 
+  @Nullable
   public final Integer bitDepth;
 
   public BitsCollection(final C collection) {
@@ -44,21 +46,26 @@ public abstract class BitsCollection<C extends RefMap<Bits, AtomicInteger>> exte
     this.bitDepth = bitDepth;
   }
 
-  public static @SuppressWarnings("unused") BitsCollection[] addRefs(BitsCollection[] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  BitsCollection[] addRefs(@Nullable BitsCollection[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRef)
         .toArray((x) -> new BitsCollection[x]);
   }
 
-  public static @SuppressWarnings("unused") BitsCollection[][] addRefs(BitsCollection[][] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  BitsCollection[][] addRefs(@Nullable BitsCollection[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRefs)
         .toArray((x) -> new BitsCollection[x][]);
   }
 
-  public CodeType getType(final Bits bits) {
+  @Nonnull
+  public CodeType getType(@Nonnull final Bits bits) {
     if (null != this.bitDepth) {
       if (bits.bitLength == this.bitDepth) {
         return CodeType.Terminal;
@@ -75,10 +82,14 @@ public abstract class BitsCollection<C extends RefMap<Bits, AtomicInteger>> exte
 
   public abstract void write(BitOutputStream out) throws IOException;
 
-  public @SuppressWarnings("unused") void _free() {
+  public @SuppressWarnings("unused")
+  void _free() {
   }
 
-  public @Override @SuppressWarnings("unused") BitsCollection<C> addRef() {
+  @Nonnull
+  public @Override
+  @SuppressWarnings("unused")
+  BitsCollection<C> addRef() {
     return (BitsCollection<C>) super.addRef();
   }
 

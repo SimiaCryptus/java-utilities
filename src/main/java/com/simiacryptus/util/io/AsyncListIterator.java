@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefIteratorBase;
 import com.simiacryptus.ref.wrappers.RefList;
 
@@ -28,11 +27,12 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class AsyncListIterator<T> extends RefIteratorBase<T> {
+  @Nullable
   private final RefList<T> queue;
   private final Thread thread;
   int index = -1;
 
-  public AsyncListIterator(final RefList<T> queue, final Thread thread) {
+  public AsyncListIterator(@Nullable final RefList<T> queue, final Thread thread) {
     this.thread = thread;
     RefList<T> temp_02_0001 = queue == null ? null : queue.addRef();
     this.queue = temp_02_0001 == null ? null : temp_02_0001.addRef();
@@ -42,14 +42,18 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
       queue.freeRef();
   }
 
-  public static @SuppressWarnings("unused") AsyncListIterator[] addRefs(AsyncListIterator[] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  AsyncListIterator[] addRefs(@Nullable AsyncListIterator[] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRef)
         .toArray((x) -> new AsyncListIterator[x]);
   }
 
-  public static @SuppressWarnings("unused") AsyncListIterator[][] addRefs(AsyncListIterator[][] array) {
+  @Nullable
+  public static @SuppressWarnings("unused")
+  AsyncListIterator[][] addRefs(@Nullable AsyncListIterator[][] array) {
     if (array == null)
       return null;
     return Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRefs)
@@ -58,6 +62,7 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
 
   @Override
   public boolean hasNext() {
+    assert queue != null;
     return index < queue.size() || thread.isAlive();
   }
 
@@ -66,6 +71,7 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
   public T next() {
     try {
       while (hasNext()) {
+        assert queue != null;
         if (++index < queue.size()) {
           return queue.get(index);
         } else {
@@ -78,12 +84,16 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
     }
   }
 
-  public @SuppressWarnings("unused") void _free() {
+  public @SuppressWarnings("unused")
+  void _free() {
     if (null != queue)
       queue.freeRef();
   }
 
-  public @Override @SuppressWarnings("unused") AsyncListIterator<T> addRef() {
+  @Nonnull
+  public @Override
+  @SuppressWarnings("unused")
+  AsyncListIterator<T> addRef() {
     return (AsyncListIterator<T>) super.addRef();
   }
 }

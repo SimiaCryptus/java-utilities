@@ -19,13 +19,14 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefHashMap;
 import com.simiacryptus.ref.wrappers.RefString;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -38,16 +39,18 @@ public class LocalAppSettings {
 
   public final Map<String, String> properties = new HashMap<>();
 
-  public LocalAppSettings(HashMap<String, String> properties) {
+  public LocalAppSettings(@Nonnull HashMap<String, String> properties) {
     this.properties.putAll(properties);
   }
 
+  @Nullable
   public static RefHashMap<String, String> read() {
     return read(new File("."));
 
   }
 
-  public static RefHashMap<String, String> read(File workingDir) {
+  @Nullable
+  public static RefHashMap<String, String> read(@Nonnull File workingDir) {
     File parentFile = workingDir.getParentFile();
     File file = new File(workingDir, "app.json");
     if (file.exists()) {

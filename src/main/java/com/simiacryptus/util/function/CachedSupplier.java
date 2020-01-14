@@ -19,8 +19,6 @@
 
 package com.simiacryptus.util.function;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 import java.util.function.Supplier;
 
 public class CachedSupplier<T> implements Supplier<T> {

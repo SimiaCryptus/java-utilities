@@ -19,10 +19,10 @@
 
 package com.simiacryptus.util.binary.codes;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 
 public class Gaussian {
@@ -52,6 +52,7 @@ public class Gaussian {
     this.stdDev = stdDev;
   }
 
+  @Nonnull
   public static Gaussian fromBinomial(final double probability, final long totalPopulation) {
     if (0. >= totalPopulation) {
       throw new IllegalArgumentException();
@@ -75,7 +76,7 @@ public class Gaussian {
     return Math.log(d) / LOG2;
   }
 
-  public long decode(final BitInputStream in, final long max) throws IOException {
+  public long decode(@Nonnull final BitInputStream in, final long max) throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -118,7 +119,7 @@ public class Gaussian {
     }
   }
 
-  public void encode(final BitOutputStream out, final long value, final long max) throws IOException {
+  public void encode(@Nonnull final BitOutputStream out, final long value, final long max) throws IOException {
     if (0 == max) {
       return;
     }

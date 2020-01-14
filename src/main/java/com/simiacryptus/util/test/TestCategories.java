@@ -19,8 +19,6 @@
 
 package com.simiacryptus.util.test;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 public class TestCategories {
 
   public static class Report {

@@ -19,8 +19,6 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.ref.lang.RefAware;
-
 import java.util.Map;
 
 public interface MonitoredItem {

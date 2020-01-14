@@ -19,10 +19,12 @@
 
 package com.simiacryptus.util.data;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefCollection;
+import com.simiacryptus.ref.wrappers.RefSystem;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,11 +32,12 @@ import java.util.function.Function;
 
 public class SerialArrayList<U> {
   public final int unitSize;
+  @Nonnull
   private final SerialType<U> factory;
   private byte[] buffer;
   private int maxByte = 0;
 
-  public SerialArrayList(SerialType<U> factory, SerialArrayList<U>... items) {
+  public SerialArrayList(@Nonnull SerialType<U> factory, @Nonnull SerialArrayList<U>... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.maxByte = RefArrays.stream(items).mapToInt(item -> item.maxByte).sum();
@@ -42,22 +45,21 @@ public class SerialArrayList<U> {
     int cursor = 0;
     for (int i = 0; i < items.length; i++) {
       SerialArrayList<U> item = items[i];
-      com.simiacryptus.ref.wrappers.RefSystem.arraycopy(item.buffer, 0, this.buffer, cursor, item.maxByte);
+      RefSystem.arraycopy(item.buffer, 0, this.buffer, cursor, item.maxByte);
       cursor += item.maxByte;
     }
   }
 
-  public SerialArrayList(SerialType<U> factory, RefCollection<U> items) {
+  public SerialArrayList(@Nonnull SerialType<U> factory, @Nonnull RefCollection<U> items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.size() * unitSize];
     AtomicInteger i = new AtomicInteger();
     items.forEach(x -> set(i.getAndIncrement(), x));
-    if (null != items)
-      items.freeRef();
+    items.freeRef();
   }
 
-  public SerialArrayList(SerialType<U> factory, U... items) {
+  public SerialArrayList(@Nonnull SerialType<U> factory, @Nonnull U... items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.length * unitSize];
@@ -65,13 +67,13 @@ public class SerialArrayList<U> {
       set(i, items[i]);
   }
 
-  public SerialArrayList(SerialType<U> factory) {
+  public SerialArrayList(@Nonnull SerialType<U> factory) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[1024];
   }
 
-  public SerialArrayList(SerialType<U> factory, int size) {
+  public SerialArrayList(@Nonnull SerialType<U> factory, int size) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[this.unitSize * size];
@@ -81,12 +83,13 @@ public class SerialArrayList<U> {
     return buffer.length;
   }
 
+  @Nonnull
   public SerialArrayList<U> add(SerialArrayList<U> right) {
     return new SerialArrayList<U>(factory, this, right);
   }
 
   public synchronized void clear() {
-    buffer = new byte[] {};
+    buffer = new byte[]{};
     maxByte = 0;
   }
 
@@ -94,6 +97,7 @@ public class SerialArrayList<U> {
     return maxByte / unitSize;
   }
 
+  @Nonnull
   public U get(int i) {
     ByteBuffer view = getView(i);
     try {
@@ -109,7 +113,7 @@ public class SerialArrayList<U> {
     return length;
   }
 
-  public synchronized U update(int i, Function<U, U> updater) {
+  public synchronized U update(int i, @Nonnull Function<U, U> updater) {
     U updated = updater.apply(this.get(i));
     set(i, updated);
     return updated;
@@ -125,7 +129,7 @@ public class SerialArrayList<U> {
     }
   }
 
-  public synchronized int addAll(RefCollection<U> data) {
+  public synchronized int addAll(@Nullable RefCollection<U> data) {
     int startIndex = length();
     putAll(data == null ? null : data.addRef(), startIndex);
     if (null != data)
@@ -133,23 +137,24 @@ public class SerialArrayList<U> {
     return startIndex;
   }
 
-  public synchronized void putAll(RefCollection<U> data, int startIndex) {
+  public synchronized void putAll(@Nullable RefCollection<U> data, int startIndex) {
     putAll(new SerialArrayList<U>(factory, data == null ? null : data.addRef()), startIndex);
     if (null != data)
       data.freeRef();
   }
 
-  public synchronized void putAll(SerialArrayList<U> data, int startIndex) {
+  public synchronized void putAll(@Nonnull SerialArrayList<U> data, int startIndex) {
     ensureCapacity((startIndex * unitSize) + data.maxByte);
-    com.simiacryptus.ref.wrappers.RefSystem.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
+    RefSystem.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
   }
 
+  @Nonnull
   public SerialArrayList<U> copy() {
     return new SerialArrayList<U>(factory, this);
   }
 
   @Override
-  public boolean equals(Object o) {
+  public boolean equals(@Nullable Object o) {
     if (this == o)
       return true;
     if (o == null || getClass() != o.getClass())
@@ -175,6 +180,7 @@ public class SerialArrayList<U> {
     return result;
   }
 
+  @Nonnull
   private ByteBuffer getView(int i) {
     ByteBuffer duplicate = ByteBuffer.wrap(buffer);
     duplicate.position(unitSize * i);

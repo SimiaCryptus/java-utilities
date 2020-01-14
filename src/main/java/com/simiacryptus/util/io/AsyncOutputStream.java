@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 
 import javax.annotation.Nonnull;
@@ -58,9 +57,8 @@ public class AsyncOutputStream extends FilterOutputStream {
   }
 
   @Override
-  public synchronized void write(final byte[] b, final int off, final int len) {
-    @Nonnull
-    final byte[] _b = RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
+  public synchronized void write(@Nonnull final byte[] b, final int off, final int len) {
+    @Nonnull final byte[] _b = RefArrays.copyOfRange(b, off, Math.min(b.length, off + len));
     queue.submit(() -> {
       try {
         out.write(_b);

@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util.data;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 
 import javax.annotation.Nonnull;
@@ -40,8 +39,7 @@ public class IntArray {
     if (o == null || getClass() != o.getClass())
       return false;
 
-    @Nonnull
-    final IntArray intArray = (IntArray) o;
+    @Nonnull final IntArray intArray = (IntArray) o;
 
     return RefArrays.equals(data, intArray.data);
   }

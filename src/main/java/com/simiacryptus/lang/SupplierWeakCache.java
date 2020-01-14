@@ -19,7 +19,6 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefWeakReference;
 
 import javax.annotation.Nullable;

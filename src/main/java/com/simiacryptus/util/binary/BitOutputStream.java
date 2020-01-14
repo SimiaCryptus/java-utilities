@@ -19,19 +19,20 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefConsumer;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class BitOutputStream implements AutoCloseable {
 
-  static final int varLongDepths[] = { 6, 14, 30, 62 };
+  static final int varLongDepths[] = {6, 14, 30, 62};
   private final OutputStream inner;
 
+  @Nonnull
   private Bits remainder = Bits.NULL;
   private int totalBitsWritten = 0;
 
@@ -43,7 +44,8 @@ public class BitOutputStream implements AutoCloseable {
     return totalBitsWritten;
   }
 
-  public static Bits toBits(RefConsumer<BitOutputStream> fn) {
+  @Nonnull
+  public static Bits toBits(@Nonnull RefConsumer<BitOutputStream> fn) {
     try {
       ByteArrayOutputStream buffer = new ByteArrayOutputStream();
       BitOutputStream out = new BitOutputStream(buffer);
@@ -61,7 +63,7 @@ public class BitOutputStream implements AutoCloseable {
     this.remainder = Bits.NULL;
   }
 
-  public synchronized void write(final Bits bits) throws IOException {
+  public synchronized void write(@Nonnull final Bits bits) throws IOException {
     Bits newRemainder = this.remainder.concatenate(bits);
     final int newRemainingBits = newRemainder.bitLength % 8;
     int bitsToWrite = newRemainder.bitLength - newRemainingBits;
@@ -83,7 +85,7 @@ public class BitOutputStream implements AutoCloseable {
     this.write(new Bits(Double.doubleToLongBits(value), 64));
   }
 
-  public <T extends Enum<T>> void write(final Enum<T> value) throws IOException {
+  public <T extends Enum<T>> void write(@Nonnull final Enum<T> value) throws IOException {
     final long ordinal = value.ordinal();
     this.write(new Bits(ordinal, 8));
   }
@@ -100,6 +102,7 @@ public class BitOutputStream implements AutoCloseable {
     this.write(new Bits(value, 32));
   }
 
+  @Nonnull
   public Bits writeBoundedLong(final long value, final long max) throws IOException {
     final int bits = 0 >= max ? 0 : (int) (Math.floor(Math.log(max) / Math.log(2)) + 1);
     if (0 < bits) {
@@ -128,7 +131,7 @@ public class BitOutputStream implements AutoCloseable {
   public void writeVarShort(final short value, int optimal) throws IOException {
     if (value < 0)
       throw new IllegalArgumentException();
-    int[] varShortDepths = { optimal, 16 };
+    int[] varShortDepths = {optimal, 16};
     final int bitLength = new Bits(value).bitLength;
     int type = RefArrays.binarySearch(varShortDepths, bitLength);
     if (type < 0) {

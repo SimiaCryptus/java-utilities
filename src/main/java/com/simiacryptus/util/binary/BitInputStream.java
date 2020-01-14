@@ -19,10 +19,10 @@
 
 package com.simiacryptus.util.binary;
 
-import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefString;
 
+import javax.annotation.Nonnull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,13 +30,15 @@ import java.io.InputStream;
 public class BitInputStream {
 
   private final InputStream inner;
+  @Nonnull
   private Bits remainder = new Bits(0);
 
   public BitInputStream(final InputStream inner) {
     this.inner = inner;
   }
 
-  public static BitInputStream toBitStream(final byte[] data) {
+  @Nonnull
+  public static BitInputStream toBitStream(@Nonnull final byte[] data) {
     return new BitInputStream(new ByteArrayInputStream(data));
   }
 
@@ -48,7 +50,7 @@ public class BitInputStream {
     return remainder.bitLength + 8 * inner.available();
   }
 
-  public <T extends Enum<T>> void expect(final Enum<T> expect) throws IOException {
+  public <T extends Enum<T>> void expect(@Nonnull final Enum<T> expect) throws IOException {
     final Bits checkBits = this.read(8);
     final long expectedLong = expect.ordinal();
     if (checkBits.toLong() != expectedLong) {
@@ -57,7 +59,7 @@ public class BitInputStream {
     }
   }
 
-  public void expect(final Bits bits) throws IOException {
+  public void expect(@Nonnull final Bits bits) throws IOException {
     int size = Math.min(availible(), bits.bitLength);
     Bits read = read(size);
     if (!bits.range(0, size).equals(read)) {
@@ -65,6 +67,7 @@ public class BitInputStream {
     }
   }
 
+  @Nonnull
   public Bits read(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
@@ -75,6 +78,7 @@ public class BitInputStream {
     return readBits;
   }
 
+  @Nonnull
   public Bits peek(final int bits) throws IOException {
     final int additionalBitsNeeded = bits - this.remainder.bitLength;
     final int additionalBytesNeeded = (int) Math.ceil(additionalBitsNeeded / 8.);
@@ -83,18 +87,18 @@ public class BitInputStream {
     return this.remainder.range(0, Math.min(bits, this.remainder.bitLength));
   }
 
+  @Nonnull
   public Bits readAhead() throws IOException {
     return this.readAhead(1);
   }
 
+  @Nonnull
   public Bits readAhead(final int bytes) throws IOException {
     assert (0 < bytes);
-    if (0 < bytes) {
-      final byte[] buffer = new byte[bytes];
-      int bytesRead = this.inner.read(buffer);
-      if (bytesRead > 0) {
-        this.remainder = this.remainder.concatenate(new Bits(RefArrays.copyOf(buffer, bytesRead)));
-      }
+    final byte[] buffer = new byte[bytes];
+    int bytesRead = this.inner.read(buffer);
+    if (bytesRead > 0) {
+      this.remainder = this.remainder.concatenate(new Bits(RefArrays.copyOf(buffer, bytesRead)));
     }
     return this.remainder;
   }
@@ -142,7 +146,7 @@ public class BitInputStream {
   }
 
   public short readVarShort(int optimal) throws IOException {
-    int[] varShortDepths = { optimal, 16 };
+    int[] varShortDepths = {optimal, 16};
     final int type = (int) this.read(1).toLong();
     return (short) this.read(varShortDepths[type]).toLong();
   }

@@ -59,8 +59,7 @@ public class JsonUtil {
 
   @Nonnull
   public static JsonArray getJson(@Nonnull final double[] kernelDims) {
-    @Nonnull
-    final JsonArray array = new JsonArray();
+    @Nonnull final JsonArray array = new JsonArray();
     for (final double k : kernelDims) {
       array.add(new JsonPrimitive(k));
     }
@@ -69,21 +68,21 @@ public class JsonUtil {
 
   @Nonnull
   public static JsonArray getJson(@Nonnull final int[] kernelDims) {
-    @Nonnull
-    final JsonArray array = new JsonArray();
+    @Nonnull final JsonArray array = new JsonArray();
     for (final int k : kernelDims) {
       array.add(new JsonPrimitive(k));
     }
     return array;
   }
 
+  @Nonnull
   public static CharSequence toJson(@RefAware final Object obj) {
     return toJson(obj, getMapper());
   }
 
   @Nonnull
   @RefIgnore
-  public static CharSequence toJson(@RefAware final Object obj, final ObjectMapper objectMapper) {
+  public static CharSequence toJson(@RefAware final Object obj, @Nonnull final ObjectMapper objectMapper) {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     try {
       objectMapper.writeValue(outputStream, obj);
@@ -94,7 +93,7 @@ public class JsonUtil {
     return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
   }
 
-  public static <T> T cache(final File file, Class<T> clazz, Supplier<T> intializer) throws IOException {
+  public static <T> T cache(@Nonnull final File file, Class<T> clazz, @Nonnull Supplier<T> intializer) throws IOException {
     if (file.exists()) {
       return getMapper().readValue(FileUtils.readFileToString(file, Charset.defaultCharset()), clazz);
     } else {
@@ -104,7 +103,8 @@ public class JsonUtil {
     }
   }
 
-  public static int[] toIntArray(JsonArray array) {
+  @Nonnull
+  public static int[] toIntArray(@Nonnull JsonArray array) {
     int[] ints = new int[array.size()];
     for (int i = 0; i < ints.length; i++) {
       ints[i] = array.get(i).getAsInt();
@@ -112,13 +112,14 @@ public class JsonUtil {
     return ints;
   }
 
-  public static JsonArray toIntArray(int[] array) {
+  @Nonnull
+  public static JsonArray toIntArray(@Nonnull int[] array) {
     JsonArray jsonElements = new JsonArray();
     RefArrays.stream(array).forEach(jsonElements::add);
     return jsonElements;
   }
 
-  public static JsonObject toJson(byte[] buf) {
+  public static JsonObject toJson(@Nonnull byte[] buf) {
     return new GsonBuilder().create().fromJson(new InputStreamReader(new ByteArrayInputStream(buf)), JsonObject.class);
   }
 }
