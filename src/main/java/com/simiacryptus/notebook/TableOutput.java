@@ -30,7 +30,6 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 public class TableOutput {
@@ -43,7 +42,6 @@ public class TableOutput {
     @Nonnull final TableOutput table = new TableOutput();
     Arrays.stream(rows).forEach(table::putRow);
     return table;
-
   }
 
   @Nonnull
@@ -169,11 +167,12 @@ public class TableOutput {
           try {
             switch (e.getValue().getSimpleName()) {
               case "String":
+                CharSequence key = e.getKey();
                 return "%-" + rows.stream()
-                    .mapToInt(RefUtil.wrapInterface((ToIntFunction<? super Map<CharSequence, Object>>) x -> {
-                      Object val = x.getOrDefault(e.getKey(), "");
+                    .mapToInt(x -> {
+                      Object val = x.getOrDefault(key, "");
                       return null == val ? 0 : val.toString().length();
-                    }, RefUtil.addRef(e))).max().getAsInt() + "s";
+                    }).max().getAsInt() + "s";
               case "Integer":
                 return "%6d";
               case "Double":
@@ -309,7 +308,6 @@ public class TableOutput {
         }
       }
     }
-
   }
 
 }

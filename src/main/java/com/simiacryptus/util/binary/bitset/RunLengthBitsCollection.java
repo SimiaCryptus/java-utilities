@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.binary.bitset;
 
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefHashMap;
 import com.simiacryptus.ref.wrappers.RefHashSet;
 import com.simiacryptus.ref.wrappers.RefList;
@@ -36,24 +37,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, AtomicInteger>> {
   public RunLengthBitsCollection(final int bitDepth) {
     super(bitDepth, new RefHashMap<Bits, AtomicInteger>());
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  RunLengthBitsCollection[] addRefs(@Nullable RunLengthBitsCollection[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRef)
-        .toArray((x) -> new RunLengthBitsCollection[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  RunLengthBitsCollection[][] addRefs(@Nullable RunLengthBitsCollection[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(RunLengthBitsCollection::addRefs)
-        .toArray((x) -> new RunLengthBitsCollection[x][]);
   }
 
   @Override
@@ -74,10 +57,16 @@ public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, Ato
     temp_12_0001.freeRef();
     assert this.map != null;
     RefHashSet<Entry<Bits, AtomicInteger>> entries = this.map.entrySet();
-    for (final Entry<Bits, AtomicInteger> e : entries) {
-      out.write(e.getKey());
-      out.write(new Bits(e.getValue().get(), 32));
-    }
+    entries.forEach(e -> {
+      try {
+        out.write(e.getKey());
+        out.write(new Bits(e.getValue().get(), 32));
+      } catch (IOException ex) {
+        throw new RuntimeException(ex);
+      } finally {
+        RefUtil.freeRef(e);
+      }
+    });
     entries.freeRef();
   }
 

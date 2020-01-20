@@ -52,11 +52,12 @@ public class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends Refe
     final RefArrayList<T> list = new RefArrayList<T>();
     assert this.map != null;
     RefSet<Entry<T, AtomicInteger>> entries = this.map.entrySet();
-    for (final Entry<T, AtomicInteger> e : entries) {
+    entries.forEach(e -> {
       for (int i = 0; i < e.getValue().get(); i++) {
         list.add(e.getKey());
       }
-    }
+      RefUtil.freeRef(e);
+    });
     entries.freeRef();
     return list;
   }
@@ -73,24 +74,6 @@ public class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends Refe
         return i;
       }
     });
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  CountCollection[] addRefs(@Nullable CountCollection[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRef)
-        .toArray((x) -> new CountCollection[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  CountCollection[][] addRefs(@Nullable CountCollection[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(CountCollection::addRefs)
-        .toArray((x) -> new CountCollection[x][]);
   }
 
   public int add(final T bits) {

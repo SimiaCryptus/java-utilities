@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.binary.bitset;
 
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefMap;
 import com.simiacryptus.util.CountCollection;
 import com.simiacryptus.util.binary.BitInputStream;
@@ -44,24 +45,6 @@ public abstract class BitsCollection<C extends RefMap<Bits, AtomicInteger>> exte
   public BitsCollection(final int bitDepth, final C collection) {
     super(collection);
     this.bitDepth = bitDepth;
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  BitsCollection[] addRefs(@Nullable BitsCollection[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRef)
-        .toArray((x) -> new BitsCollection[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  BitsCollection[][] addRefs(@Nullable BitsCollection[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(BitsCollection::addRefs)
-        .toArray((x) -> new BitsCollection[x][]);
   }
 
   @Nonnull

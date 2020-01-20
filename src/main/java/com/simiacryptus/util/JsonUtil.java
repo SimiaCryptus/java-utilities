@@ -42,6 +42,8 @@ public class JsonUtil {
 
   public static ObjectMapper getMapper() {
     return new ObjectMapper()
+        .setSerializerFactory(new RefBeanSerializerFactory())
+        //.setSerializerProvider(new RefSerializerProvider())
         //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
         .enable(SerializationFeature.INDENT_OUTPUT);
   }
@@ -122,4 +124,5 @@ public class JsonUtil {
   public static JsonObject toJson(@Nonnull byte[] buf) {
     return new GsonBuilder().create().fromJson(new InputStreamReader(new ByteArrayInputStream(buf)), JsonObject.class);
   }
+
 }

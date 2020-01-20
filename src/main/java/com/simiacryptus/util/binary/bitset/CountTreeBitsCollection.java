@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, AtomicInteger>> {
 
@@ -69,42 +70,24 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
   }
 
   @Nonnull
-  public CountTreeBitsCollection setUseBinomials(final boolean useBinomials) {
+  public void setUseBinomials(final boolean useBinomials) {
     this.useBinomials = useBinomials;
-    return this.addRef();
   }
 
   public static <T> T isNull(@Nullable final T value, final T defaultValue) {
     return null == value ? defaultValue : value;
   }
 
-  @Nullable
-  public static @SuppressWarnings("unused")
-  CountTreeBitsCollection[] addRefs(@Nullable CountTreeBitsCollection[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRef)
-        .toArray((x) -> new CountTreeBitsCollection[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  CountTreeBitsCollection[][] addRefs(@Nullable CountTreeBitsCollection[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(CountTreeBitsCollection::addRefs)
-        .toArray((x) -> new CountTreeBitsCollection[x][]);
-  }
-
   @Nonnull
   public RefTreeMap<Bits, Long> computeSums() {
     final RefTreeMap<Bits, Long> sums = new RefTreeMap<Bits, Long>();
-    long total = 0;
+    AtomicLong total = new AtomicLong();
     assert this.map != null;
     RefHashSet<Entry<Bits, AtomicInteger>> entries = this.map.entrySet();
-    for (final Entry<Bits, AtomicInteger> e : entries) {
-      sums.put(e.getKey(), total += e.getValue().get());
-    }
+    entries.forEach(e -> {
+      sums.put(e.getKey(), total.addAndGet(e.getValue().get()));
+      RefUtil.freeRef(e);
+    });
     entries.freeRef();
     return sums;
   }

@@ -26,7 +26,6 @@ import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.function.Predicate;
 
 public abstract class ResourcePool<T> extends ReferenceCountingBase {
@@ -45,23 +44,6 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     temp_01_0001.freeRef();
   }
 
-  @Nullable
-  public static @SuppressWarnings("unused")
-  ResourcePool[] addRefs(@Nullable ResourcePool[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRef).toArray((x) -> new ResourcePool[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  ResourcePool[][] addRefs(@Nullable ResourcePool[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(ResourcePool::addRefs)
-        .toArray((x) -> new ResourcePool[x][]);
-  }
-
   public abstract T create();
 
   public T get() {
@@ -74,7 +56,6 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
       T poll = this.pool.poll();
       while (null != poll) {
         if (filter.test(poll)) {
-          sampled.freeRef();
           return poll;
         } else {
           sampled.add(poll);
@@ -83,7 +64,6 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     } finally {
       pool.addAll(sampled);
     }
-    sampled.freeRef();
     synchronized (this.all) {
       if (this.all.size() < this.maxItems) {
         T poll = create();
@@ -132,7 +112,7 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     }
   }
 
-  public void apply(@Nonnull final RefConsumer<T> f, @Nonnull final Predicate<T> filter) {
+  public void apply(@Nonnull @RefAware final RefConsumer<T> f, @Nonnull final Predicate<T> filter) {
     final T prior = currentValue.get();
     if (null != prior) {
       f.accept(prior);
@@ -146,6 +126,7 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
         currentValue.remove();
       }
     }
+    RefUtil.freeRef(f);
   }
 
   public @SuppressWarnings("unused")

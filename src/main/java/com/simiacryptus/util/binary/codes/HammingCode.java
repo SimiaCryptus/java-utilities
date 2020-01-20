@@ -103,6 +103,7 @@ public class HammingCode<T extends Comparable<T>> {
     Entry<Bits, T> entry = this.forwardIndex.floorEntry(remainder);
     while (entry == null || !remainder.startsWith(entry.getKey())) {
       remainder = in.readAhead();
+      if (null != entry) RefUtil.freeRef(entry);
       entry = this.forwardIndex.floorEntry(remainder);
     }
     in.read(entry.getKey().bitLength);
@@ -119,10 +120,12 @@ public class HammingCode<T extends Comparable<T>> {
     Entry<Bits, T> entry = this.forwardIndex.floorEntry(data);
     // TestUtil.openJson(new JSONObject(forwardIndex));
     if (entry != null && !data.startsWith(entry.getKey())) {
-      entry = null;
+      RefUtil.freeRef(entry);
+      return null;
+    } else {
+      // assert(null != entry || verifyIndexes());
+      return entry;
     }
-    // assert(null != entry || verifyIndexes());
-    return entry;
   }
 
   public Bits encode(final T key) {

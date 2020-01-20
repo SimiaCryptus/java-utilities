@@ -46,7 +46,6 @@ public class LocalAppSettings {
   @Nullable
   public static RefHashMap<String, String> read() {
     return read(new File("."));
-
   }
 
   @Nullable
@@ -56,6 +55,7 @@ public class LocalAppSettings {
     if (file.exists()) {
       RefHashMap<String, String> settings = null;
       try {
+        if (null != settings) settings.freeRef();
         settings = JsonUtil.getMapper()
             .readValue(new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")), RefHashMap.class);
         settings.forEach((k, v) -> logger.info(RefString.format("Loaded %s = %s from %s", k, v, file)));
@@ -71,6 +71,5 @@ public class LocalAppSettings {
     } else {
       return new RefHashMap<>();
     }
-
   }
 }

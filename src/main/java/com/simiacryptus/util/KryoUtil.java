@@ -51,10 +51,8 @@ public class KryoUtil {
           //          }
           return super.getDefaultSerializer(clazz);
         }
-
       };
     }
-
   };
 
   public static Kryo kryo() {

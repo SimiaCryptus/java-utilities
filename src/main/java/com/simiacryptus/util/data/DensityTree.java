@@ -129,7 +129,6 @@ public class DensityTree {
         return RefString.format("%s: %s - %s", columnNames[d], min[d], max[d]);
       }).reduce((a, b) -> a + "; " + b)) + "]";
     }
-
   }
 
   public class OrthoRule extends Rule {

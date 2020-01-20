@@ -61,55 +61,8 @@ public class MonitoredObject extends ReferenceCountingBase implements MonitoredI
     return returnValue;
   }
 
-  @Nullable
-  public static @SuppressWarnings("unused")
-  MonitoredObject[] addRefs(@Nullable MonitoredObject[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRef)
-        .toArray((x) -> new MonitoredObject[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  MonitoredObject[][] addRefs(@Nullable MonitoredObject[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(MonitoredObject::addRefs)
-        .toArray((x) -> new MonitoredObject[x][]);
-  }
-
-  @Nonnull
-  public MonitoredObject addConst(final CharSequence key, final Object item) {
+  public void addObj(CharSequence key, @RefAware MonitoredItem item) {
     items.put(key, item);
-    return this.addRef();
-  }
-
-  @Nonnull
-  public MonitoredObject addField(final CharSequence key, final Supplier<Object> item) {
-    items.put(key, item);
-    return this.addRef();
-  }
-
-  @Nonnull
-  public MonitoredObject addObj(final CharSequence key, @RefAware final MonitoredItem item) {
-    items.put(key, item);
-    return this.addRef();
-  }
-
-  @Nonnull
-  public MonitoredObject clearConstants() {
-    @Nonnull final RefHashSet<CharSequence> keys = new RefHashSet<>(items.keySet());
-    for (final CharSequence k : keys) {
-      final Object v = items.get(k);
-      if (v instanceof MonitoredObject) {
-        RefUtil.freeRef(((MonitoredObject) v).clearConstants());
-      } else if (!(v instanceof Supplier) && !(v instanceof MonitoredItem)) {
-        items.remove(k);
-      }
-    }
-    keys.freeRef();
-    return this.addRef();
   }
 
   public @SuppressWarnings("unused")

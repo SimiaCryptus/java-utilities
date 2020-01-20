@@ -19,6 +19,7 @@
 
 package com.simiacryptus.lang;
 
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.*;
 
@@ -42,32 +43,12 @@ public class StaticResourcePool<T> extends ReferenceCountingBase {
     this.all = temp_03_0001.addRef();
     temp_03_0001.freeRef();
     items.freeRef();
-    RefList<T> temp_03_0002 = getAll();
-    pool.addAll(temp_03_0002);
-    temp_03_0002.freeRef();
+    pool.addAll(getAll());
   }
 
   @Nonnull
   public RefList<T> getAll() {
     return all.addRef();
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  StaticResourcePool[] addRefs(@Nullable StaticResourcePool[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRef)
-        .toArray((x) -> new StaticResourcePool[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  StaticResourcePool[][] addRefs(@Nullable StaticResourcePool[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(StaticResourcePool::addRefs)
-        .toArray((x) -> new StaticResourcePool[x][]);
   }
 
   public void apply(@Nonnull final RefConsumer<T> f) {
@@ -125,7 +106,6 @@ public class StaticResourcePool<T> extends ReferenceCountingBase {
       T poll = this.pool.poll();
       while (null != poll) {
         if (filter.test(poll)) {
-          sampled.freeRef();
           return poll;
         } else {
           sampled.add(poll);
@@ -135,11 +115,9 @@ public class StaticResourcePool<T> extends ReferenceCountingBase {
     } finally {
       pool.addAll(sampled);
     }
-    sampled.freeRef();
     try {
       while (true) {
-        final T poll;
-        poll = this.pool.poll(5, TimeUnit.MINUTES);
+        final T poll = this.pool.poll(5, TimeUnit.MINUTES);
         if (null == poll)
           throw new RuntimeException("Timeout awaiting item from pool");
         if (exclusive && !filter.test(poll)) {

@@ -24,7 +24,6 @@ import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Spliterator;
 
 public abstract class DataLoader<T> extends ReferenceCountingBase {
@@ -32,21 +31,6 @@ public abstract class DataLoader<T> extends ReferenceCountingBase {
   @Nullable
   private volatile Thread thread;
 
-  @Nullable
-  public static @SuppressWarnings("unused")
-  DataLoader[] addRefs(@Nullable DataLoader[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRef).toArray((x) -> new DataLoader[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  DataLoader[][] addRefs(@Nullable DataLoader[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(DataLoader::addRefs).toArray((x) -> new DataLoader[x][]);
-  }
 
   public void clear() throws InterruptedException {
     if (thread != null) {

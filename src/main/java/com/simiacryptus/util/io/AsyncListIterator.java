@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util.io;
 
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefIteratorBase;
 import com.simiacryptus.ref.wrappers.RefList;
 
@@ -40,24 +41,6 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
       temp_02_0001.freeRef();
     if (null != queue)
       queue.freeRef();
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  AsyncListIterator[] addRefs(@Nullable AsyncListIterator[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRef)
-        .toArray((x) -> new AsyncListIterator[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  AsyncListIterator[][] addRefs(@Nullable AsyncListIterator[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(AsyncListIterator::addRefs)
-        .toArray((x) -> new AsyncListIterator[x][]);
   }
 
   @Override

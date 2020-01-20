@@ -20,6 +20,7 @@
 package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
@@ -57,27 +58,8 @@ public final class BinaryChunkIterator extends RefIteratorBase<byte[]> {
 
   public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
                                           final boolean parallel) {
-    RefStream<T> temp_07_0004 = RefStreamSupport
+    return RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
-    return temp_07_0004;
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  BinaryChunkIterator[] addRefs(@Nullable BinaryChunkIterator[] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(BinaryChunkIterator::addRef)
-        .toArray((x) -> new BinaryChunkIterator[x]);
-  }
-
-  @Nullable
-  public static @SuppressWarnings("unused")
-  BinaryChunkIterator[][] addRefs(@Nullable BinaryChunkIterator[][] array) {
-    if (array == null)
-      return null;
-    return Arrays.stream(array).filter((x) -> x != null).map(BinaryChunkIterator::addRefs)
-        .toArray((x) -> new BinaryChunkIterator[x][]);
   }
 
   @Nonnull

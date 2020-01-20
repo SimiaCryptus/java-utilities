@@ -21,6 +21,9 @@ package com.simiacryptus.util.test;
 
 import ch.qos.logback.core.ConsoleAppender;
 import com.simiacryptus.lang.UncheckedSupplier;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.RefSystem;
 import com.simiacryptus.util.io.TeeOutputStream;
 import org.slf4j.Logger;
@@ -152,13 +155,22 @@ public class SysOutInterceptor extends PrintStream {
     return previous;
   }
 
-  public static class LoggedResult<T> {
+  public static class LoggedResult<T> extends ReferenceCountingBase {
     public final String log;
-    public final T obj;
+    private final @RefAware T obj;
 
-    public LoggedResult(final T obj, final String log) {
+    public LoggedResult(final @RefAware T obj, final String log) {
       this.obj = obj;
       this.log = log;
+    }
+
+    public @RefAware T getObj() {
+      return RefUtil.addRef(obj);
+    }
+
+    @Override
+    protected void _free() {
+      RefUtil.freeRef(obj);
     }
   }
 }
