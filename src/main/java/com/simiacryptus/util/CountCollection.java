@@ -86,6 +86,7 @@ public class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends Refe
 
   public @SuppressWarnings("unused")
   void _free() {
+    super._free();
     if (null != map)
       map.freeRef();
   }

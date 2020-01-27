@@ -161,6 +161,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
 
   public @SuppressWarnings("unused")
   void _free() {
+    super._free();
   }
 
   @Nonnull

@@ -88,6 +88,7 @@ public class StaticResourcePool<T> extends ReferenceCountingBase {
 
   public @SuppressWarnings("unused")
   void _free() {
+    super._free();
     all.freeRef();
     pool.freeRef();
   }

@@ -220,6 +220,7 @@ public class HammingCode<T extends Comparable<T>> {
 
     public @SuppressWarnings("unused")
     void _free() {
+      super._free();
     }
 
     @Nonnull

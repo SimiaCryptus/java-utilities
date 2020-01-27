@@ -67,6 +67,7 @@ public abstract class BitsCollection<C extends RefMap<Bits, AtomicInteger>> exte
 
   public @SuppressWarnings("unused")
   void _free() {
+    super._free();
   }
 
   @Nonnull

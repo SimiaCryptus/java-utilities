@@ -23,6 +23,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 import com.simiacryptus.util.io.BinaryChunkIterator;
 import com.simiacryptus.util.io.TeeInputStream;
@@ -105,7 +106,7 @@ public class Util {
         return inner.apply(key);
       }
     });
-    return cache::getUnchecked;
+    return key -> RefUtil.addRef(cache.getUnchecked(key));
   }
 
   @Nonnull

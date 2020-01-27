@@ -170,6 +170,7 @@ public class SysOutInterceptor extends PrintStream {
 
     @Override
     protected void _free() {
+      super._free();
       RefUtil.freeRef(obj);
     }
   }

@@ -77,6 +77,7 @@ public abstract class DataLoader<T> extends ReferenceCountingBase {
 
   public @SuppressWarnings("unused")
   void _free() {
+    super._free();
     if (null != queue)
       queue.freeRef();
   }

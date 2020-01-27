@@ -102,6 +102,7 @@ public final class BinaryChunkIterator extends RefIteratorBase<byte[]> {
 
   public @SuppressWarnings("unused")
   void _free() {
+    super._free();
   }
 
   @Nonnull
