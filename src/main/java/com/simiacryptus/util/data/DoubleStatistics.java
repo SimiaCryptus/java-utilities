@@ -29,12 +29,12 @@ import java.util.stream.Collector;
 public class DoubleStatistics extends DoubleSummaryStatistics {
 
   @Nonnull
-  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.of(DoubleStatistics::new,
-      DoubleStatistics::accept, DoubleStatistics::combine, d -> d);
+  public static Collector<Double, DoubleStatistics, DoubleStatistics> COLLECTOR = Collector.of(() -> new DoubleStatistics(),
+      (doubleStatistics, value) -> doubleStatistics.accept(value), (doubleStatistics, other) -> doubleStatistics.combine(other), d -> d);
 
   @Nonnull
-  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.of(DoubleStatistics::new,
-      (a, n) -> a.accept(n.doubleValue()), DoubleStatistics::combine, d -> d);
+  public static Collector<Number, DoubleStatistics, DoubleStatistics> NUMBERS = Collector.of(() -> new DoubleStatistics(),
+      (a, n) -> a.accept(n.doubleValue()), (doubleStatistics, other) -> doubleStatistics.combine(other), d -> d);
 
   private double simpleSumOfSquare; // Used to compute right sum for non-finite inputs
   private double sumOfSquare = 0.0d;
@@ -62,7 +62,7 @@ public class DoubleStatistics extends DoubleSummaryStatistics {
 
   @Nonnull
   public DoubleStatistics accept(@Nonnull final double[] value) {
-    RefArrays.stream(value).forEach(this::accept);
+    RefArrays.stream(value).forEach(value1 -> accept(value1));
     return this;
   }
 

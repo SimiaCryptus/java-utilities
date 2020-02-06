@@ -19,23 +19,27 @@
 
 package com.simiacryptus.util.test;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.RefFunction;
 import com.simiacryptus.ref.wrappers.RefStringBuilder;
 
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 
-public class LabeledObject<T> {
-  public final T data;
+public class LabeledObject<T> extends ReferenceCountingBase {
+  public final @RefAware T data;
   public final String label;
 
-  public LabeledObject(final T img, final String name) {
+  public LabeledObject(final @RefAware T img, final String name) {
     super();
     this.data = img;
     this.label = name;
   }
 
   @Nonnull
-  public <U> LabeledObject<U> map(@Nonnull final Function<T, U> f) {
+  public <U> LabeledObject<U> map(@Nonnull final RefFunction<T, U> f) {
     return new LabeledObject<>(f.apply(this.data), this.label);
   }
 
@@ -44,9 +48,15 @@ public class LabeledObject<T> {
   public String toString() {
     @Nonnull final RefStringBuilder sb = new RefStringBuilder(
         "LabeledObject{");
-    sb.append("data=").append(data);
+    sb.append("data=").append(RefUtil.addRef(data));
     sb.append(", label='").append(label).append('\'');
     sb.append('}');
     return sb.toString();
+  }
+
+  @Override
+  protected void _free() {
+    RefUtil.freeRef(data);
+    super._free();
   }
 }

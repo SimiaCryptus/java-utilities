@@ -57,6 +57,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
 public class Util {
@@ -222,7 +223,7 @@ public class Util {
 
   @Nonnull
   public static CharSequence[] currentStack() {
-    return RefStream.of(Thread.currentThread().getStackTrace()).map(Object::toString).toArray(i -> new CharSequence[i]);
+    return Stream.of(Thread.currentThread().getStackTrace()).map(StackTraceElement::toString).toArray(i -> new CharSequence[i]);
   }
 
   @Nonnull
@@ -250,7 +251,7 @@ public class Util {
   public static void layout(@Nonnull final Component c) {
     c.doLayout();
     if (c instanceof Container) {
-      RefArrays.stream(((Container) c).getComponents()).forEach(Util::layout);
+      RefArrays.stream(((Container) c).getComponents()).forEach(c1 -> layout(c1));
     }
   }
 
@@ -326,13 +327,17 @@ public class Util {
     try {
       ImageIO.write(img.data, "png", b);
     } catch (@Nonnull final RuntimeException e) {
+      RefUtil.freeRef(img);
       throw e;
     } catch (@Nonnull final Exception e) {
+      RefUtil.freeRef(img);
       throw new RuntimeException(e);
     }
     final byte[] byteArray = b.toByteArray();
     final CharSequence encode = Base64.getEncoder().encodeToString(byteArray);
-    return "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
+    String s = "<img src=\"data:image/png;base64," + encode + "\" alt=\"" + img.label + "\" />";
+    RefUtil.freeRef(img);
+    return s;
   }
 
   public static <T> RefStream<T> toIterator(@Nonnull final RefIteratorBase<T> iterator) {
@@ -407,11 +412,11 @@ public class Util {
   }
 
   public static void runAllParallel(@Nonnull Runnable... runnables) {
-    RefArrays.stream(runnables).parallel().forEach(Runnable::run);
+    RefArrays.stream(runnables).parallel().forEach(runnable -> runnable.run());
   }
 
   public static void runAllSerial(@Nonnull Runnable... runnables) {
-    RefArrays.stream(runnables).forEach(Runnable::run);
+    RefArrays.stream(runnables).forEach(runnable -> runnable.run());
   }
 
   @Nonnull
@@ -430,13 +435,13 @@ public class Util {
   }
 
   public static String toString(@Nonnull final StackTraceElement[] stack, final CharSequence delimiter) {
-    return RefArrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber())
+    return Arrays.stream(stack).map(x -> x.getFileName() + ":" + x.getLineNumber())
         .reduce((a, b) -> a + delimiter + b).orElse("");
   }
 
   @Nonnull
   public static StackTraceElement[] getStackTrace(final int skip) {
-    return RefArrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
+    return Arrays.stream(Thread.currentThread().getStackTrace()).skip(skip)
         .filter(x -> x.getClassName().startsWith("com.simiacryptus.")).limit(500)
         .toArray(i -> new StackTraceElement[i]);
   }

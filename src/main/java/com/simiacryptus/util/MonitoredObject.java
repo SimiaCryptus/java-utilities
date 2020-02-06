@@ -59,7 +59,7 @@ public class MonitoredObject extends ReferenceCountingBase implements MonitoredI
   }
 
   public void addObj(CharSequence key, @RefAware MonitoredItem item) {
-    items.put(key, item);
+    RefUtil.freeRef(items.put(key, item));
   }
 
   public @SuppressWarnings("unused")

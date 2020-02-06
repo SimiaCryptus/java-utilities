@@ -111,7 +111,7 @@ public class RefMapSerializer extends MapSerializer {
 
   public void serializeTypedFields(RefMap<?, ?> value, JsonGenerator gen, SerializerProvider provider, Object suppressableValue) throws IOException {
     final Set<String> ignored = this._ignoredEntries;
-    final boolean checkEmpty = (MARKER_FOR_EMPTY == suppressableValue);
+    final boolean checkEmpty = MARKER_FOR_EMPTY == suppressableValue;
 
     RefSet<? extends Map.Entry<?, ?>> entries = value.entrySet();
     RefIterator<? extends Map.Entry<?, ?>> entryIterator = entries.iterator();
@@ -198,7 +198,7 @@ public class RefMapSerializer extends MapSerializer {
             provider.findNullKeySerializer(_keyType, _property).serialize(null, gen, provider);
           } else {
             // One twist: is entry ignorable? If so, skip
-            if ((ignored != null) && ignored.contains(keyElem)) {
+            if (ignored != null && ignored.contains(keyElem)) {
               continue;
             }
             keySerializer.serialize(keyElem, gen, provider);

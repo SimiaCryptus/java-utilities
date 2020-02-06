@@ -38,7 +38,7 @@ public class CachedSupplier<T> implements Supplier<T> {
         obj = cached;
         if (null == obj) {
           obj = fn.get();
-          cached = (obj);
+          cached = obj;
         }
       }
     }

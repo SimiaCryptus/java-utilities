@@ -46,7 +46,7 @@ public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, Ato
       final Bits bits = in.read(this.bitDepth);
       final int count = (int) in.read(32).toLong();
       assert this.map != null;
-      this.map.put(bits, new AtomicInteger(count));
+      RefUtil.freeRef(this.map.put(bits, new AtomicInteger(count)));
     }
   }
 

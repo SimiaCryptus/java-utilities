@@ -24,6 +24,7 @@ import com.simiacryptus.ref.wrappers.RefArrays;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class PercentileStatistics extends ScalarStatistics {
   @Nullable
   @Override
   public synchronized ScalarStatistics add(@Nonnull final double... values) {
-    this.values.add(RefArrays.copyOf(values, values.length));
+    this.values.add(Arrays.copyOf(values, values.length));
     super.add(values);
     return null;
   }
@@ -56,7 +57,7 @@ public class PercentileStatistics extends ScalarStatistics {
   }
 
   public synchronized Double getPercentile(final double percentile) {
-    return values.parallelStream().flatMapToDouble(x -> RefArrays.stream(x)).sorted()
+    return values.parallelStream().flatMapToDouble(x -> Arrays.stream(x)).sorted()
         .skip((int) (percentile * values.size())).findFirst().orElse(Double.NaN);
   }
 

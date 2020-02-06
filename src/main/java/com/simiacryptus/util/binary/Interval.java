@@ -57,7 +57,7 @@ public class Interval {
       long b = endBits.range(0, i).toLong();
       if (b - a > 1) {
         Bits bits = new Bits(a + 1, i);
-        assert (Bits.ZERO.equals(bits.range(0, 1)));
+        assert Bits.ZERO.equals(bits.range(0, 1));
         return bits.range(1);
       }
     }

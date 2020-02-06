@@ -113,7 +113,7 @@ public class CountCollection<T, C extends RefMap<T, AtomicInteger>> extends Refe
     AtomicInteger counter = this.map.get(bits);
     if (null == counter) {
       counter = new AtomicInteger();
-      this.map.put(bits, counter);
+      RefUtil.freeRef(this.map.put(bits, counter));
     }
     return counter;
   }

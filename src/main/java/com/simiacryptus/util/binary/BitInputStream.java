@@ -94,7 +94,7 @@ public class BitInputStream {
 
   @Nonnull
   public Bits readAhead(final int bytes) throws IOException {
-    assert (0 < bytes);
+    assert 0 < bytes;
     final byte[] buffer = new byte[bytes];
     int bytesRead = this.inner.read(buffer);
     if (bytesRead > 0) {
@@ -123,9 +123,9 @@ public class BitInputStream {
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
     Bits peek = this.peek(bits);
     double divisor = 1 << peek.bitLength;
-    long value = (int) (peek.toLong() * ((double) max) / divisor);
-    assert (0 <= value);
-    assert (max >= value);
+    long value = (int) (peek.toLong() * (double) max / divisor);
+    assert 0 <= value;
+    assert max >= value;
     return value;
   }
 
@@ -135,9 +135,9 @@ public class BitInputStream {
     int bits = 1 + (int) Math.ceil(Math.log(max) / Math.log(2));
     Bits peek = this.peek(bits);
     double divisor = 1 << peek.bitLength;
-    int value = (int) (peek.toLong() * ((double) max) / divisor);
-    assert (0 <= value);
-    assert (max >= value);
+    int value = (int) (peek.toLong() * (double) max / divisor);
+    assert 0 <= value;
+    assert max >= value;
     return value;
   }
 

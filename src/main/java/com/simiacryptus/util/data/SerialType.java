@@ -46,7 +46,7 @@ public interface SerialType<T> {
 
   @Nonnull
   default T read(@Nonnull byte[] input) throws IOException {
-    assert (input.length == getSize());
+    assert input.length == getSize();
     return read(ByteBuffer.wrap(input));
   }
 

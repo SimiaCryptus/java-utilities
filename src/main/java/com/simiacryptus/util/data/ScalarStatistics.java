@@ -26,6 +26,7 @@ import com.simiacryptus.util.MonitoredItem;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,7 +93,7 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
   @Nonnull
   public static ScalarStatistics stats(@Nonnull final double[] data) {
     @Nonnull final ScalarStatistics statistics = new PercentileStatistics();
-    RefArrays.stream(data).forEach(statistics::add);
+    Arrays.stream(data).forEach(v -> statistics.add(v));
     return statistics;
   }
 
@@ -206,7 +207,6 @@ public class ScalarStatistics implements MonitoredItem, Serializable {
 
   @Override
   public String toString() {
-    Map<CharSequence, Object> temp_10_0002 = getMetrics();
-    return temp_10_0002.toString();
+    return getMetrics().toString();
   }
 }

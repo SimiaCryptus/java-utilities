@@ -64,7 +64,7 @@ public class ArrayUtil {
 
   @Nonnull
   public static double[] multiply(@Nonnull final double[] a, final double b) {
-    return ArrayUtil.op(a, (x) -> x * b);
+    return ArrayUtil.op(a, x -> x * b);
   }
 
   @Nonnull
@@ -109,9 +109,10 @@ public class ArrayUtil {
                                      @Nonnull final DoubleUnaryOperator fn) {
     @Nonnull final RefArrayList<double[]> list = new RefArrayList<>();
     for (int i = 0; i < a.size(); i++) {
-      @Nonnull final double[] c = new double[a.get(i).length];
-      for (int j = 0; j < a.get(i).length; j++) {
-        c[j] = fn.applyAsDouble(a.get(i)[j]);
+      double[] doubles = a.get(i);
+      @Nonnull final double[] c = new double[doubles.length];
+      for (int j = 0; j < doubles.length; j++) {
+        c[j] = fn.applyAsDouble(doubles[j]);
       }
       list.add(c);
     }
@@ -124,10 +125,12 @@ public class ArrayUtil {
     assert a.size() == b.size();
     return RefIntStream.range(0, a.size()).parallel()
         .mapToObj(RefUtil.wrapInterface((IntFunction<? extends double[]>) i -> {
-          assert a.get(i).length == b.get(i).length;
-          @Nonnull final double[] c = new double[a.get(i).length];
-          for (int j = 0; j < a.get(i).length; j++) {
-            c[j] = fn.applyAsDouble(a.get(i)[j], b.get(i)[j]);
+          double[] doubles_a = a.get(i);
+          double[] doubles_b = b.get(i);
+          assert doubles_a.length == doubles_b.length;
+          @Nonnull final double[] c = new double[doubles_a.length];
+          for (int j = 0; j < doubles_a.length; j++) {
+            c[j] = fn.applyAsDouble(doubles_a[j], doubles_b[j]);
           }
           return c;
         }, a, b)).collect(RefCollectors.toList());
@@ -144,7 +147,7 @@ public class ArrayUtil {
 
   @Nonnull
   public static double[] sum(@Nonnull final double[] a, final double b) {
-    return ArrayUtil.op(a, (x) -> x + b);
+    return ArrayUtil.op(a, x -> x + b);
   }
 
   public static double sum(@Nonnull final @RefAware RefList<double[]> a) {

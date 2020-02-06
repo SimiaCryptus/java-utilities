@@ -144,7 +144,7 @@ public class SerialArrayList<U> {
   }
 
   public synchronized void putAll(@Nonnull SerialArrayList<U> data, int startIndex) {
-    ensureCapacity((startIndex * unitSize) + data.maxByte);
+    ensureCapacity(startIndex * unitSize + data.maxByte);
     RefSystem.arraycopy(data.buffer, 0, this.buffer, startIndex * unitSize, data.maxByte);
   }
 

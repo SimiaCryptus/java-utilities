@@ -40,7 +40,7 @@ public class TableOutput {
   @Nonnull
   public static TableOutput create(@Nonnull final Map<CharSequence, Object>... rows) {
     @Nonnull final TableOutput table = new TableOutput();
-    Arrays.stream(rows).forEach(table::putRow);
+    Arrays.stream(rows).forEach(properties -> table.putRow(properties));
     return table;
   }
 
@@ -258,7 +258,7 @@ public class TableOutput {
         }
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(metadataCols.stream().map(e -> {
-            CharSequence temp_04_0009 = ((CharSequence) row.getOrDefault(e.getKey(), ""));
+            CharSequence temp_04_0009 = (CharSequence) row.getOrDefault(e.getKey(), "");
             RefUtil.freeRef(e);
             return temp_04_0009;
           }).collect(Collectors.joining("\t")));

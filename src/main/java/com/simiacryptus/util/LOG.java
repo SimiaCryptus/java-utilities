@@ -28,6 +28,7 @@ import com.simiacryptus.ref.wrappers.RefSystem;
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Arrays;
 
 public class LOG {
 
@@ -55,7 +56,7 @@ public class LOG {
 
   private static void log(final Severity debug, @Nonnull final String msg, final Object[] args) {
     final String formatted = RefString.format(msg, args);
-    final StackTraceElement caller = RefUtil.get(RefArrays.stream(Thread.currentThread().getStackTrace()).filter((stack) -> {
+    final StackTraceElement caller = RefUtil.get(Arrays.stream(Thread.currentThread().getStackTrace()).filter(stack -> {
       Class<?> clazz;
       try {
         clazz = Class.forName(stack.getClassName());

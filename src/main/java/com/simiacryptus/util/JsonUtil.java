@@ -117,7 +117,7 @@ public class JsonUtil {
   @Nonnull
   public static JsonArray toIntArray(@Nonnull int[] array) {
     JsonArray jsonElements = new JsonArray();
-    RefArrays.stream(array).forEach(jsonElements::add);
+    RefArrays.stream(array).forEach(number -> jsonElements.add(number));
     return jsonElements;
   }
 

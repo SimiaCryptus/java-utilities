@@ -85,7 +85,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
     assert this.map != null;
     RefHashSet<Entry<Bits, AtomicInteger>> entries = this.map.entrySet();
     entries.forEach(e -> {
-      sums.put(e.getKey(), total.addAndGet(e.getValue().get()));
+      RefUtil.freeRef(sums.put(e.getKey(), total.addAndGet(e.getValue().get())));
       RefUtil.freeRef(e);
     });
     entries.freeRef();
@@ -288,7 +288,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
     final BranchCounts branchCounts = this.readBranchCounts(in, code, size);
     if (0 < branchCounts.terminals) {
       assert this.map != null;
-      this.map.put(code, new AtomicInteger((int) branchCounts.terminals));
+      RefUtil.freeRef(this.map.put(code, new AtomicInteger((int) branchCounts.terminals)));
     }
     if (0 < branchCounts.zeroCount) {
       this.read(in, code.concatenate(Bits.ZERO), branchCounts.zeroCount);
@@ -312,7 +312,8 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
 
     remainder.freeRef();
     assert this.map != null;
-    final int firstEntryCount = this.map.get(firstEntry.getKey()).get();
+    AtomicInteger atomicInteger = this.map.get(firstEntry.getKey());
+    final int firstEntryCount = atomicInteger.get();
     final long baseCount = firstEntry.getValue() - firstEntryCount;
     Map.Entry<Bits, Long> temp_13_0005 = sums.lastEntry();
     final long endCount = temp_13_0005.getValue();
@@ -331,7 +332,8 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
       @Nonnull
       @Override
       public Long transformEntry(final @RefAware Bits key, final Long value) {
-        return (long) CountTreeBitsCollection.this.map.get(key).get();
+        AtomicInteger atomicInteger = CountTreeBitsCollection.this.map.get(key);
+        return (long) atomicInteger.get();
       }
     };
     RefMap<Bits, Long> temp_13_0007 = RefMaps.transformEntries(RefUtil.addRef(sums), transformer);

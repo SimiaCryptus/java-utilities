@@ -68,7 +68,7 @@ public class BitOutputStream implements AutoCloseable {
     final int newRemainingBits = newRemainder.bitLength % 8;
     int bitsToWrite = newRemainder.bitLength - newRemainingBits;
     if (bitsToWrite > 0) {
-      assert (0 == bitsToWrite % 8);
+      assert 0 == bitsToWrite % 8;
       final Bits toWrite = newRemainder.range(0, bitsToWrite);
       this.inner.write(toWrite.getBytes());
       newRemainder = newRemainder.range(bitsToWrite);

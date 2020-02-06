@@ -72,7 +72,7 @@ public class GifSequenceWriter {
     child.setAttribute("authenticationCode", "2.0");
 
     int loop = loopContinuously ? 0 : 1;
-    child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) ((loop >> 8) & 0xFF)});
+    child.setUserObject(new byte[]{0x1, (byte) (loop & 0xFF), (byte) (loop >> 8 & 0xFF)});
     appEntensionsNode.appendChild(child);
     imageMetaData.setFromTree(metaFormatName, root);
     gifWriter.setOutput(outputStream);
@@ -126,7 +126,7 @@ public class GifSequenceWriter {
     @Nonnull
     IIOMetadataNode node = new IIOMetadataNode(nodeName);
     rootNode.appendChild(node);
-    return (node);
+    return node;
   }
 
   public void writeToSequence(@Nonnull RenderedImage img) throws IOException {

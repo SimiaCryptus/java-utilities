@@ -50,7 +50,7 @@ public class FastRandom {
     long z = next();
     int exponentMag = 4;
     double resolution = 1e8;
-    double x = ((z / 2) % resolution) / resolution;
+    double x = (z / 2) % resolution / resolution;
     double y = z % exponentMag - exponentMag / 2;
     while (y > 1) {
       y--;

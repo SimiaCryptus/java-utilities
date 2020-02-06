@@ -37,7 +37,7 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
 
   @Nonnull
   public SoftCachedSupplier<T> getSoftRef() {
-    return new SoftCachedSupplier<>(this::get);
+    return new SoftCachedSupplier<>(() -> get());
   }
 
   @Nullable

@@ -197,15 +197,6 @@ public class HammingCode<T extends Comparable<T>> {
       this.parent = parent;
     }
 
-    @Nullable
-    public static @SuppressWarnings("unused")
-    HammingCodeCollection[] addRefs(@Nullable HammingCodeCollection[] array) {
-      if (array == null)
-        return null;
-      return Arrays.stream(array).filter((x) -> x != null).map(HammingCodeCollection::addRef)
-          .toArray((x) -> new HammingCodeCollection[x]);
-    }
-
     @Nonnull
     @Override
     public CodeType getType(@Nonnull final Bits bits) {

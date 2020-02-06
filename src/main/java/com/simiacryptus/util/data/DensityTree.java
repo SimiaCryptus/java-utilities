@@ -102,8 +102,8 @@ public class DensityTree {
     public Bounds(@Nonnull double[] max, @Nonnull double[] min) {
       this.max = max;
       this.min = min;
-      assert (max.length == min.length);
-      assert (RefIntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]));
+      assert max.length == min.length;
+      assert RefIntStream.range(0, max.length).filter(i -> Double.isFinite(max[i])).allMatch(i -> max[i] >= min[i]);
     }
 
     public double getVolume() {
@@ -260,12 +260,12 @@ public class DensityTree {
       if (maxDepth <= depth)
         return;
       this.rule = RefIntStream.range(0, points[0].length).mapToObj(x -> x).flatMap(dim -> split_ortho(dim))
-          .filter(x -> Double.isFinite(x.fitness)).max(RefComparator.comparing(x -> x.fitness)).orElse(null);
+          .filter(x -> Double.isFinite(x.fitness)).max(RefComparator.comparingDouble(x -> x.fitness)).orElse(null);
       if (null == this.rule)
         return;
       double[][] leftPts = RefArrays.stream(this.points).filter(pt -> rule.eval(pt)).toArray(i -> new double[i][]);
       double[][] rightPts = RefArrays.stream(this.points).filter(pt -> !rule.eval(pt)).toArray(i -> new double[i][]);
-      assert (leftPts.length + rightPts.length == this.points.length);
+      assert leftPts.length + rightPts.length == this.points.length;
       if (rightPts.length == 0 || leftPts.length == 0)
         return;
       this.left = new Node(leftPts, depth + 1);
@@ -287,8 +287,8 @@ public class DensityTree {
       right[sortedPoints.length - 1] = getBounds(new double[][]{sortedPoints[sortedPoints.length - 1]});
       for (int i = 1; i < sortedPoints.length; i++) {
         left[i] = left[i - 1].union(sortedPoints[i]);
-        right[(sortedPoints.length - 1) - i] = right[((sortedPoints.length - 1) - (i - 1))]
-            .union(sortedPoints[(sortedPoints.length - 1) - i]);
+        right[sortedPoints.length - 1 - i] = right[sortedPoints.length - 1 - (i - 1)]
+            .union(sortedPoints[sortedPoints.length - 1 - i]);
       }
       return RefIntStream.range(1, sortedPoints.length - 1).filter(i -> {
         return sortedPoints[i - 1][dim] < sortedPoints[i][dim];
