@@ -42,14 +42,12 @@ public final class BinaryChunkIterator extends RefIteratorBase<byte[]> {
   }
 
   public static <T> RefStream<T> toIterator(@Nonnull final RefIterator<T> iterator) {
-    RefStream<T> temp_07_0001 = RefStreamSupport
+    return RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
-    return temp_07_0001;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator) {
-    RefStream<T> temp_07_0002 = BinaryChunkIterator.toStream(iterator, 0);
-    return temp_07_0002;
+    return BinaryChunkIterator.toStream(iterator, 0);
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {

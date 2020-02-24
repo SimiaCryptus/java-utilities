@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -50,13 +51,12 @@ public class SerialArrayList<U> {
     }
   }
 
-  public SerialArrayList(@Nonnull SerialType<U> factory, @Nonnull RefCollection<U> items) {
+  public SerialArrayList(@Nonnull SerialType<U> factory, @Nonnull Collection<U> items) {
     this.factory = factory;
     this.unitSize = factory.getSize();
     this.buffer = new byte[items.size() * unitSize];
     AtomicInteger i = new AtomicInteger();
     items.forEach(x -> set(i.getAndIncrement(), x));
-    items.freeRef();
   }
 
   public SerialArrayList(@Nonnull SerialType<U> factory, @Nonnull U... items) {
@@ -129,18 +129,14 @@ public class SerialArrayList<U> {
     }
   }
 
-  public synchronized int addAll(@Nullable RefCollection<U> data) {
+  public synchronized int addAll(@Nullable Collection<U> data) {
     int startIndex = length();
-    putAll(data == null ? null : data.addRef(), startIndex);
-    if (null != data)
-      data.freeRef();
+    putAll(data, startIndex);
     return startIndex;
   }
 
-  public synchronized void putAll(@Nullable RefCollection<U> data, int startIndex) {
-    putAll(new SerialArrayList<U>(factory, data == null ? null : data.addRef()), startIndex);
-    if (null != data)
-      data.freeRef();
+  public synchronized void putAll(@Nullable Collection<U> data, int startIndex) {
+    putAll(new SerialArrayList<U>(factory, data), startIndex);
   }
 
   public synchronized void putAll(@Nonnull SerialArrayList<U> data, int startIndex) {

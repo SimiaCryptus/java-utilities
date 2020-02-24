@@ -293,15 +293,14 @@ public class DensityTree {
       return RefIntStream.range(1, sortedPoints.length - 1).filter(i -> {
         return sortedPoints[i - 1][dim] < sortedPoints[i][dim];
       }).mapToObj(i -> {
-        int leftCount = i;
-        int rightCount = sortedPoints.length - leftCount;
-        if (minSize >= leftCount || minSize >= rightCount)
+        int rightCount = sortedPoints.length - i;
+        if (minSize >= i || minSize >= rightCount)
           return null;
         @Nonnull
         OrthoRule rule = new OrthoRule(dim, sortedPoints[i][dim]);
         Bounds l = left[i - 1];
         Bounds r = right[i];
-        rule.fitness = -(leftCount * Math.log(l.getVolume() / Node.this.bounds.getVolume())
+        rule.fitness = -(i * Math.log(l.getVolume() / Node.this.bounds.getVolume())
             + rightCount * Math.log(r.getVolume() / Node.this.bounds.getVolume()))
             / (sortedPoints.length * Math.log(2));
         return (Rule) rule;

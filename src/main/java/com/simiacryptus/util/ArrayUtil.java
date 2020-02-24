@@ -36,8 +36,7 @@ public class ArrayUtil {
   }
 
   public static RefList<double[]> add(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0001 = ArrayUtil.op(a, b, (x, y) -> x + y);
-    return temp_08_0001;
+    return ArrayUtil.op(a, b, (x, y) -> x + y);
   }
 
   public static double dot(@Nonnull final double[] a, @Nonnull final double[] b) {
@@ -45,8 +44,7 @@ public class ArrayUtil {
   }
 
   public static double dot(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    double temp_08_0002 = ArrayUtil.sum(ArrayUtil.multiply(a, b));
-    return temp_08_0002;
+    return ArrayUtil.sum(ArrayUtil.multiply(a, b));
   }
 
   public static double magnitude(@Nonnull final double[] a) {
@@ -58,8 +56,7 @@ public class ArrayUtil {
   }
 
   public static RefList<double[]> minus(@Nonnull final RefList<double[]> a, @Nonnull final RefList<double[]> b) {
-    RefList<double[]> temp_08_0003 = ArrayUtil.op(a, b, (x, y) -> x - y);
-    return temp_08_0003;
+    return ArrayUtil.op(a, b, (x, y) -> x - y);
   }
 
   @Nonnull
@@ -74,14 +71,12 @@ public class ArrayUtil {
 
   @Nonnull
   public static RefList<double[]> multiply(@Nonnull final RefList<double[]> a, final double b) {
-    RefList<double[]> temp_08_0004 = ArrayUtil.op(a, x -> x * b);
-    return temp_08_0004;
+    return ArrayUtil.op(a, x -> x * b);
   }
 
   public static RefList<double[]> multiply(@Nonnull final @RefAware RefList<double[]> a,
                                            @Nonnull final @RefAware RefList<double[]> b) {
-    RefList<double[]> temp_08_0005 = ArrayUtil.op(a, b, (x, y) -> x * y);
-    return temp_08_0005;
+    return ArrayUtil.op(a, b, (x, y) -> x * y);
   }
 
   @Nonnull

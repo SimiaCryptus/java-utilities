@@ -19,20 +19,16 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.lang.*;
 import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.Predicate;
 
 public abstract class ResourcePool<T> extends ReferenceCountingBase {
 
   @Nonnull
   private final RefHashSet<T> all;
-  private final ThreadLocal<T> currentValue = new ThreadLocal<>();
+  private final RefThreadLocal<T> currentValue = new RefThreadLocal<>();
   private final int maxItems;
   private final RefLinkedBlockingQueue<T> pool = new RefLinkedBlockingQueue<>();
 
@@ -47,32 +43,26 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
   public abstract T create();
 
   public T get() {
-    return get(x -> true);
-  }
-
-  public T get(@Nonnull Predicate<T> filter) {
-    RefArrayList<T> sampled = new RefArrayList<>();
-    try {
+    assertAlive();
+    {
       T poll = this.pool.poll();
-      while (null != poll) {
-        if (filter.test(poll)) {
-          return poll;
-        } else {
-          sampled.add(poll);
-        }
+      if (null != poll) {
+        RefUtil.assertAlive(poll);
+        return poll;
       }
-    } finally {
-      pool.addAll(sampled);
     }
     synchronized (this.all) {
       if (this.all.size() < this.maxItems) {
         T poll = create();
-        this.all.add(poll);
+        RefUtil.assertAlive(poll);
+        this.all.add(RefUtil.addRef(poll));
         return poll;
       }
     }
     try {
-      return this.pool.take();
+      T take = this.pool.take();
+      RefUtil.assertAlive(take);
+      return take;
     } catch (@Nonnull final InterruptedException e) {
       throw new RuntimeException(e);
     }
@@ -83,26 +73,44 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
   }
 
   @Nonnull
-  public <U> U apply(@Nonnull @RefAware final RefFunction<T, U> f) {
-    return apply(f, x -> true);
-  }
-
-  public void apply(@Nonnull @RefAware final RefConsumer<T> f) {
-    apply(f, x -> true);
-  }
-
-  @Nonnull
-  public <U> U apply(@Nonnull @RefAware final RefFunction<T, U> f, @Nonnull final Predicate<T> filter) {
+  public <U> U apply(@Nonnull @RefAware final RefFunction<T, U> fn) {
+    assertAlive();
     final T prior = currentValue.get();
     try {
       if (null != prior) {
-        return f.apply(prior);
+        RefUtil.assertAlive(prior);
+        return fn.apply(prior);
       } else {
-        final T poll = get(filter);
+        final T poll = get();
+        RefUtil.assertAlive(poll);
         try {
-          currentValue.set(poll);
-          return f.apply(poll);
+          currentValue.set(RefUtil.addRef(poll));
+          return fn.apply(RefUtil.addRef(poll));
         } finally {
+          RefUtil.assertAlive(poll);
+          this.pool.add(poll);
+          currentValue.remove();
+        }
+      }
+    } finally {
+      RefUtil.freeRef(fn);
+    }
+  }
+
+  public void apply(@Nonnull @RefAware final RefConsumer<T> f) {
+    assert assertAlive();
+    assert this.pool.assertAlive();
+    final T prior = currentValue.get();
+    try {
+      if (null != prior) {
+        f.accept(prior);
+      } else {
+        final T poll = get();
+        try {
+          currentValue.set(RefUtil.addRef(poll));
+          f.accept(RefUtil.addRef(poll));
+        } finally {
+          RefUtil.assertAlive(poll);
           this.pool.add(poll);
           currentValue.remove();
         }
@@ -112,28 +120,12 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
     }
   }
 
-  public void apply(@Nonnull @RefAware final RefConsumer<T> f, @Nonnull final Predicate<T> filter) {
-    final T prior = currentValue.get();
-    if (null != prior) {
-      f.accept(prior);
-    } else {
-      final T poll = get(filter);
-      try {
-        currentValue.set(poll);
-        f.accept(poll);
-      } finally {
-        this.pool.add(poll);
-        currentValue.remove();
-      }
-    }
-    RefUtil.freeRef(f);
-  }
-
   public @SuppressWarnings("unused")
   void _free() {
     super._free();
     all.freeRef();
     pool.freeRef();
+    currentValue.freeRef();
   }
 
   @Nonnull

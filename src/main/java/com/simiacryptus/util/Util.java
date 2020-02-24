@@ -19,9 +19,6 @@
 
 package com.simiacryptus.util;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
@@ -52,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleSupplier;
@@ -101,13 +99,8 @@ public class Util {
   }
 
   public static <F, T> Function<F, T> cache(@Nonnull final Function<F, T> inner) {
-    @Nonnull final LoadingCache<F, T> cache = CacheBuilder.newBuilder().build(new CacheLoader<F, T>() {
-      @Override
-      public T load(final F key) {
-        return inner.apply(key);
-      }
-    });
-    return key -> RefUtil.addRef(cache.getUnchecked(key));
+    RefConcurrentHashMap<F, T> cache = new RefConcurrentHashMap<>();
+    return RefUtil.wrapInterface(key -> cache.computeIfAbsent(key, inner::apply), cache, inner);
   }
 
   @Nonnull
@@ -341,26 +334,22 @@ public class Util {
   }
 
   public static <T> RefStream<T> toIterator(@Nonnull final RefIteratorBase<T> iterator) {
-    RefStream<T> temp_09_0001 = RefStreamSupport
+    return RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator, 1, Spliterator.ORDERED), false);
-    return temp_09_0001;
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final RefIteratorBase<T> iterator) {
-    RefStream<T> temp_09_0002 = Util.toStream(iterator, 0);
-    return temp_09_0002;
+    return Util.toStream(iterator, 0);
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size) {
-    RefStream<T> temp_09_0003 = Util.toStream(iterator, size, false);
-    return temp_09_0003;
+    return Util.toStream(iterator, size, false);
   }
 
   public static <T> RefStream<T> toStream(@Nonnull final @RefAware RefIteratorBase<T> iterator, final int size,
                                           final boolean parallel) {
-    RefStream<T> temp_09_0004 = RefStreamSupport
+    return RefStreamSupport
         .stream(RefSpliterators.spliterator(iterator, size, Spliterator.ORDERED), parallel);
-    return temp_09_0004;
   }
 
   @Nonnull
@@ -411,12 +400,24 @@ public class Util {
     return path.normalize().toString().replaceAll("\\\\", "/");
   }
 
-  public static void runAllParallel(@Nonnull Runnable... runnables) {
-    RefArrays.stream(runnables).parallel().forEach(runnable -> runnable.run());
+  public static void runAllParallel(@RefAware @Nonnull Runnable... runnables) {
+    RefArrays.stream(runnables).parallel().forEach(runnable -> {
+      try {
+        runnable.run();
+      } finally {
+        RefUtil.freeRef(runnable);
+      }
+    });
   }
 
-  public static void runAllSerial(@Nonnull Runnable... runnables) {
-    RefArrays.stream(runnables).forEach(runnable -> runnable.run());
+  public static void runAllSerial(@RefAware @Nonnull Runnable... runnables) {
+    RefArrays.stream(runnables).forEach(runnable -> {
+      try {
+        runnable.run();
+      } finally {
+        RefUtil.freeRef(runnable);
+      }
+    });
   }
 
   @Nonnull

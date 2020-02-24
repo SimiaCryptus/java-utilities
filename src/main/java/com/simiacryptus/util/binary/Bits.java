@@ -405,8 +405,7 @@ public class Bits implements Comparable<Bits> {
   public long toLong() {
     long value = 0;
     for (final byte b : shiftRight(this.bytes, this.bytes.length * 8 - this.bitLength)) {
-      final long shifted = value << 8;
-      value = shifted;
+      value = value << 8;
       final int asInt = b & 0xFF;
       value += asInt;
     }

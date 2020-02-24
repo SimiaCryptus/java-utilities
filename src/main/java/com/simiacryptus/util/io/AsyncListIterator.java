@@ -35,12 +35,7 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
 
   public AsyncListIterator(@Nullable final RefList<T> queue, final Thread thread) {
     this.thread = thread;
-    RefList<T> temp_02_0001 = queue == null ? null : queue.addRef();
-    this.queue = temp_02_0001 == null ? null : temp_02_0001.addRef();
-    if (null != temp_02_0001)
-      temp_02_0001.freeRef();
-    if (null != queue)
-      queue.freeRef();
+    this.queue = queue;
   }
 
   @Override

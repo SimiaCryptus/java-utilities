@@ -68,11 +68,9 @@ public abstract class DataLoader<T> extends ReferenceCountingBase {
       }
     }
     @Nullable final RefIteratorBase<T> iterator = new AsyncListIterator<>(queue == null ? null : queue.addRef(), thread);
-    RefStream<T> temp_06_0001 = RefStreamSupport.stream(
-        RefSpliterators.spliteratorUnknownSize(iterator.addRef(), Spliterator.DISTINCT),
+    return RefStreamSupport.stream(
+        RefSpliterators.spliteratorUnknownSize(iterator, Spliterator.DISTINCT),
         false).filter(x -> x != null);
-    iterator.freeRef();
-    return temp_06_0001;
   }
 
   public @SuppressWarnings("unused")
