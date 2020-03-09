@@ -19,29 +19,27 @@
 
 package com.simiacryptus.util.function;
 
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
+import com.simiacryptus.ref.wrappers.RefSupplier;
 import com.simiacryptus.ref.wrappers.RefWeakReference;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
-public class WeakCachedSupplier<T> implements Supplier<T> {
+public class WeakCachedSupplier<T> extends ReferenceCountingBase implements RefSupplier<T> {
 
-  private final Supplier<T> fn;
+  private final RefSupplier<T> fn;
   @Nullable
   private volatile RefWeakReference<T> cached;
 
-  public WeakCachedSupplier(final Supplier<T> fn) {
+  public WeakCachedSupplier(@RefAware final RefSupplier<T> fn) {
     this.fn = fn;
-  }
-
-  @Nonnull
-  public SoftCachedSupplier<T> getSoftRef() {
-    return new SoftCachedSupplier<>(() -> get());
   }
 
   @Nullable
   @Override
+  @RefAware
   public T get() {
     @Nullable
     T obj = null == cached ? null : cached.get();
@@ -51,11 +49,19 @@ public class WeakCachedSupplier<T> implements Supplier<T> {
         if (null == obj) {
           obj = fn.get();
           if (null != obj) {
+            RefUtil.freeRef(cached);
             cached = new RefWeakReference<>(obj);
           }
         }
       }
     }
-    return obj;
+    return RefUtil.addRef(obj);
+  }
+
+  @Override
+  protected void _free() {
+    super._free();
+    RefUtil.freeRef(fn);
+    RefUtil.freeRef(cached);
   }
 }

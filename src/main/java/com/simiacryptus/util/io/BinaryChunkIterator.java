@@ -20,14 +20,11 @@
 package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.lang.RefAware;
-import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Spliterator;
 
 public final class BinaryChunkIterator extends RefIteratorBase<byte[]> {

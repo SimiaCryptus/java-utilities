@@ -28,9 +28,7 @@ import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 

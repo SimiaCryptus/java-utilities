@@ -19,7 +19,9 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.*;
+import com.simiacryptus.ref.lang.RefAware;
+import com.simiacryptus.ref.lang.RefUtil;
+import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.*;
 
 import javax.annotation.Nonnull;

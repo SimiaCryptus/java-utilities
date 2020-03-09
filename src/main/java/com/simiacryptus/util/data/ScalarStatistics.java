@@ -20,7 +20,6 @@
 package com.simiacryptus.util.data;
 
 import com.google.gson.JsonObject;
-import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.util.MonitoredItem;
 
 import javax.annotation.Nonnull;

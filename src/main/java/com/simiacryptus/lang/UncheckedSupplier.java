@@ -23,5 +23,6 @@ import com.simiacryptus.ref.lang.RefAware;
 
 public interface UncheckedSupplier<T> {
 
-  @RefAware T get() throws Exception;
+  @RefAware
+  T get() throws Exception;
 }

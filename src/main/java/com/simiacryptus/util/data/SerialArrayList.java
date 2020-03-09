@@ -20,7 +20,6 @@
 package com.simiacryptus.util.data;
 
 import com.simiacryptus.ref.wrappers.RefArrays;
-import com.simiacryptus.ref.wrappers.RefCollection;
 import com.simiacryptus.ref.wrappers.RefSystem;
 
 import javax.annotation.Nonnull;

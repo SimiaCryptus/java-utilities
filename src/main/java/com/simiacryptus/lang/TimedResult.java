@@ -39,7 +39,8 @@ public class TimedResult<T> extends ReferenceCountingBase {
     this.gcMs = gcMs;
   }
 
-  public @RefAware T getResult() {
+  public @RefAware
+  T getResult() {
     return RefUtil.addRef(result);
   }
 

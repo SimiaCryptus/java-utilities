@@ -26,10 +26,10 @@ import com.simiacryptus.ref.wrappers.RefFunction;
 import com.simiacryptus.ref.wrappers.RefStringBuilder;
 
 import javax.annotation.Nonnull;
-import java.util.function.Function;
 
 public class LabeledObject<T> extends ReferenceCountingBase {
-  public final @RefAware T data;
+  public final @RefAware
+  T data;
   public final String label;
 
   public LabeledObject(final @RefAware T img, final String name) {

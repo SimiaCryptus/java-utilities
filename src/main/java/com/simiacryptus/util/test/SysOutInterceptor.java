@@ -157,14 +157,16 @@ public class SysOutInterceptor extends PrintStream {
 
   public static class LoggedResult<T> extends ReferenceCountingBase {
     public final String log;
-    private final @RefAware T obj;
+    private final @RefAware
+    T obj;
 
     public LoggedResult(final @RefAware T obj, final String log) {
       this.obj = obj;
       this.log = log;
     }
 
-    public @RefAware T getObj() {
+    public @RefAware
+    T getObj() {
       return RefUtil.addRef(obj);
     }
 

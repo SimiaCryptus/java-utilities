@@ -19,13 +19,11 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefIteratorBase;
 import com.simiacryptus.ref.wrappers.RefList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 
 public class AsyncListIterator<T> extends RefIteratorBase<T> {
   @Nullable
