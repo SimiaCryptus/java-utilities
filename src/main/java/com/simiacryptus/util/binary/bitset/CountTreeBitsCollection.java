@@ -68,7 +68,6 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
     super(bitDepth, new RefTreeMap<Bits, AtomicInteger>());
   }
 
-  @Nonnull
   public void setUseBinomials(final boolean useBinomials) {
     this.useBinomials = useBinomials;
   }

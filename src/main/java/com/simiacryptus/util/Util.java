@@ -421,7 +421,6 @@ public class Util {
 
   @Nonnull
   public static String toString(@Nonnull RefConsumer<PrintStream> fn) {
-    @Nonnull
     java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
     try (@Nonnull
          PrintStream out = new PrintStream(buffer)) {
