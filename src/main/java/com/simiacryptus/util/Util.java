@@ -49,11 +49,13 @@ import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
@@ -248,10 +250,7 @@ public class Util {
   }
 
   public static String mkString(@Nonnull final CharSequence separator, final CharSequence... strs) {
-    RefList<CharSequence> temp_09_0006 = RefArrays.asList(strs);
-    String temp_09_0005 = temp_09_0006.stream().collect(RefCollectors.joining(separator));
-    temp_09_0006.freeRef();
-    return temp_09_0005;
+    return Stream.of(strs).collect(Collectors.joining(separator));
   }
 
   @Nonnull
@@ -386,7 +385,7 @@ public class Util {
   @Nonnull
   public static Path pathToFile(@Nonnull final File baseFile, @Nonnull File file) {
     try {
-      Path basePath = baseFile.getCanonicalFile().toPath().getParent();
+      Path basePath = baseFile.getCanonicalFile().toPath();
       Path path = file.getCanonicalFile().toPath();
       return basePath.relativize(path);
     } catch (IOException e) {
