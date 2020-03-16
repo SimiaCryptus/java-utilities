@@ -19,7 +19,6 @@
 
 package com.simiacryptus.util;
 
-import com.simiacryptus.ref.wrappers.RefHashMap;
 import com.simiacryptus.ref.wrappers.RefString;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

@@ -36,7 +36,7 @@ public class LOG {
 
   public static void d(@Nonnull final String msg, final Object... args) {
     LOG.preprocessArgs(args);
-    LOG.log(Severity.Debug, msg, args);
+    LOG.log(msg, args);
   }
 
   public static void d(@Nonnull final Throwable e, final CharSequence msg, final Object... args) {
@@ -54,7 +54,7 @@ public class LOG {
     return out.toString();
   }
 
-  private static void log(final Severity debug, @Nonnull final String msg, final Object[] args) {
+  private static void log(@Nonnull final String msg, final Object[] args) {
     final String formatted = RefString.format(msg, args);
     final StackTraceElement caller = RefUtil.get(Arrays.stream(Thread.currentThread().getStackTrace()).filter(stack -> {
       Class<?> clazz;

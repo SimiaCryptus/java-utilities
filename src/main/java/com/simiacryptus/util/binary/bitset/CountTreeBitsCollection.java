@@ -189,7 +189,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
     // Get zero-suffixed primary
     if (maximum > 0) {
       assert Thread.currentThread().getStackTrace().length < 100;
-      branchCounts.zeroCount = this.readZeroBranchSize(in, maximum, code);
+      branchCounts.zeroCount = this.readZeroBranchSize(in, maximum);
     }
     maximum -= branchCounts.zeroCount;
     branchCounts.oneCount = maximum;
@@ -207,7 +207,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
     return readBoundedLong;
   }
 
-  protected long readZeroBranchSize(@Nonnull final BitInputStream in, final long max, final Bits code) throws IOException {
+  protected long readZeroBranchSize(@Nonnull final BitInputStream in, final long max) throws IOException {
     if (0 == max) {
       return 0;
     }
@@ -242,7 +242,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
 
     assert maximum >= branch.zeroCount;
     if (0 < maximum) {
-      this.writeZeroBranchSize(out, branch.zeroCount, maximum, branch.path);
+      this.writeZeroBranchSize(out, branch.zeroCount, maximum);
       maximum -= branch.zeroCount;
     } else {
       assert 0 == branch.zeroCount;
@@ -262,7 +262,7 @@ public class CountTreeBitsCollection extends BitsCollection<RefTreeMap<Bits, Ato
     }
   }
 
-  protected void writeZeroBranchSize(@Nonnull final BitOutputStream out, final long value, final long max, final Bits bits)
+  protected void writeZeroBranchSize(@Nonnull final BitOutputStream out, final long value, final long max)
       throws IOException {
     assert 0 <= value;
     assert max >= value;
