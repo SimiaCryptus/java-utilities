@@ -21,6 +21,7 @@ package com.simiacryptus.util.binary;
 
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefConsumer;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,7 @@ public class BitOutputStream implements AutoCloseable {
       out.flush();
       return new Bits(buffer.toByteArray(), out.getTotalBitsWritten());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 

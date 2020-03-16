@@ -21,6 +21,7 @@ package com.simiacryptus.util.data;
 
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefSystem;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -102,7 +103,7 @@ public class SerialArrayList<U> {
     try {
       return factory.read(view);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -124,7 +125,7 @@ public class SerialArrayList<U> {
     try {
       factory.write(view, value);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 

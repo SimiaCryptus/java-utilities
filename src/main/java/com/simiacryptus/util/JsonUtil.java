@@ -90,7 +90,7 @@ public class JsonUtil {
       objectMapper.writeValue(outputStream, obj);
       RefUtil.freeRef(obj);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
     return new String(outputStream.toByteArray(), Charset.forName("UTF-8"));
   }

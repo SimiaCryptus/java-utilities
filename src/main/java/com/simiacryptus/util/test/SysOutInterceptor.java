@@ -25,6 +25,7 @@ import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.RefSystem;
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.io.TeeOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,10 +81,8 @@ public class SysOutInterceptor extends PrintStream {
         ps.close();
         return new LoggedResult<>(null, buff.toString());
       }
-    } catch (@Nonnull final RuntimeException e) {
-      throw e;
     } catch (@Nonnull final Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     } finally {
       SysOutInterceptor.INSTANCE.threadHandler.remove();
       SysOutInterceptor.INSTANCE.isMonitoring.remove();
@@ -105,10 +104,8 @@ public class SysOutInterceptor extends PrintStream {
         ps.close();
         return new LoggedResult<>(result, buff.toString());
       }
-    } catch (@Nonnull final RuntimeException e) {
-      throw e;
     } catch (@Nonnull final Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     } finally {
       SysOutInterceptor.INSTANCE.threadHandler.remove();
       SysOutInterceptor.INSTANCE.isMonitoring.remove();

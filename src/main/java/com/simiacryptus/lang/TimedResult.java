@@ -23,6 +23,7 @@ import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.RefSystem;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,10 +53,8 @@ public class TimedResult<T> extends ReferenceCountingBase {
       @Nullable
       T result = fn.get();
       return new TimedResult<T>(result, RefSystem.nanoTime() - start, gcTime() - priorGcMs);
-    } catch (@Nonnull final RuntimeException e) {
-      throw e;
     } catch (@Nonnull final Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     } finally {
       RefUtil.freeRef(fn);
     }
@@ -72,10 +71,8 @@ public class TimedResult<T> extends ReferenceCountingBase {
       final long start = RefSystem.nanoTime();
       fn.get();
       return new TimedResult<Void>(null, RefSystem.nanoTime() - start, gcTime() - priorGcMs);
-    } catch (@Nonnull final RuntimeException e) {
-      throw e;
     } catch (@Nonnull final Exception e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     } finally {
       RefUtil.freeRef(fn);
     }

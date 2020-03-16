@@ -21,6 +21,7 @@ package com.simiacryptus.util.binary;
 
 import com.simiacryptus.ref.wrappers.RefAssert;
 import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.util.Util;
 import org.json.JSONException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -63,7 +64,7 @@ public class BitsTest {
         out.write(Bits.divide(1, 2, 10));
         out.write(Bits.divide(1, 2, 10));
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     });
     RefAssert.assertEquals("0101", totalBits.toBitString());

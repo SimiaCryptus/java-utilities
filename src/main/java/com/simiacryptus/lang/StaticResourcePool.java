@@ -21,6 +21,7 @@ package com.simiacryptus.lang;
 
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.*;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
@@ -126,7 +127,7 @@ public class StaticResourcePool<T> extends ReferenceCountingBase {
         }
       }
     } catch (@Nonnull final InterruptedException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 }

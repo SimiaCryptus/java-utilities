@@ -23,6 +23,7 @@ import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.lang.ReferenceCountingBase;
 import com.simiacryptus.ref.wrappers.*;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 
@@ -66,7 +67,7 @@ public abstract class ResourcePool<T> extends ReferenceCountingBase {
       RefUtil.assertAlive(take);
       return take;
     } catch (@Nonnull final InterruptedException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 

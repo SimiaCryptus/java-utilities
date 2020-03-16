@@ -60,7 +60,7 @@ public class IOUtil {
       objectMapper.writeValue(writer, obj);
       Files.write(file.toPath(), writer.toString().getBytes());
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -69,7 +69,7 @@ public class IOUtil {
       return objectMapper.readValue(new String(Files.readAllBytes(file.toPath())), new TypeReference<T>() {
       });
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -81,7 +81,7 @@ public class IOUtil {
       IOUtils.write(RefArrays.copyOf(output.getBuffer(), output.position()), file);
       file.close();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -90,7 +90,7 @@ public class IOUtil {
       IOUtils.write(obj.getBytes("UTF-8"), file);
       file.close();
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -101,7 +101,7 @@ public class IOUtil {
       Input input = new Input(buffer.get(), 0, bytes.length);
       return (T) new KryoReflectionFactorySupport().readClassAndObject(input);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 

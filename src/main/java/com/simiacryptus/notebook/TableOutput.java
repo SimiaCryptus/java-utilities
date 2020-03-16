@@ -21,6 +21,7 @@ package com.simiacryptus.notebook;
 
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefString;
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.data.DoubleStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,7 +116,7 @@ public class TableOutput {
       }
       return buffer.toString();
     } catch (@Nonnull final IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -154,7 +155,7 @@ public class TableOutput {
       }
       return buffer.toString();
     } catch (@Nonnull final IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -186,14 +187,14 @@ public class TableOutput {
           }
         }).collect(Collectors.joining(" | "));
         printStream.println(schema.entrySet().stream().map(x -> {
-          CharSequence temp_04_0002 = x.getKey();
+          CharSequence key = x.getKey();
           RefUtil.freeRef(x);
-          return temp_04_0002;
+          return key;
         }).collect(Collectors.joining(" | ")).trim());
         printStream.println(schema.entrySet().stream().map(x -> {
-          CharSequence temp_04_0003 = x.getKey();
+          CharSequence key = x.getKey();
           RefUtil.freeRef(x);
-          return temp_04_0003;
+          return key;
         }).map(x -> {
           @Nonnull final char[] t = new char[x.length()];
           Arrays.fill(t, '-');
@@ -201,15 +202,15 @@ public class TableOutput {
         }).collect(Collectors.joining(" | ")).trim());
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(RefString.format(formatString, schema.entrySet().stream().map(e -> {
-            Object temp_04_0004 = row.get(e.getKey());
+            Object cell = row.get(e.getKey());
             RefUtil.freeRef(e);
-            return temp_04_0004;
+            return cell;
           }).toArray()));
         }
       }
       return buffer.toString();
     } catch (@Nonnull final IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
@@ -223,9 +224,9 @@ public class TableOutput {
       }
     }
     final List<Entry<CharSequence, Class<?>>> scalarCols = schema.entrySet().stream().filter(e -> {
-      boolean temp_04_0005 = Number.class.isAssignableFrom(e.getValue());
+      boolean isNumber = Number.class.isAssignableFrom(e.getValue());
       RefUtil.freeRef(e);
-      return temp_04_0005;
+      return isNumber;
     }).collect(Collectors.toList());
     try (@Nonnull
          FileOutputStream file = new FileOutputStream(new File(path, "tensors.tsv"))) {
@@ -233,17 +234,17 @@ public class TableOutput {
            PrintStream printStream = new PrintStream(file)) {
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(scalarCols.stream().map(e -> {
-            double temp_04_0006 = ((Number) row.getOrDefault(e.getKey(), 0)).doubleValue();
+            double doubleValue = ((Number) row.getOrDefault(e.getKey(), 0)).doubleValue();
             RefUtil.freeRef(e);
-            return temp_04_0006;
+            return doubleValue;
           }).map(x -> x.toString()).collect(Collectors.joining("\t")));
         }
       }
     }
     final List<Entry<CharSequence, Class<?>>> metadataCols = schema.entrySet().stream().filter(e -> {
-      boolean temp_04_0007 = String.class.isAssignableFrom(e.getValue());
+      boolean isString = String.class.isAssignableFrom(e.getValue());
       RefUtil.freeRef(e);
-      return temp_04_0007;
+      return isString;
     }).collect(Collectors.toList());
     try (@Nonnull
          FileOutputStream file = new FileOutputStream(new File(path, "metadata.tsv"))) {
@@ -251,24 +252,24 @@ public class TableOutput {
            PrintStream printStream = new PrintStream(file)) {
         if (1 < metadataCols.size()) {
           printStream.println(metadataCols.stream().map(e -> {
-            CharSequence temp_04_0008 = e.getKey();
+            CharSequence charSequence = e.getKey();
             RefUtil.freeRef(e);
-            return temp_04_0008;
+            return charSequence;
           }).collect(Collectors.joining("\t")));
         }
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(metadataCols.stream().map(e -> {
-            CharSequence temp_04_0009 = (CharSequence) row.getOrDefault(e.getKey(), "");
+            CharSequence charSequence = (CharSequence) row.getOrDefault(e.getKey(), "");
             RefUtil.freeRef(e);
-            return temp_04_0009;
+            return charSequence;
           }).collect(Collectors.joining("\t")));
         }
       }
     }
     final List<Entry<CharSequence, Class<?>>> urlCols = schema.entrySet().stream().filter(e -> {
-      boolean temp_04_0010 = URL.class.isAssignableFrom(e.getValue());
+      boolean isURL = URL.class.isAssignableFrom(e.getValue());
       RefUtil.freeRef(e);
-      return temp_04_0010;
+      return isURL;
     }).collect(Collectors.toList());
     try (@Nonnull
          FileOutputStream file = new FileOutputStream(new File(path, "bookmarks.txt"))) {
@@ -276,9 +277,9 @@ public class TableOutput {
            PrintStream printStream = new PrintStream(file)) {
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.println(urlCols.stream().map(e -> {
-            String temp_04_0011 = row.get(e.getKey()).toString();
+            String string = row.get(e.getKey()).toString();
             RefUtil.freeRef(e);
-            return temp_04_0011;
+            return string;
           }).collect(Collectors.joining("\t")));
         }
       }

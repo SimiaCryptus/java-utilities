@@ -39,7 +39,7 @@ public class ReflectionUtil {
       try {
         return (T) value.get(obj);
       } catch (IllegalAccessException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     }
     return null;
@@ -64,9 +64,9 @@ public class ReflectionUtil {
       try {
         return (T) value.invoke(obj, args);
       } catch (IllegalAccessException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       } catch (InvocationTargetException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     }
     throw new RuntimeException(String.format("Method %s.%s(%s) not found", obj.getClass(), name, Arrays.stream(args).map(x -> x.getClass().getSimpleName()).reduce((a, b) -> a + ", " + b).get()));
@@ -96,7 +96,7 @@ public class ReflectionUtil {
       getField(astNode.getClass(), name).set(astNode, value);
       return astNode;
     } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 }

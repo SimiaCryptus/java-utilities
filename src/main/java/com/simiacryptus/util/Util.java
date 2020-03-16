@@ -27,6 +27,7 @@ import com.simiacryptus.util.io.TeeInputStream;
 import com.simiacryptus.util.test.LabeledObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -49,7 +51,6 @@ import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.DoubleSupplier;
@@ -147,7 +148,7 @@ public class Util {
         }
         return urlConnection.getInputStream();
       } catch (@Nonnull KeyManagementException | NoSuchAlgorithmException | IOException e) {
-        throw new RuntimeException(e);
+        throw throwException(e);
       }
     };
   }
@@ -317,12 +318,9 @@ public class Util {
     @Nonnull final ByteArrayOutputStream b = new ByteArrayOutputStream();
     try {
       ImageIO.write(img.data, "png", b);
-    } catch (@Nonnull final RuntimeException e) {
-      RefUtil.freeRef(img);
-      throw e;
     } catch (@Nonnull final Exception e) {
       RefUtil.freeRef(img);
-      throw new RuntimeException(e);
+      throwException(e);
     }
     final byte[] byteArray = b.toByteArray();
     final CharSequence encode = Base64.getEncoder().encodeToString(byteArray);
@@ -488,8 +486,22 @@ public class Util {
     try {
       return out.toString("UTF-8");
     } catch (UnsupportedEncodingException e1) {
-      throw new RuntimeException(e1);
+      throw throwException(e1);
     }
   }
 
+  @NotNull
+  public static URI getURI(String uri) {
+    try {
+      return new URI(uri);
+    } catch (URISyntaxException e) {
+      throw throwException(e);
+    }
+  }
+
+  public static RuntimeException throwException(Throwable e) {
+    if (e instanceof Error) throw (Error) e;
+    if (e instanceof RuntimeException) throw (RuntimeException) e;
+    throw new RuntimeException(e);
+  }
 }

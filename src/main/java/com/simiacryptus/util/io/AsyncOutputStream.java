@@ -20,6 +20,7 @@
 package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.wrappers.RefArrays;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import java.io.FilterOutputStream;
@@ -40,7 +41,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       try {
         out.close();
       } catch (@Nonnull final IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     });
   }
@@ -51,7 +52,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       try {
         out.flush();
       } catch (@Nonnull final IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     });
   }
@@ -63,7 +64,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       try {
         out.write(_b);
       } catch (@Nonnull final IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     });
   }
@@ -74,7 +75,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       try {
         out.write(b);
       } catch (@Nonnull final IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
     });
   }

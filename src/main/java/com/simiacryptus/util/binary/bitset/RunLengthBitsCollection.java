@@ -23,6 +23,7 @@ import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefHashMap;
 import com.simiacryptus.ref.wrappers.RefHashSet;
 import com.simiacryptus.ref.wrappers.RefList;
+import com.simiacryptus.util.Util;
 import com.simiacryptus.util.binary.BitInputStream;
 import com.simiacryptus.util.binary.BitOutputStream;
 import com.simiacryptus.util.binary.Bits;
@@ -60,7 +61,7 @@ public class RunLengthBitsCollection extends BitsCollection<RefHashMap<Bits, Ato
         out.write(e.getKey());
         out.write(new Bits(e.getValue().get(), 32));
       } catch (IOException ex) {
-        throw new RuntimeException(ex);
+        throw Util.throwException(ex);
       } finally {
         RefUtil.freeRef(e);
       }

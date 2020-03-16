@@ -21,6 +21,7 @@ package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.wrappers.*;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import java.io.DataInputStream;
@@ -87,7 +88,7 @@ public final class BinaryChunkIterator extends RefIteratorBase<byte[]> {
     try {
       return BinaryChunkIterator.read(in, recordSize);
     } catch (@Nonnull final IOException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 

@@ -44,23 +44,22 @@ public class LocalAppSettings {
   }
 
   @Nullable
-  public static RefHashMap<String, String> read() {
+  public static HashMap<String, String> read() {
     return read(new File("."));
   }
 
   @Nullable
-  public static RefHashMap<String, String> read(@Nonnull File workingDir) {
+  public static HashMap<String, String> read(@Nonnull File workingDir) {
     File parentFile = workingDir.getParentFile();
     File file = new File(workingDir, "app.json");
     if (file.exists()) {
-      RefHashMap<String, String> settings = null;
+      final HashMap<String, String> settings;
       try {
-        if (null != settings) settings.freeRef();
         settings = JsonUtil.getMapper()
-            .readValue(new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")), RefHashMap.class);
+            .readValue(new String(FileUtils.readFileToByteArray(file), Charset.forName("UTF-8")), HashMap.class);
         settings.forEach((k, v) -> logger.info(RefString.format("Loaded %s = %s from %s", k, v, file)));
       } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw Util.throwException(e);
       }
       if (parentFile != null && parentFile.exists()) {
         settings.putAll(read(parentFile));
@@ -69,7 +68,7 @@ public class LocalAppSettings {
     } else if (parentFile != null && parentFile.exists()) {
       return read(parentFile);
     } else {
-      return new RefHashMap<>();
+      return new HashMap<>();
     }
   }
 }

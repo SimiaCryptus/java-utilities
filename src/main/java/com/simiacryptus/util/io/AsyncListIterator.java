@@ -21,6 +21,7 @@ package com.simiacryptus.util.io;
 
 import com.simiacryptus.ref.wrappers.RefIteratorBase;
 import com.simiacryptus.ref.wrappers.RefList;
+import com.simiacryptus.util.Util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -56,7 +57,7 @@ public class AsyncListIterator<T> extends RefIteratorBase<T> {
       }
       return null;
     } catch (@Nonnull final InterruptedException e) {
-      throw new RuntimeException(e);
+      throw Util.throwException(e);
     }
   }
 
