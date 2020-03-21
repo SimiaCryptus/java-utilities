@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SysOutInterceptor extends PrintStream {
 
-  public static final PrintStream ORIGINAL_OUT = RefSystem.out;
+  public static final PrintStream ORIGINAL_OUT = System.out;
   public static final SysOutInterceptor INSTANCE = new SysOutInterceptor(ORIGINAL_OUT);
   private static final Logger log = LoggerFactory.getLogger(SysOutInterceptor.class);
   private final ThreadLocal<Boolean> isMonitoring = new ThreadLocal<Boolean>() {
@@ -121,7 +121,7 @@ public class SysOutInterceptor extends PrintStream {
       if (null != stdout) {
         stdout.setOutputStream(this);
       }
-      RefSystem.setOut(this);
+      System.setOut(this);
     }
     return this;
   }

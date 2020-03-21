@@ -19,6 +19,7 @@
 
 package com.simiacryptus.util;
 
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.GsonBuilder;
@@ -35,17 +36,29 @@ import org.apache.commons.io.FileUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
 public class JsonUtil {
 
   public static ObjectMapper getMapper() {
-    return new ObjectMapper()
-        .setSerializerFactory(new RefBeanSerializerFactory())
-        //.setSerializerProvider(new RefSerializerProvider())
-        //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+    ObjectMapper objectMapper = new ObjectMapper()
         .enable(SerializationFeature.INDENT_OUTPUT);
+    objectMapper.setSerializerFactory(new RefBeanSerializerFactory());
+    registerDynamicModule(objectMapper,
+        "com.fasterxml.jackson.module.scala.DefaultScalaModule");
+    //.setSerializerProvider(new RefSerializerProvider())
+    //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
+    return objectMapper;
+  }
+
+  public static void registerDynamicModule(ObjectMapper objectMapper, String name) {
+    try {
+      objectMapper.registerModule((Module) Class.forName(name).getDeclaredConstructor().newInstance());
+    } catch (Throwable e) {
+      // Ignore
+    }
   }
 
   public static double[] getDoubleArray(@Nonnull final JsonArray array) {

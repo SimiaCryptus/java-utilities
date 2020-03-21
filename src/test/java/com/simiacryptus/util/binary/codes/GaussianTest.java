@@ -63,21 +63,21 @@ public class GaussianTest {
   @Test
   @Tag("UnitTest")
   public void testHardcodedGaussians() throws IOException {
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 3), 255)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 10), 255)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 200), 255)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(new Gaussian(100, 500), 255)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(new Gaussian(500, 10), 255)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(new Gaussian(-100, 10), 255)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.7, 3), 3)));
-    RefSystem.out
+    System.out
         .println(RefString.format("T: %s", this.test(Gaussian.fromBinomial(0.5, 1), 1)));
   }
 

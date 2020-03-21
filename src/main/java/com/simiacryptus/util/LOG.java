@@ -70,7 +70,7 @@ public class LOG {
     final double time = (RefSystem.nanoTime() - LOG.startTime) / 1000000000.;
     final String line = RefString.format("[%.5f] (%s:%s) %s", time, caller.getFileName(), caller.getLineNumber(),
         formatted.replaceAll("\n", "\n\t"));
-    RefSystem.out.println(line);
+    System.out.println(line);
   }
 
   private static void preprocessArgs(@Nonnull final Object... args) {

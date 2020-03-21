@@ -21,7 +21,9 @@ package com.simiacryptus.lang;
 
 import com.simiacryptus.ref.lang.RefAware;
 
-public interface UncheckedSupplier<T> {
+import java.io.Serializable;
+
+public interface UncheckedSupplier<T> extends Serializable {
 
   @RefAware
   T get() throws Exception;

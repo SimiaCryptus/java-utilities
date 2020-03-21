@@ -382,13 +382,9 @@ public class Util {
 
   @Nonnull
   public static Path pathToFile(@Nonnull final File baseFile, @Nonnull File file) {
-    try {
-      Path basePath = baseFile.getCanonicalFile().toPath();
-      Path path = file.getCanonicalFile().toPath();
-      return basePath.relativize(path);
-    } catch (IOException e) {
-      throw new RuntimeException(RefString.format("Base: %s; File: %s", baseFile, file), e);
-    }
+    Path basePath = baseFile.toPath();
+    Path path = file.toPath();
+    return basePath.relativize(path);
   }
 
   @Nonnull
