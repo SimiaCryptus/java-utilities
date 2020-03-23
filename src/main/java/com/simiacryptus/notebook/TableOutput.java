@@ -20,7 +20,6 @@
 package com.simiacryptus.notebook;
 
 import com.simiacryptus.ref.lang.RefUtil;
-import com.simiacryptus.ref.wrappers.RefString;
 import com.simiacryptus.util.Util;
 import com.simiacryptus.util.data.DoubleStatistics;
 import org.slf4j.Logger;
@@ -82,7 +81,7 @@ public class TableOutput {
           final Class<?> cellType = value.getClass();
           Class<?> colType = schema.getOrDefault(propKey, cellType);
           if (!colType.isAssignableFrom(cellType)) {
-            logger.warn(RefString.format("Schema mismatch for %s (%s != %s)", propKey, colType, cellType));
+            logger.warn(String.format("Schema mismatch for %s (%s != %s)", propKey, colType, cellType));
           }
           schema.putIfAbsent(propKey, cellType);
         }
@@ -111,7 +110,7 @@ public class TableOutput {
         }).collect(Collectors.joining(","));
         printStream.println(keys.stream().collect(Collectors.joining(",")).trim());
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(RefString.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
+          printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
         }
       }
       return buffer.toString();
@@ -148,7 +147,7 @@ public class TableOutput {
         printStream.print("</tr>");
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
           printStream.print("<tr>");
-          printStream.println(RefString.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
+          printStream.println(String.format(formatString, keys.stream().map(k -> row.get(k)).toArray()));
           printStream.print("</tr>");
         }
         printStream.print("</table>");
@@ -164,47 +163,33 @@ public class TableOutput {
          ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
       try (@Nonnull
            PrintStream printStream = new PrintStream(buffer)) {
-        final String formatString = schema.entrySet().stream().map(e -> {
+        final String formatString = "| " + schema.keySet().stream().map(key -> {
           try {
-            switch (e.getValue().getSimpleName()) {
-              case "String":
-                CharSequence key = e.getKey();
-                return "%-" + rows.stream()
-                    .mapToInt(x -> {
-                      Object val = x.getOrDefault(key, "");
-                      return null == val ? 0 : val.toString().length();
-                    }).max().getAsInt() + "s";
-              case "Integer":
-                return "%6d";
-              case "Double":
-                return "%.4f";
-              default:
-                return "%s";
-            }
+            return "%-" + Math.max(1, columnWidth(key)) + "s";
           } finally {
-            if (null != e)
-              RefUtil.freeRef(e);
+            RefUtil.freeRef(key);
           }
-        }).collect(Collectors.joining(" | "));
-        printStream.println(schema.entrySet().stream().map(x -> {
+        }).collect(Collectors.joining(" | ")) + " |";
+        // Print Column Names
+        printStream.println(String.format(formatString, schema.keySet().toArray()));
+        // Print Dash Line
+        printStream.println("| " + schema.entrySet().stream().map(x -> {
           CharSequence key = x.getKey();
           RefUtil.freeRef(x);
           return key;
-        }).collect(Collectors.joining(" | ")).trim());
-        printStream.println(schema.entrySet().stream().map(x -> {
-          CharSequence key = x.getKey();
-          RefUtil.freeRef(x);
-          return key;
-        }).map(x -> {
-          @Nonnull final char[] t = new char[x.length()];
+        }).map(key -> {
+          @Nonnull final char[] t = new char[columnWidth(key)];
           Arrays.fill(t, '-');
           return new String(t);
-        }).collect(Collectors.joining(" | ")).trim());
+        }).collect(Collectors.joining(" | ")).trim() + " |");
+        // Print values
         for (@Nonnull final Map<CharSequence, Object> row : rows) {
-          printStream.println(RefString.format(formatString, schema.entrySet().stream().map(e -> {
-            Object cell = row.get(e.getKey());
-            RefUtil.freeRef(e);
-            return cell;
+          printStream.println(String.format(formatString, schema.keySet().stream().map(key -> {
+            try {
+              return toString(row, key);
+            } finally {
+              RefUtil.freeRef(key);
+            }
           }).toArray()));
         }
       }
@@ -212,6 +197,32 @@ public class TableOutput {
     } catch (@Nonnull final IOException e) {
       throw Util.throwException(e);
     }
+  }
+
+  public String toString(@Nonnull Map<CharSequence, Object> row, CharSequence key) {
+    Object o = row.get(key);
+    if(o == null) return "";
+    switch (schema.get(key).getSimpleName()) {
+      case "String":
+        return o.toString();
+      case "Integer":
+        return String.format("%6d", o);
+      case "Double":
+        return String.format("%.4f", o);
+      default:
+        return o.toString();
+    }
+  }
+
+  private int columnWidth(CharSequence key) {
+    return Math.max(textDataWidth(key), key.length());
+  }
+
+  private int textDataWidth(CharSequence key) {
+    return rows.stream()
+        .mapToInt(row -> {
+          return toString(row, key).length();
+        }).max().getAsInt();
   }
 
   public void writeProjectorData(@Nonnull final File path, final URL baseUrl) throws IOException {

@@ -26,12 +26,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.simiacryptus.notebook.TableOutput;
 import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefIgnore;
 import com.simiacryptus.ref.lang.RefUtil;
 import com.simiacryptus.ref.wrappers.RefArrays;
 import com.simiacryptus.ref.wrappers.RefIntStream;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +44,7 @@ import java.nio.charset.Charset;
 import java.util.function.Supplier;
 
 public class JsonUtil {
+  public static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
   public static ObjectMapper getMapper() {
     ObjectMapper objectMapper = new ObjectMapper()
@@ -57,7 +61,7 @@ public class JsonUtil {
     try {
       objectMapper.registerModule((Module) Class.forName(name).getDeclaredConstructor().newInstance());
     } catch (Throwable e) {
-      // Ignore
+      logger.debug(String.format("Cannot initialize jackson module %s: %s", name, e.getMessage()));
     }
   }
 
