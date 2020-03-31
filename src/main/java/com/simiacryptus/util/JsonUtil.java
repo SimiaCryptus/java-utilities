@@ -19,6 +19,8 @@
 
 package com.simiacryptus.util;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -50,6 +52,9 @@ public class JsonUtil {
     ObjectMapper objectMapper = new ObjectMapper()
         .enable(SerializationFeature.INDENT_OUTPUT);
     objectMapper.setSerializerFactory(new RefBeanSerializerFactory());
+    objectMapper.setDefaultPrettyPrinter(new DefaultPrettyPrinter()
+        .withArrayIndenter(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
+    );
     registerDynamicModule(objectMapper,
         "com.fasterxml.jackson.module.scala.DefaultScalaModule");
     //.setSerializerProvider(new RefSerializerProvider())
