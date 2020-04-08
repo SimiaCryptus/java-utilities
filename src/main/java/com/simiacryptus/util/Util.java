@@ -257,6 +257,7 @@ public class Util {
   @Nonnull
   public static String pathTo(@Nonnull final File from, @Nonnull final File to) {
     return from.toPath().relativize(to.toPath()).toString().replaceAll("\\\\", "/");
+    //return Util.stripPrefix(Util.toString(Util.pathToFile(from, to)), "/");
   }
 
   @Nonnull

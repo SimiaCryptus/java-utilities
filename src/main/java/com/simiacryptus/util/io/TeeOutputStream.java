@@ -19,8 +19,6 @@
 
 package com.simiacryptus.util.io;
 
-import com.simiacryptus.ref.wrappers.RefSystem;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.*;

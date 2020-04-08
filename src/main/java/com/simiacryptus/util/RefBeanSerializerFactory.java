@@ -37,6 +37,25 @@ class RefBeanSerializerFactory extends BeanSerializerFactory {
   }
 
   @Override
+  public SerializerFactory withConfig(SerializerFactoryConfig config) {
+    if (_factoryConfig == config) {
+      return this;
+    }
+    /* 22-Nov-2010, tatu: Handling of subtypes is tricky if we do immutable-with-copy-ctor;
+     *    and we pretty much have to here either choose between losing subtype instance
+     *    when registering additional serializers, or losing serializers.
+     *    Instead, let's actually just throw an error if this method is called when subtype
+     *    has not properly overridden this method; this to indicate problem as soon as possible.
+     */
+    if (getClass() != RefBeanSerializerFactory.class) {
+      throw new IllegalStateException("Subtype of RefBeanSerializerFactory (" + getClass().getName()
+          + ") has not properly overridden method 'withAdditionalSerializers': cannot instantiate subtype with "
+          + "additional serializer definitions");
+    }
+    return new RefBeanSerializerFactory(config);
+  }
+
+  @Override
   protected MapSerializer _checkMapContentInclusion(SerializerProvider prov, BeanDescription beanDesc, MapSerializer mapSer) throws JsonMappingException {
     return RefMapSerializer.wrap(super._checkMapContentInclusion(prov, beanDesc, mapSer));
   }
@@ -49,25 +68,6 @@ class RefBeanSerializerFactory extends BeanSerializerFactory {
   @Override
   protected JsonSerializer<Object> constructBeanOrAddOnSerializer(SerializerProvider prov, JavaType type, BeanDescription beanDesc, boolean staticTyping) throws JsonMappingException {
     return RefMapSerializer.wrap(super.constructBeanOrAddOnSerializer(prov, type, beanDesc, staticTyping));
-  }
-  @Override
-  public SerializerFactory withConfig(SerializerFactoryConfig config)
-  {
-    if (_factoryConfig == config) {
-      return this;
-    }
-    /* 22-Nov-2010, tatu: Handling of subtypes is tricky if we do immutable-with-copy-ctor;
-     *    and we pretty much have to here either choose between losing subtype instance
-     *    when registering additional serializers, or losing serializers.
-     *    Instead, let's actually just throw an error if this method is called when subtype
-     *    has not properly overridden this method; this to indicate problem as soon as possible.
-     */
-    if (getClass() != RefBeanSerializerFactory.class) {
-      throw new IllegalStateException("Subtype of RefBeanSerializerFactory ("+getClass().getName()
-          +") has not properly overridden method 'withAdditionalSerializers': cannot instantiate subtype with "
-          +"additional serializer definitions");
-    }
-    return new RefBeanSerializerFactory(config);
   }
 
 }

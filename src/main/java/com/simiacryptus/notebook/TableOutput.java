@@ -201,7 +201,7 @@ public class TableOutput {
 
   public String toString(@Nonnull Map<CharSequence, Object> row, CharSequence key) {
     Object o = row.get(key);
-    if(o == null) return "";
+    if (o == null) return "";
     switch (schema.get(key).getSimpleName()) {
       case "String":
         return o.toString();
@@ -212,17 +212,6 @@ public class TableOutput {
       default:
         return o.toString();
     }
-  }
-
-  private int columnWidth(CharSequence key) {
-    return Math.max(textDataWidth(key), key.length());
-  }
-
-  private int textDataWidth(CharSequence key) {
-    return rows.stream()
-        .mapToInt(row -> {
-          return toString(row, key).length();
-        }).max().getAsInt();
   }
 
   public void writeProjectorData(@Nonnull final File path, final URL baseUrl) throws IOException {
@@ -320,6 +309,17 @@ public class TableOutput {
         }
       }
     }
+  }
+
+  private int columnWidth(CharSequence key) {
+    return Math.max(textDataWidth(key), key.length());
+  }
+
+  private int textDataWidth(CharSequence key) {
+    return rows.stream()
+        .mapToInt(row -> {
+          return toString(row, key).length();
+        }).max().getAsInt();
   }
 
 }
