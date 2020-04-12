@@ -30,7 +30,7 @@
 
     <artifactId>java-util</artifactId>
     <description>Miscellaneous Utilities (Pure Java)</description>
-    <url>https://simiacryptus.github.io/${github.project}/</url>
+
 
     <properties>
 
