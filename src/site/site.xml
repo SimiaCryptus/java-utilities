@@ -39,10 +39,10 @@
 
         <menu ref="reports"/>
         <menu name="Data Reports">
-            <item name="Wikipedia Topics"
-                  href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/wikiTopics/config.json"/>
-            <item name="Sentence Classification"
-                  href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/sentenceClassification/config.json"/>
+<!--            <item name="Wikipedia Topics"-->
+<!--                  href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/wikiTopics/config.json"/>-->
+<!--            <item name="Sentence Classification"-->
+<!--                  href="http://projector.tensorflow.org/?config=https://simiacryptus.github.io/utilities/java-util/sentenceClassification/config.json"/>-->
         </menu>
         <menu name="Simia Cryptus" position="right">
             <item name="Blog" href="http://simiacryptus.com"/>
