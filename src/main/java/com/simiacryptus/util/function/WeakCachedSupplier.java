@@ -29,7 +29,8 @@ import javax.annotation.Nullable;
 
 public class WeakCachedSupplier<T> extends ReferenceCountingBase implements RefSupplier<T> {
 
-  @RefAware private final RefSupplier<T> fn;
+  @RefAware
+  private final RefSupplier<T> fn;
   @Nullable
   private volatile RefWeakReference<T> cached;
 
