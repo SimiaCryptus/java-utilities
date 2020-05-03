@@ -150,6 +150,7 @@
     <url>http://code.simiacrypt.us/release/${project.version}/java-util</url>
     <distributionManagement>
         <site>
+            <id>simiacryptus</id>
             <url>s3://code.simiacrypt.us/release/${project.version}/java-util</url>
         </site>
     </distributionManagement>
