@@ -19,14 +19,13 @@
 
 package com.simiacryptus.lang;
 
-import com.simiacryptus.ref.lang.RefIgnore;
+import com.simiacryptus.ref.lang.RefAware;
 import com.simiacryptus.ref.lang.RefUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
-@RefIgnore
 public abstract class LazyVal<T> implements Supplier<T> {
   @Nullable
   private volatile T val = null;
@@ -44,6 +43,7 @@ public abstract class LazyVal<T> implements Supplier<T> {
   }
 
   @Nullable
+  @RefAware
   public T get() {
     if (null == val) {
       synchronized (this) {
@@ -52,8 +52,7 @@ public abstract class LazyVal<T> implements Supplier<T> {
         }
       }
     }
-    RefUtil.addRef(val);
-    return val;
+    return RefUtil.addRef(val);
   }
 
   @Nonnull
