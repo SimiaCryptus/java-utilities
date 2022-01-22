@@ -19,11 +19,16 @@
 
 package com.simiacryptus.util;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.json.JsonWriteFeature;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -46,26 +51,38 @@ import java.util.function.Supplier;
 public class JsonUtil {
   public static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
-  public static ObjectMapper getMapper() {
-    ObjectMapper objectMapper = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT);
-    objectMapper.setSerializerFactory(new RefBeanSerializerFactory());
-    objectMapper.setDefaultPrettyPrinter(new DefaultPrettyPrinter()
-        .withArrayIndenter(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE)
-    );
-    registerDynamicModule(objectMapper,
-        "com.fasterxml.jackson.module.scala.DefaultScalaModule");
-    //.setSerializerProvider(new RefSerializerProvider())
-    //.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL)
-    return objectMapper;
+  public static JsonMapper getMapper() {
+    Module module = getModule("com.fasterxml.jackson.module.scala.DefaultScalaModule");
+    JsonMapper.Builder builder = JsonMapper.builder()
+        .visibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
+//        .visibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
+        //.visibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE)
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+//        .disable(MapperFeature.INFER_PROPERTY_MUTATORS)
+//        .disable(MapperFeature.AUTO_DETECT_GETTERS)
+//        .disable(MapperFeature.AUTO_DETECT_SETTERS)
+        .serializerFactory(new RefBeanSerializerFactory())
+        .defaultPrettyPrinter(new DefaultPrettyPrinter()
+            .withArrayIndenter(DefaultIndenter.SYSTEM_LINEFEED_INSTANCE));
+    if(null != module) builder.addModule(module);
+    return builder.build();
   }
 
   public static void registerDynamicModule(ObjectMapper objectMapper, String name) {
+    Module module = getModule(name);
+    if(null != module) objectMapper.registerModule(module);
+  }
+
+  @org.jetbrains.annotations.Nullable
+  public static Module getModule(String name) {
+    Module module = null;
     try {
-      objectMapper.registerModule((Module) Class.forName(name).getDeclaredConstructor().newInstance());
+      module = (Module) Class.forName(name).getDeclaredConstructor().newInstance();
     } catch (Throwable e) {
       logger.debug(String.format("Cannot initialize jackson module %s: %s", name, e.getMessage()));
     }
+    return module;
   }
 
   public static double[] getDoubleArray(@Nonnull final JsonArray array) {
